@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-06 23:41
+ * @LastTime   : 2023-12-06 23:51
  * @desc       : 
 -->
 <script setup>
@@ -136,6 +136,7 @@
       ElMessage({
         type: 'error',
         message: '视图名字已存在,请重新输入!',
+        duration: 1500,
       });
     }
   }
