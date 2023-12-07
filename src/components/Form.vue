@@ -3,12 +3,13 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-06 23:51
+ * @LastTime   : 2023-12-08 01:48
  * @desc       : 
 -->
 <script setup>
   import { bitable } from '@lark-base-open/js-sdk';
   import { nextTick, onMounted, ref, toRaw } from 'vue';
+  import axios from 'axios';
 
   const base = bitable.base;
 
@@ -17,22 +18,203 @@
 
   const selectViewIdList = ref([]);
 
+  const baseId = ref();
+  const tableId = ref();
+
   onMounted(async () => {
     getViewMetaList();
+
+    const selection = await bitable.base.getSelection();
+    baseId.value = selection.baseId;
+    tableId.value = selection.tableId;
   });
 
   base.onSelectionChange(async () => {
     getViewMetaList();
   });
 
-  async function getViewMetaList() {
-    table.value = await base.getActiveTable();
-    const viewList = await toRaw(table.value).getViewMetaList();
-    handlerViewList(viewList);
+  const tenant_access_token = ref();
+
+  // 是否验证成功
+  const Verify = ref(false);
+
+  async function getTenantAccessToken() {
+    const apiUrl = '/api/open-apis/auth/v3/tenant_access_token/internal';
+
+    const data = {
+      app_id: appId.value,
+      app_secret: appSecret.value,
+    };
+
+    const headers = {
+      'Content-Type': 'application/json; charset=utf-8',
+    };
+
+    try {
+      const response = await axios.post(apiUrl, data, { headers });
+      // 处理响应数据
+      if (response?.data?.code === 0) {
+        tenant_access_token.value = response?.data?.tenant_access_token;
+        Verify.value = true;
+        ElMessage({
+          type: 'success',
+          message: '企业凭证调用成功~',
+          duration: 1500,
+        });
+      }
+      // expire 时间到了自动刷新问题, 分钟
+    } catch (error) {
+      // 弹出提示用户错误信息
+
+      // ElMessage({
+      //     type:'success',
+      //     message: '企业凭证调用成功~'
+      //   })
+      console.error('Error:', error.message);
+      throw error;
+    }
   }
 
-  function handlerViewList(_viewList) {
-    viewList.value = _viewList.map((item) => ({ ...item, isEditing: false }));
+  // 表格的管理员 user_id 列表
+  const fullAccessIdList = ref([]);
+
+  // TODO 到时候, 拿到个人视图的 user_id 在 fullAccessIdList 中查找即可
+
+  /**
+   * @desc  : 获取协作者列表
+   */
+  async function getMemberList() {
+    const apiUrl = '/api/open-apis/drive/permission/member/list';
+
+    const data = {
+      token: baseId.value,
+      type: 'bitable',
+    };
+
+    const headers = {
+      'Content-Type': 'application/json; charset=utf-8',
+      Authorization: `Bearer ${tenant_access_token.value}`,
+    };
+
+    try {
+      const response = await axios.post(apiUrl, data, { headers });
+      // 处理响应数据
+      if (response?.status === 200) {
+        // const members = [
+        //   {
+        //     member_type: 'chat',
+        //     member_open_id: 'oc_b9be4164d821f466310bc22bb2979cc7',
+        //     member_user_id: 'oc_b9be4164d821f466310bc22bb2979cc7',
+        //     perm: 'full_access',
+        //   },
+        //   {
+        //     member_type: 'user',
+        //     member_open_id: 'ou_65b0affcc6c342a50e4c66f700137b64',
+        //     member_user_id: '96g3c421',
+        //     perm: 'view',
+        //   },
+        //   {
+        //     member_type: 'user',
+        //     member_open_id: 'ou_b47765834b6bdc18c47a57340f98c0e5',
+        //     member_user_id: 'bg36b129',
+        //     perm: 'edit',
+        //   },
+        // ];
+
+        const members = response?.data?.data?.members;
+
+        members.forEach((item) => {
+          if (item.perm === 'full_access') {
+            fullAccessIdList.value.push(item.member_user_id);
+          }
+        });
+
+        console.log('full ', fullAccessIdList.value);
+        // tenant_access_token.value = response?.data?.tenant_access_token;
+      }
+      // expire 时间到了自动刷新问题, 分钟
+    } catch (error) {
+      // 弹出提示用户错误信息
+
+      // ElMessage({
+      //     type:'success',
+      //     message: '企业凭证调用成功~'
+      //   })
+      console.error('Error:', error.message);
+      throw error;
+    }
+  }
+
+  async function getViewAllList() {
+    const apiUrl = `api/open-apis/bitable/v1/apps/${baseId.value}/tables/${tableId.value}/views`;
+
+    const headers = {
+      'Content-Type': 'application/json; charset=utf-8',
+      Authorization: `Bearer ${tenant_access_token.value}`,
+    };
+
+    try {
+      // 发起带有 Authorization 头的 GET 请求
+      const response = await axios.get(apiUrl, { headers });
+
+      if (response?.data?.code === 0) {
+        viewList.value = response.data?.data?.items;
+        handlerViewList();
+
+        ElMessage({
+          type: 'success',
+          message: '数据查询成功~',
+          duration: 1500,
+        });
+      }
+    } catch (error) {
+      // 处理错误
+      console.error('Error:', error.message);
+      throw error;
+    }
+  }
+
+  async function getViewMetaList() {
+    table.value = await base.getActiveTable();
+
+    viewList.value = await toRaw(table.value).getViewMetaList();
+
+    handlerViewList();
+  }
+
+  function handlerViewList() {
+    if (userType.value === 1) {
+      viewList.value = viewList.value.map((item) => {
+        return { view_id: item.id, view_name: item.name, view_type: mapViewType(item.type), isEditing: false };
+      });
+    } else {
+      viewList.value = viewList.value.map((item) => ({ ...item, isEditing: false }));
+    }
+  }
+
+  function mapViewType(type) {
+    let _charType;
+    switch (type) {
+      case 1:
+        _charType = 'grid';
+        break;
+      case 2:
+        _charType = 'kanban';
+        break;
+      case 3:
+        _charType = 'form';
+        break;
+      case 4:
+        _charType = 'gallery';
+        break;
+      case 5:
+        _charType = 'gantt';
+        break;
+      case 7:
+        _charType = 'unknown';
+        break;
+    }
+    return _charType;
   }
 
   const multipleTableRef = ref();
@@ -50,17 +232,17 @@
     }
   };
   const handleSelectionChange = (val) => {
-    selectViewIdList.value = val.map((item) => item.id);
+    selectViewIdList.value = val.map((item) => item.view_id);
   };
 
   /**
    * @desc  : 修改视图名
-   * @param  {any} name 名字
-   * @param  {any} id id
+   * @param  {any} view_name 名字
+   * @param  {any} view_id 视图 id
    */
-  function handleFileName(name, id) {
-    toRaw(table.value).setView(id, {
-      name,
+  function handleFileName(view_name, view_id) {
+    toRaw(table.value).setView(view_id, {
+      name: view_name,
     });
   }
 
@@ -69,32 +251,30 @@
    * @param  {any} index 索引
    * @param  {any} row 行数据
    */
-  async function handleDelete(index, row) {
-    await toRaw(table.value).deleteView(row.id);
-    const viewList = await toRaw(table.value).getViewMetaList();
-    handlerViewList(viewList);
+  async function handleDelete(index, view_id) {
+    await toRaw(table.value).deleteView(view_id);
+    viewList.value = await toRaw(table.value).getViewMetaList();
+    handlerViewList();
   }
 
   /**
    * @desc  : 批量删除
    */
   async function batchDelete() {
-    for (const id of selectViewIdList.value) {
-      await toRaw(table.value).deleteView(id);
+    for (const view_id of selectViewIdList.value) {
+      await toRaw(table.value).deleteView(view_id);
     }
-    const viewList = await toRaw(table.value).getViewMetaList();
-    handlerViewList(viewList);
+    viewList.value = await toRaw(table.value).getViewMetaList();
+    handlerViewList();
   }
 
   // 编辑视图
-  async function handleEdit(index, row) {
-    console.log('🚀  row:', row);
+  async function handleEdit(index, view_id) {
     isEditing.value = true;
-    activeButtonId.value = row.id;
+    activeButtonId.value = view_id;
 
     viewList.value = viewList.value.map((item) => {
-      // viewList.value.map((item) => {
-      if (item.id === row.id) {
+      if (item.view_id === view_id) {
         item.isEditing = true;
       }
       return item;
@@ -112,7 +292,7 @@
     { value: 2, label: '看板视图' },
     { value: 3, label: '表单视图' },
     { value: 4, label: '画册视图' },
-    { value: 5, label: '甘特图视图' },
+    { value: 5, label: '甘特视图' },
     // { value: 6, label: '层次结构视图' },
     { value: 7, label: '日历视图' },
     // { value: 100, label: '小部件视图' },
@@ -120,10 +300,18 @@
   const newViewType = ref(1);
   const newViewName = ref();
 
+  const viewRangeList = ref([
+    { value: 1, label: '全部视图' },
+    { value: 2, label: '个人视图' },
+    { value: 3, label: '协作者个人视图' },
+  ]);
+
+  const viewRange = ref(1);
+
   const isAdd = ref(false);
 
   async function confirmAddView() {
-    const index = viewList.value.findIndex((item) => item.name === newViewName.value);
+    const index = viewList.value.findIndex((item) => item.view_name === newViewName.value);
     if (index === -1) {
       await toRaw(table.value).addView({
         name: newViewName.value,
@@ -157,7 +345,7 @@
    */
   async function changeViewType(row, type) {
     await toRaw(table.value).setView({
-      viewId: row.id,
+      viewId: row.view_id,
       type: type,
     });
 
@@ -168,27 +356,24 @@
 
   /**
    * @desc  : 切换视图
-   * @param  {any} row 行数据
-   * @return {any}
    */
-  async function switchView(row) {
-    await bitable.ui.switchToView(toRaw(table.value).id, row.id);
+  async function switchView(view_id) {
+    await bitable.ui.switchToView(toRaw(table.value).id, view_id);
   }
 
   const activeButtonId = ref();
   // 双击按钮开始编辑
   function startEditing(row) {
-    // activeButtonId.value = row.id;
+    // activeButtonId.value = row.view_id;
     // isEditing.value = true;
     viewList.value = viewList.value.map((item) => {
       // viewList.value.map((item) => {
-      if (item.id === row.id) {
+      if (item.view_id === row.view_id) {
         item.isEditing = true;
       }
       return item;
     });
-    console.log('🚀   viewList.value:', viewList.value);
-    // debugger;
+
     // 在下一轮事件循环中，将输入框聚焦
     nextTick(() => {
       editInput.value.focus();
@@ -196,9 +381,9 @@
   }
 
   // 结束编辑，例如在输入框失焦时调用
-  function endEditing(row) {
+  function endEditing(view_id) {
     viewList.value = viewList.value.map((item) => {
-      if (item.id === row.id) {
+      if (item.view_id === view_id) {
         item.isEditing = false;
       }
       return item;
@@ -220,10 +405,78 @@
       return true;
     }
   }
+
+  /**
+   * @desc  : 查询
+   */
+  function searchView() {
+    // 企业用户,通过掉接口
+    // 个人用户: 手动查询
+
+    getViewAllList();
+  }
+
+  /**
+   * @desc  : 确认信息
+   */
+  async function confirm() {
+    await getTenantAccessToken();
+    await getMemberList();
+  }
+
+  // 用户类型 1 个人用户; 2 企业用户
+  const userType = ref(1);
+
+  const appId = ref();
+  const appSecret = ref();
 </script>
 
 <template>
   <div class="field-manager">
+    <div class="addView-line">
+      <div class="addView-line-label">用户类型:</div>
+      <el-radio-group
+        v-model="userType"
+        size="small"
+      >
+        <el-radio-button :label="1"> 个人用户 </el-radio-button>
+        <el-radio-button :label="2">企业用户</el-radio-button>
+      </el-radio-group>
+    </div>
+    <div
+      class="addView"
+      v-if="userType === 2"
+    >
+      <div class="addView-line">
+        <div class="addView-line-label">App ID:</div>
+        <el-input
+          v-model="appId"
+          type="password"
+          size="small"
+          placeholder="请输入 App ID"
+        />
+      </div>
+
+      <div class="addView-line">
+        <div class="addView-line-label">App Secret:</div>
+        <el-input
+          v-model="appSecret"
+          type="password"
+          size="small"
+          placeholder="请输入 App Secret"
+        />
+      </div>
+
+      <div>
+        <el-button
+          type="primary"
+          size="small"
+          @click="confirm"
+          >确认信息</el-button
+        >
+      </div>
+    </div>
+
     <div class="batch-button">
       <el-button
         @click="batchDelete"
@@ -238,17 +491,32 @@
         >新增视图</el-button
       >
     </div>
-    <div
-      class="addView"
-      v-if="isAdd"
-    >
+    <div class="addView">
+      <div
+        class="addView-line"
+        v-if="userType === 2 && Verify"
+      >
+        <div class="addView-line-label">视图范围:</div>
+        <el-select
+          v-model="viewRange"
+          placeholder="请选择视图范围"
+          size="small"
+        >
+          <el-option
+            v-for="item in viewRangeList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </div>
+
       <div class="addView-line">
         <div class="addView-line-label">视图名称:</div>
         <el-input
           v-model="newViewName"
           size="small"
           placeholder="请输入视图名字"
-          :prefix-icon="Search"
         />
       </div>
 
@@ -272,14 +540,14 @@
         <el-button
           type="primary"
           size="small"
-          @click="confirmAddView"
-          >确认</el-button
+          @click="searchView"
+          >查询</el-button
         >
+
         <el-button
+          type="primary"
           size="small"
-          type="info"
-          @click="cancelAddView"
-          >取消</el-button
+          >下一页</el-button
         >
       </div>
     </div>
@@ -299,20 +567,20 @@
       >
         <!-- <template #default="scope">{{ scope.row.name }}</template> -->
         <template #default="scope">
-          <div :title="scope.row.name">
+          <div :title="scope.row.view_name">
             <el-button
-              v-show="!item?.isEditing && activeButtonId !== scope.row.id"
-              @click="switchView(scope.row)"
-              >{{ scope.row.name }}</el-button
+              v-show="!item?.isEditing && activeButtonId !== scope.row.view_id"
+              @click="switchView(scope.row.view_id)"
+              >{{ scope.row.view_name }}</el-button
             >
             <!-- FIXME 双击直接编辑暂时不做 @dblclick="startEditing(scope.row)" -->
             <el-input
-              v-show="(item?.isEditing && isEditing) || activeButtonId === scope.row.id"
+              v-show="(item?.isEditing && isEditing) || activeButtonId === scope.row.view_id"
               ref="editInput"
-              @blur="endEditing(scope.row)"
-              :model-value="scope.row.name"
-              @change="(value) => handleFileName(value, scope.row.id)"
-              @input="(value) => (scope.row.name = value)"
+              @blur="endEditing(scope.row.view_id)"
+              :model-value="scope.row.view_name"
+              @change="(value) => handleFileName(value, scope.row.view_id)"
+              @input="(value) => (scope.row.view_name = value)"
             />
           </div>
         </template>
@@ -324,7 +592,7 @@
         <template #default="scope">
           <el-button
             size="small"
-            @click="handleEdit(scope.$index, scope.row)"
+            @click="handleEdit(scope.$index, scope.row.view_id)"
             link
             ><el-icon size="14"><Edit /></el-icon
           ></el-button>
@@ -353,7 +621,7 @@
             size="small"
             type="danger"
             link
-            @click="handleDelete(scope.$index, scope.row)"
+            @click="handleDelete(scope.$index, scope.row.view_id)"
             ><el-icon size="16"><Delete /></el-icon
           ></el-button>
         </template>
