@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-08 01:48
+ * @LastTime   : 2023-12-08 08:29
  * @desc       : 
 -->
 <script setup>
@@ -285,41 +285,69 @@
     });
   }
 
-  async function addView() {}
+  const openAddView = ref(false);
 
-  const viewTypeList = ref([
+  async function addView() {
+    openAddView.value = true;
+  }
+
+  // 查询类型下拉, 对齐 js-sdk
+  const addViewTypeList = ref([
     { value: 1, label: '表格视图' },
     { value: 2, label: '看板视图' },
     { value: 3, label: '表单视图' },
     { value: 4, label: '画册视图' },
     { value: 5, label: '甘特视图' },
-    // { value: 6, label: '层次结构视图' },
     { value: 7, label: '日历视图' },
-    // { value: 100, label: '小部件视图' },
   ]);
+
   const newViewType = ref(1);
   const newViewName = ref();
 
+  const addViewType = ref(1);
+  const addViewName = ref();
+
+  //  查询的类型下拉, 对齐字符串字典
+  const searchViewTypeList = ref([
+    { value: 'all', label: '全部视图' },
+    { value: 'grid', label: '表格视图' },
+    { value: 'kanban', label: '看板视图' },
+    { value: 'form', label: '表单视图' },
+    { value: 'gallery', label: '画册视图' },
+    { value: 'gantt', label: '甘特视图' },
+    { value: 'unknown', label: '日历视图' },
+  ]);
+
+  const searchViewType = ref('all');
+  const searchViewName = ref();
+
   const viewRangeList = ref([
     { value: 1, label: '全部视图' },
-    { value: 2, label: '个人视图' },
-    { value: 3, label: '协作者个人视图' },
+    { value: 2, label: '当前用户个人视图' },
+    { value: 3, label: '非管理员个人视图' },
   ]);
 
   const viewRange = ref(1);
 
-  const isAdd = ref(false);
-
   async function confirmAddView() {
-    const index = viewList.value.findIndex((item) => item.view_name === newViewName.value);
+    const index = viewList.value.findIndex((item) => item.view_name === addViewName.value);
     if (index === -1) {
       await toRaw(table.value).addView({
-        name: newViewName.value,
-        type: newViewType.value,
+        name: addViewName.value,
+        type: addViewType.value,
       });
 
       const _viewList = await toRaw(table.value).getViewMetaList();
       handlerViewList(_viewList);
+      addViewName.value = '';
+      addViewType.value = 1;
+      openAddView.value = false;
+
+      ElMessage({
+        type: 'success',
+        message: '视图新增成功~',
+        duration: 1500,
+      });
     } else {
       ElMessage({
         type: 'error',
@@ -331,7 +359,6 @@
 
   function cancelAddView() {
     // 重置操作
-    isAdd.value = false;
     newViewName.value = '';
     newViewType.value = 1;
   }
@@ -409,11 +436,32 @@
   /**
    * @desc  : 查询
    */
-  function searchView() {
-    // 企业用户,通过掉接口
-    // 个人用户: 手动查询
+  async function searchView() {
+    if (userType.value === 1) {
+      // 个人用户: 手动查询
+      await getViewMetaList();
+      handleFilterViewList();
+    } else {
+      // 企业用户,通过掉接口
 
-    getViewAllList();
+      getViewAllList();
+    }
+  }
+
+  function handleFilterViewList() {
+    // 筛选视图类型和视图名字
+    viewList.value = viewList.value.filter((item) => {
+      const typeMatch = searchViewType.value === 'all' || item.view_type === searchViewType.value;
+      const nameMatch = !searchViewName.value || item?.view_name?.includes(searchViewName.value);
+      // debugger;
+      return typeMatch && nameMatch;
+    });
+  }
+
+  async function reset() {
+    searchViewName.value = '';
+    searchViewType.value = 'all';
+    await getViewMetaList();
   }
 
   /**
@@ -429,6 +477,9 @@
 
   const appId = ref();
   const appSecret = ref();
+
+  // 过滤之后的视图列表
+  const filterViewList = ref([]);
 </script>
 
 <template>
@@ -485,12 +536,63 @@
         >批量删除</el-button
       >
       <el-button
-        @click="() => (isAdd = true)"
         type="primary"
         size="small"
+        @click="addView"
         >新增视图</el-button
       >
     </div>
+
+    <!-- 新增视图 -->
+    <el-dialog
+      v-model="openAddView"
+      title="新增视图"
+    >
+      <div class="addView">
+        <div class="addView-line">
+          <div class="addView-line-label">视图名称:</div>
+          <el-input
+            v-model="addViewName"
+            size="small"
+            placeholder="请输入视图名字"
+          />
+        </div>
+
+        <div class="addView-line">
+          <div class="addView-line-label">视图类型:</div>
+          <el-select
+            v-model="addViewType"
+            placeholder="请选择视图类型"
+            size="small"
+          >
+            <el-option
+              v-for="item in addViewTypeList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </div>
+
+        <div>
+          <el-button
+            type="primary"
+            size="small"
+            @click="confirmAddView"
+            >确定</el-button
+          >
+
+          <el-button
+            size="small"
+            @click="cancel"
+            >取消</el-button
+          >
+        </div>
+      </div>
+    </el-dialog>
+
+    <!-- TODO 批量新增 -->
+
     <div class="addView">
       <div
         class="addView-line"
@@ -514,7 +616,7 @@
       <div class="addView-line">
         <div class="addView-line-label">视图名称:</div>
         <el-input
-          v-model="newViewName"
+          v-model="searchViewName"
           size="small"
           placeholder="请输入视图名字"
         />
@@ -523,12 +625,12 @@
       <div class="addView-line">
         <div class="addView-line-label">视图类型:</div>
         <el-select
-          v-model="newViewType"
+          v-model="searchViewType"
           placeholder="请选择视图类型"
           size="small"
         >
           <el-option
-            v-for="item in viewTypeList"
+            v-for="item in searchViewTypeList"
             :key="item.value"
             :label="item.label"
             :value="item.value"
@@ -545,9 +647,9 @@
         >
 
         <el-button
-          type="primary"
           size="small"
-          >下一页</el-button
+          @click="reset"
+          >重置</el-button
         >
       </div>
     </div>
