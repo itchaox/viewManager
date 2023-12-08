@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-08 09:20
+ * @LastTime   : 2023-12-09 00:46
  * @desc       : 
 -->
 <script setup>
@@ -21,8 +21,16 @@
   const baseId = ref();
   const tableId = ref();
 
+  const userId = ref();
+
+  // 临时的视图列表
+  const templateViewList = ref();
+
   onMounted(async () => {
-    getViewMetaList();
+    const _userId = await bitable.bridge.getUserId();
+    userId.value = _userId;
+
+    await getViewMetaList();
 
     const selection = await bitable.base.getSelection();
     baseId.value = selection.baseId;
@@ -38,6 +46,7 @@
   // 是否验证成功
   const Verify = ref(false);
 
+  // 获取 token
   async function getTenantAccessToken() {
     const apiUrl = '/api/open-apis/auth/v3/tenant_access_token/internal';
 
@@ -129,7 +138,6 @@
           }
         });
 
-        console.log('full ', fullAccessIdList.value);
         // tenant_access_token.value = response?.data?.tenant_access_token;
       }
       // expire 时间到了自动刷新问题, 分钟
@@ -145,8 +153,26 @@
     }
   }
 
+  // 分页标记
+  const page_token = ref();
+
+  const total = ref();
+
+  /**
+   * @desc  : 获取完整视图列表
+   */
   async function getViewAllList() {
+    // debugger;
     const apiUrl = `api/open-apis/bitable/v1/apps/${baseId.value}/tables/${tableId.value}/views`;
+
+    const data1 = {
+      page_size: 100,
+    };
+
+    const data2 = {
+      page_size: 100,
+      page_token: page_token.value,
+    };
 
     const headers = {
       'Content-Type': 'application/json; charset=utf-8',
@@ -155,17 +181,25 @@
 
     try {
       // 发起带有 Authorization 头的 GET 请求
-      const response = await axios.get(apiUrl, { headers });
+      // const response = await axios.get(apiUrl, page_token.value ? data2 : data1, { headers });
+      const response = await axios.post(apiUrl, page_token.value ? data2 : data1, { headers });
+      debugger;
 
       if (response?.data?.code === 0) {
-        viewList.value = response.data?.data?.items;
-        handlerViewList();
+        viewList.value.push(response.data?.data?.items);
 
         ElMessage({
           type: 'success',
           message: '数据查询成功~',
           duration: 1500,
         });
+
+        if (response.data?.data?.page_token) {
+          // 有 token,则 有更多项
+          // 视图现在最多200项, page_size 100; 因此这里最多请求2次
+          page_token.value = response.data?.data?.page_token;
+          getViewAllList();
+        }
       }
     } catch (error) {
       // 处理错误
@@ -183,12 +217,28 @@
   }
 
   function handlerViewList() {
-    if (userType.value === 1) {
+    // 个人用户, 也统一字段名
+    // 企业用户, 全部视图范围走 js api
+    if (userType.value === 1 || viewRange.value === 1) {
       viewList.value = viewList.value.map((item) => {
         return { view_id: item.id, view_name: item.name, view_type: mapViewType(item.type), isEditing: false };
       });
     } else {
-      viewList.value = viewList.value.map((item) => ({ ...item, isEditing: false }));
+      // 此处的数据, 都是视图全部类型, 有 private 视图等
+
+      if (viewRange.value === 2) {
+        // "当前用户" 的个人视图
+        viewList.value = viewList.value.filter(
+          (item) => item.view_public_level === 'Private' && item.view_private_owner_id === userId.value,
+        );
+      } else if (viewRange.value === 3) {
+        // "非管理员" 的个人视图
+        viewList.value = viewList.value.filter(
+          (item) =>
+            item.view_public_level === 'Private' && !fullAccessIdList.value.includes(item.view_private_owner_id),
+        );
+      }
+      // viewList.value = viewList.value.map((item) => ({ ...item, isEditing: false }));
     }
   }
 
@@ -322,7 +372,7 @@
   const searchViewName = ref();
 
   const viewRangeList = ref([
-    { value: 1, label: '全部视图' },
+    { value: 1, label: '全部角色视图范围' },
     { value: 2, label: '当前用户个人视图' },
     { value: 3, label: '非管理员个人视图' },
   ]);
@@ -337,15 +387,16 @@
         type: addViewType.value,
       });
 
-      const _viewList = await toRaw(table.value).getViewMetaList();
-      handlerViewList(_viewList);
+      viewList.value = await toRaw(table.value).getViewMetaList();
+      handlerViewList();
+
       addViewName.value = '';
       addViewType.value = 1;
       openAddView.value = false;
 
       ElMessage({
         type: 'success',
-        message: '视图新增成功~',
+        message: '新增视图成功~',
         duration: 1500,
       });
     } else {
@@ -355,6 +406,12 @@
         duration: 1500,
       });
     }
+  }
+
+  function cancel() {
+    addViewName.value = '';
+    addViewType.value = 1;
+    openAddView.value = false;
   }
 
   function cancelAddView() {
@@ -437,15 +494,21 @@
    * @desc  : 查询
    */
   async function searchView() {
-    if (userType.value === 1) {
+    if (userType.value === 1 || viewRange.value === 1) {
       // 个人用户: 手动查询
+      // 企业用户: 全部视图范围还是走手动查询
       await getViewMetaList();
-      handleFilterViewList();
     } else {
+      debugger;
+      // 先清空视图数组
+      viewList.value = [];
       // 企业用户,通过掉接口
-
-      getViewAllList();
+      await getViewAllList();
+      handlerViewList();
     }
+
+    // 筛选视图类型和视图名字
+    handleFilterViewList();
   }
 
   function handleFilterViewList() {
@@ -453,7 +516,6 @@
     viewList.value = viewList.value.filter((item) => {
       const typeMatch = searchViewType.value === 'all' || item.view_type === searchViewType.value;
       const nameMatch = !searchViewName.value || item?.view_name?.includes(searchViewName.value);
-      // debugger;
       return typeMatch && nameMatch;
     });
   }
@@ -475,8 +537,9 @@
   // 用户类型 1 个人用户; 2 企业用户
   const userType = ref(1);
 
-  const appId = ref();
-  const appSecret = ref();
+  // FIXME 暂时写死,  待修改
+  const appId = ref('cli_a5fb6d31657ad00c');
+  const appSecret = ref('ywVwQBGrLNkWCo8bwe7pf4IksBQ8rIyy');
 
   // 过滤之后的视图列表
   const filterViewList = ref([]);
