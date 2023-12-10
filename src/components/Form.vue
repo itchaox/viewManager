@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-10 17:43
+ * @LastTime   : 2023-12-10 18:23
  * @desc       : 
 -->
 <script setup>
@@ -775,11 +775,13 @@
                 v-show="!item?.isEditing && activeButtonId !== scope.row.view_id"
                 @click="switchView(scope.row.view_id)"
                 :style="{ width: '100%' }"
+                type="primary"
+                plain
                 >{{ scope.row.view_name }}</el-button
               >
               <!-- FIXME 双击直接编辑暂时不做 @dblclick="startEditing(scope.row)" -->
               <el-input
-                v-show="(item?.isEditing && isEditing) || activeButtonId === scope.row.view_id"
+                v-if="(item?.isEditing && isEditing) || activeButtonId === scope.row.view_id"
                 ref="editInput"
                 @blur="endEditing(scope.row.view_id)"
                 @keydown.enter="endEditing(scope.row.view_id)"
