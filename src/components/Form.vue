@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-10 17:19
+ * @LastTime   : 2023-12-10 17:43
  * @desc       : 
 -->
 <script setup>
@@ -305,7 +305,7 @@
     // 在下一轮事件循环中，将输入框聚焦
     nextTick(() => {
       editInput.value.focus();
-      console.log('🚀  editInput:', editInput.value);
+      console.log('🚀  editInput:', typeof editInput.value);
     });
   }
 
@@ -774,6 +774,7 @@
               <el-button
                 v-show="!item?.isEditing && activeButtonId !== scope.row.view_id"
                 @click="switchView(scope.row.view_id)"
+                :style="{ width: '100%' }"
                 >{{ scope.row.view_name }}</el-button
               >
               <!-- FIXME 双击直接编辑暂时不做 @dblclick="startEditing(scope.row)" -->
