@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-10 18:55
+ * @LastTime   : 2023-12-10 18:59
  * @desc       : 
 -->
 <script setup>
@@ -777,6 +777,7 @@
         <el-table-column
           property="name"
           label="操作"
+          width="60"
         >
           <template #default="scope">
             <!-- FIXME 暂时不需求编辑操作 -->
