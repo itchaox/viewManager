@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-10 12:49
+ * @LastTime   : 2023-12-10 14:07
  * @desc       : 
 -->
 <script setup>
@@ -60,16 +60,17 @@
       Verify.value = true;
       ElMessage({
         type: 'success',
-        message: '企业凭证调用成功~',
+        message: '自建应用凭证调用成功~',
         duration: 1500,
+        showClose: true,
       });
       openEnterprise.value = false;
     } else {
       ElMessage({
         type: 'error',
         message: 'app_id 或 app_secret 错误, 请检查后重试!',
-
         duration: 1500,
+        showClose: true,
       });
     }
     // expire 时间到了自动刷新问题, 分钟
@@ -113,7 +114,7 @@
 
       // ElMessage({
       //     type:'success',
-      //     message: '企业凭证调用成功~'
+      //     message: '自建应用凭证调用成功~'
       //   })
       console.error('Error:', error.message);
       throw error;
@@ -149,17 +150,19 @@
         // 追加元素
         viewList.value.push(..._list?.map((item) => item));
 
-        ElMessage({
-          type: 'success',
-          message: '数据查询成功~',
-          duration: 1500,
-        });
-
         if (response.data?.data?.has_more) {
-          // 有 token,则 有更多项
+          // 判断是否有更多项
           // 视图现在最多200项, page_size 100; 因此这里最多请求2次
           page_token.value = response.data?.data?.page_token;
           await getViewAllList();
+        } else {
+          ElMessage({
+            type: 'success',
+            message: '数据查询成功~',
+            duration: 1500,
+
+            showClose: true,
+          });
         }
       }
     } catch (error) {
@@ -178,6 +181,8 @@
       type: 'success',
       message: '数据查询成功~',
       duration: 1500,
+
+      showClose: true,
     });
 
     handlerViewList();
@@ -351,12 +356,15 @@
         type: 'success',
         message: '新增视图成功~',
         duration: 1500,
+
+        showClose: true,
       });
     } else {
       ElMessage({
         type: 'error',
         message: '视图名字已存在,请重新输入!',
         duration: 1500,
+        showClose: true,
       });
     }
   }
@@ -461,6 +469,7 @@
 
     // 筛选视图类型和视图名字
     handleFilterViewList();
+    page_token.value = '';
   }
 
   function handleFilterViewList() {
@@ -480,7 +489,7 @@
   }
 
   /**
-   * @desc  : 确认企业凭证信息
+   * @desc  : 确认自建应用凭证信息
    */
   async function confirmInfo() {
     await getTenantAccessToken();
@@ -488,7 +497,7 @@
   }
 
   /**
-   * @desc  : 取消企业凭证信息
+   * @desc  : 取消自建应用凭证信息
    */
   async function cancelInfo() {
     if (Verify.value) {
@@ -511,9 +520,8 @@
     openEnterprise.value = true;
   }
 
-  // FIXME 暂时写死,  待修改
-  const appId = ref('cli_a5fb6ca9bbfbd00b');
-  const appSecret = ref('PGn0kEHAdxs3TWoaN8LdzfrelJOGo1HS');
+  const appId = ref('');
+  const appSecret = ref('');
 
   // 过滤之后的视图列表
   const filterViewList = ref([]);
@@ -556,8 +564,15 @@
     <!-- 企业用户弹窗 -->
     <el-dialog
       v-model="openEnterprise"
-      title="填写企业凭证"
+      title="填写自建应用凭证"
     >
+      <el-link
+        href="https://bcmcjimpjd.feishu.cn/docx/L0sBd2M0JokYJ9xFRaPcF4cVnMg"
+        target="_blank"
+        type="primary"
+      >
+        <el-icon><QuestionFilled /></el-icon>操作指引
+      </el-link>
       <div
         class="addView"
         v-if="userType === 2"
@@ -608,7 +623,7 @@
     >
       <div class="addView">
         <div class="addView-line">
-          <div class="addView-line-label">视图名称:</div>
+          <div class="addView-line-label">视图名字:</div>
           <el-input
             v-model="addViewName"
             size="small"
@@ -672,7 +687,7 @@
       </div>
 
       <div class="addView-line">
-        <div class="addView-line-label">视图名称:</div>
+        <div class="addView-line-label">视图名字:</div>
         <el-input
           v-model="searchViewName"
           size="small"
@@ -711,56 +726,63 @@
         >
       </div>
     </div>
-    <div class="total-text">总共 {{ viewList.length }} 个视图</div>
-    <el-table
+    <div
       v-loading="loading"
       element-loading-text="加载中..."
-      :data="viewList"
-      @selection-change="handleSelectionChange"
-      :max-height="430"
     >
-      <el-table-column
-        :selectable="selectable"
-        type="selection"
-        width="30"
-      />
-      <el-table-column
-        label="视图名字"
-        :min-width="120"
+      <div
+        class="total-text"
+        v-show="!loading"
       >
-        <!-- <template #default="scope">{{ scope.row.name }}</template> -->
-        <template #default="scope">
-          <div :title="scope.row.view_name">
+        总共 {{ viewList.length }} 个视图
+      </div>
+      <el-table
+        :data="viewList"
+        @selection-change="handleSelectionChange"
+        :max-height="430"
+      >
+        <el-table-column
+          :selectable="selectable"
+          type="selection"
+          width="30"
+        />
+        <el-table-column
+          label="视图名字"
+          :min-width="120"
+        >
+          <!-- <template #default="scope">{{ scope.row.name }}</template> -->
+          <template #default="scope">
+            <div :title="scope.row.view_name">
+              <el-button
+                v-show="!item?.isEditing && activeButtonId !== scope.row.view_id"
+                @click="switchView(scope.row.view_id)"
+                >{{ scope.row.view_name }}</el-button
+              >
+              <!-- FIXME 双击直接编辑暂时不做 @dblclick="startEditing(scope.row)" -->
+              <el-input
+                v-show="(item?.isEditing && isEditing) || activeButtonId === scope.row.view_id"
+                ref="editInput"
+                @blur="endEditing(scope.row.view_id)"
+                :model-value="scope.row.view_name"
+                @change="(value) => handleFileName(value, scope.row.view_id)"
+                @input="(value) => (scope.row.view_name = value)"
+              />
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          property="name"
+          label="操作"
+        >
+          <template #default="scope">
             <el-button
-              v-show="!item?.isEditing && activeButtonId !== scope.row.view_id"
-              @click="switchView(scope.row.view_id)"
-              >{{ scope.row.view_name }}</el-button
-            >
-            <!-- FIXME 双击直接编辑暂时不做 @dblclick="startEditing(scope.row)" -->
-            <el-input
-              v-show="(item?.isEditing && isEditing) || activeButtonId === scope.row.view_id"
-              ref="editInput"
-              @blur="endEditing(scope.row.view_id)"
-              :model-value="scope.row.view_name"
-              @change="(value) => handleFileName(value, scope.row.view_id)"
-              @input="(value) => (scope.row.view_name = value)"
-            />
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column
-        property="name"
-        label="操作"
-      >
-        <template #default="scope">
-          <el-button
-            size="small"
-            @click="handleEdit(scope.$index, scope.row.view_id)"
-            link
-            ><el-icon size="14"><Edit /></el-icon
-          ></el-button>
-          <!-- FIXME API 不支持修改视图类型, 等支持了再做 -->
-          <!-- <el-dropdown trigger="click">
+              size="small"
+              @click="handleEdit(scope.$index, scope.row.view_id)"
+              link
+              ><el-icon size="14"><Edit /></el-icon
+            ></el-button>
+            <!-- FIXME API 不支持修改视图类型, 等支持了再做 -->
+            <!-- <el-dropdown trigger="click">
             <el-button
               size="small"
               @click="handleEdit(scope.$index, scope.row)"
@@ -779,17 +801,18 @@
             </template>
           </el-dropdown> -->
 
-          <el-button
-            v-if="scope.$index !== 0 || viewRange !== 1"
-            size="small"
-            type="danger"
-            link
-            @click="handleDelete(scope.$index, scope.row.view_id)"
-            ><el-icon size="16"><Delete /></el-icon
-          ></el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+            <el-button
+              v-if="scope.$index !== 0 || viewRange !== 1"
+              size="small"
+              type="danger"
+              link
+              @click="handleDelete(scope.$index, scope.row.view_id)"
+              ><el-icon size="16"><Delete /></el-icon
+            ></el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
   </div>
 </template>
 
