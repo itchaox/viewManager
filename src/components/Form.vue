@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-10 14:07
+ * @LastTime   : 2023-12-10 14:22
  * @desc       : 
 -->
 <script setup>
@@ -350,7 +350,7 @@
 
       addViewName.value = '';
       addViewType.value = 1;
-      // openAddView.value = false;
+      openAddView.value = false;
 
       ElMessage({
         type: 'success',
