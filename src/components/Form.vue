@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-09 00:46
+ * @LastTime   : 2023-12-10 11:05
  * @desc       : 
 -->
 <script setup>
@@ -29,11 +29,13 @@
   onMounted(async () => {
     const _userId = await bitable.bridge.getUserId();
     userId.value = _userId;
+    console.log('🚀  userId:', userId.value);
 
     await getViewMetaList();
 
     const selection = await bitable.base.getSelection();
     baseId.value = selection.baseId;
+
     tableId.value = selection.tableId;
   });
 
@@ -109,38 +111,14 @@
       const response = await axios.post(apiUrl, data, { headers });
       // 处理响应数据
       if (response?.status === 200) {
-        // const members = [
-        //   {
-        //     member_type: 'chat',
-        //     member_open_id: 'oc_b9be4164d821f466310bc22bb2979cc7',
-        //     member_user_id: 'oc_b9be4164d821f466310bc22bb2979cc7',
-        //     perm: 'full_access',
-        //   },
-        //   {
-        //     member_type: 'user',
-        //     member_open_id: 'ou_65b0affcc6c342a50e4c66f700137b64',
-        //     member_user_id: '96g3c421',
-        //     perm: 'view',
-        //   },
-        //   {
-        //     member_type: 'user',
-        //     member_open_id: 'ou_b47765834b6bdc18c47a57340f98c0e5',
-        //     member_user_id: 'bg36b129',
-        //     perm: 'edit',
-        //   },
-        // ];
-
         const members = response?.data?.data?.members;
 
         members.forEach((item) => {
           if (item.perm === 'full_access') {
-            fullAccessIdList.value.push(item.member_user_id);
+            fullAccessIdList.value.push(item.member_open_id);
           }
         });
-
-        // tenant_access_token.value = response?.data?.tenant_access_token;
       }
-      // expire 时间到了自动刷新问题, 分钟
     } catch (error) {
       // 弹出提示用户错误信息
 
@@ -162,17 +140,7 @@
    * @desc  : 获取完整视图列表
    */
   async function getViewAllList() {
-    // debugger;
-    const apiUrl = `api/open-apis/bitable/v1/apps/${baseId.value}/tables/${tableId.value}/views`;
-
-    const data1 = {
-      page_size: 100,
-    };
-
-    const data2 = {
-      page_size: 100,
-      page_token: page_token.value,
-    };
+    const apiUrl = `/api/open-apis/bitable/v1/apps/${baseId.value}/tables/${tableId.value}/views?page_size=100`;
 
     const headers = {
       'Content-Type': 'application/json; charset=utf-8',
@@ -181,12 +149,13 @@
 
     try {
       // 发起带有 Authorization 头的 GET 请求
-      // const response = await axios.get(apiUrl, page_token.value ? data2 : data1, { headers });
-      const response = await axios.post(apiUrl, page_token.value ? data2 : data1, { headers });
-      debugger;
+      const response = await axios.get(apiUrl, { headers });
 
       if (response?.data?.code === 0) {
-        viewList.value.push(response.data?.data?.items);
+        const _list = response.data?.data?.items;
+
+        // 追加元素
+        viewList.value.push(..._list.map((item) => item));
 
         ElMessage({
           type: 'success',
@@ -198,7 +167,7 @@
           // 有 token,则 有更多项
           // 视图现在最多200项, page_size 100; 因此这里最多请求2次
           page_token.value = response.data?.data?.page_token;
-          getViewAllList();
+          // getViewAllList();
         }
       }
     } catch (error) {
@@ -227,9 +196,11 @@
       // 此处的数据, 都是视图全部类型, 有 private 视图等
 
       if (viewRange.value === 2) {
-        // "当前用户" 的个人视图
+        console.log(viewList.value);
+        console.log(fullAccessIdList.value);
+        // "管理员" 的个人视图
         viewList.value = viewList.value.filter(
-          (item) => item.view_public_level === 'Private' && item.view_private_owner_id === userId.value,
+          (item) => item.view_public_level === 'Private' && fullAccessIdList.value.includes(item.view_private_owner_id),
         );
       } else if (viewRange.value === 3) {
         // "非管理员" 的个人视图
@@ -373,7 +344,8 @@
 
   const viewRangeList = ref([
     { value: 1, label: '全部角色视图范围' },
-    { value: 2, label: '当前用户个人视图' },
+    // { value: 2, label: '当前用户个人视图' },
+    { value: 2, label: '管理员的个人视图' },
     { value: 3, label: '非管理员个人视图' },
   ]);
 
@@ -482,8 +454,8 @@
   const editInput = ref(null);
 
   function selectable(row, index) {
-    // 第一个视图不能删除
-    if (index === 0) {
+    // 第一个视图不能删除, 个人视图删除时不做显示
+    if (index === 0 && viewRange.value === 1) {
       return false;
     } else {
       return true;
@@ -499,7 +471,6 @@
       // 企业用户: 全部视图范围还是走手动查询
       await getViewMetaList();
     } else {
-      debugger;
       // 先清空视图数组
       viewList.value = [];
       // 企业用户,通过掉接口
@@ -521,6 +492,7 @@
   }
 
   async function reset() {
+    viewRange.value = 1;
     searchViewName.value = '';
     searchViewType.value = 'all';
     await getViewMetaList();
@@ -532,14 +504,16 @@
   async function confirm() {
     await getTenantAccessToken();
     await getMemberList();
+
+    // await getNewMemberList();
   }
 
   // 用户类型 1 个人用户; 2 企业用户
   const userType = ref(1);
 
   // FIXME 暂时写死,  待修改
-  const appId = ref('cli_a5fb6d31657ad00c');
-  const appSecret = ref('ywVwQBGrLNkWCo8bwe7pf4IksBQ8rIyy');
+  const appId = ref('cli_a5fb6ca9bbfbd00b');
+  const appSecret = ref('PGn0kEHAdxs3TWoaN8LdzfrelJOGo1HS');
 
   // 过滤之后的视图列表
   const filterViewList = ref([]);
@@ -568,6 +542,7 @@
           type="password"
           size="small"
           placeholder="请输入 App ID"
+          show-password
         />
       </div>
 
@@ -578,6 +553,7 @@
           type="password"
           size="small"
           placeholder="请输入 App Secret"
+          show-password
         />
       </div>
 
@@ -782,7 +758,7 @@
           </el-dropdown> -->
 
           <el-button
-            v-if="scope.$index !== 0"
+            v-if="scope.$index !== 0 || viewRange !== 1"
             size="small"
             type="danger"
             link
