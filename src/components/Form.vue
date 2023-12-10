@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-10 18:23
+ * @LastTime   : 2023-12-10 18:34
  * @desc       : 
 -->
 <script setup>
@@ -444,7 +444,7 @@
   }
 
   // 结束编辑，例如在输入框失焦时调用
-  function endEditing(view_id) {
+  async function endEditing(view_id) {
     viewList.value = viewList.value?.map((item) => {
       if (item.view_id === view_id) {
         item.isEditing = false;
@@ -454,8 +454,7 @@
 
     activeButtonId.value = '';
     isEditing.value = false;
-    // 在这里可以处理输入框的值
-    // console.log('输入框的值:', this.inputValue);
+    await switchView(view_id);
   }
 
   const editInput = ref(null);
@@ -772,6 +771,7 @@
           <template #default="scope">
             <div :title="scope.row.view_name">
               <el-button
+                class="single-line-ellipsis"
                 v-show="!item?.isEditing && activeButtonId !== scope.row.view_id"
                 @click="switchView(scope.row.view_id)"
                 :style="{ width: '100%' }"
@@ -868,5 +868,11 @@
   .total-text {
     font-size: 12px;
     /* color: #8f959e; */
+  }
+
+  .single-line-ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 </style>
