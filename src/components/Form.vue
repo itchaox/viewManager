@@ -3,12 +3,14 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-10 11:05
+ * @LastTime   : 2023-12-10 12:18
  * @desc       : 
 -->
 <script setup>
   import { bitable } from '@lark-base-open/js-sdk';
-  import { nextTick, onMounted, ref, toRaw } from 'vue';
+  import { nextTick, watch, onMounted, ref, toRaw } from 'vue';
+  import { BASE_URL } from '@/config';
+
   import axios from 'axios';
 
   const base = bitable.base;
@@ -21,27 +23,17 @@
   const baseId = ref();
   const tableId = ref();
 
-  const userId = ref();
-
-  // 临时的视图列表
-  const templateViewList = ref();
-
   onMounted(async () => {
-    const _userId = await bitable.bridge.getUserId();
-    userId.value = _userId;
-    console.log('🚀  userId:', userId.value);
-
     await getViewMetaList();
-
     const selection = await bitable.base.getSelection();
     baseId.value = selection.baseId;
 
     tableId.value = selection.tableId;
   });
 
-  base.onSelectionChange(async () => {
-    getViewMetaList();
-  });
+  // base.onSelectionChange(async () => {
+  //   getViewMetaList();
+  // });
 
   const tenant_access_token = ref();
 
@@ -50,7 +42,7 @@
 
   // 获取 token
   async function getTenantAccessToken() {
-    const apiUrl = '/api/open-apis/auth/v3/tenant_access_token/internal';
+    const apiUrl = `${BASE_URL}/open-apis/auth/v3/tenant_access_token/internal`;
 
     const data = {
       app_id: appId.value,
@@ -61,29 +53,26 @@
       'Content-Type': 'application/json; charset=utf-8',
     };
 
-    try {
-      const response = await axios.post(apiUrl, data, { headers });
-      // 处理响应数据
-      if (response?.data?.code === 0) {
-        tenant_access_token.value = response?.data?.tenant_access_token;
-        Verify.value = true;
-        ElMessage({
-          type: 'success',
-          message: '企业凭证调用成功~',
-          duration: 1500,
-        });
-      }
-      // expire 时间到了自动刷新问题, 分钟
-    } catch (error) {
-      // 弹出提示用户错误信息
+    const response = await axios.post(apiUrl, data, { headers });
+    // 处理响应数据
+    if (response?.data?.code === 0) {
+      tenant_access_token.value = response?.data?.tenant_access_token;
+      Verify.value = true;
+      ElMessage({
+        type: 'success',
+        message: '企业凭证调用成功~',
+        duration: 1500,
+      });
+      openEnterprise.value = false;
+    } else {
+      ElMessage({
+        type: 'error',
+        message: 'app_id 或 app_secret 错误, 请检查后重试!',
 
-      // ElMessage({
-      //     type:'success',
-      //     message: '企业凭证调用成功~'
-      //   })
-      console.error('Error:', error.message);
-      throw error;
+        duration: 1500,
+      });
     }
+    // expire 时间到了自动刷新问题, 分钟
   }
 
   // 表格的管理员 user_id 列表
@@ -140,6 +129,7 @@
    * @desc  : 获取完整视图列表
    */
   async function getViewAllList() {
+    loading.value = true;
     const apiUrl = `/api/open-apis/bitable/v1/apps/${baseId.value}/tables/${tableId.value}/views?page_size=100`;
 
     const headers = {
@@ -178,9 +168,15 @@
   }
 
   async function getViewMetaList() {
+    loading.value = true;
     table.value = await base.getActiveTable();
 
     viewList.value = await toRaw(table.value).getViewMetaList();
+    ElMessage({
+      type: 'success',
+      message: '数据查询成功~',
+      duration: 1500,
+    });
 
     handlerViewList();
   }
@@ -194,10 +190,7 @@
       });
     } else {
       // 此处的数据, 都是视图全部类型, 有 private 视图等
-
       if (viewRange.value === 2) {
-        console.log(viewList.value);
-        console.log(fullAccessIdList.value);
         // "管理员" 的个人视图
         viewList.value = viewList.value.filter(
           (item) => item.view_public_level === 'Private' && fullAccessIdList.value.includes(item.view_private_owner_id),
@@ -211,6 +204,8 @@
       }
       // viewList.value = viewList.value.map((item) => ({ ...item, isEditing: false }));
     }
+
+    loading.value = false;
   }
 
   function mapViewType(type) {
@@ -274,8 +269,7 @@
    */
   async function handleDelete(index, view_id) {
     await toRaw(table.value).deleteView(view_id);
-    viewList.value = await toRaw(table.value).getViewMetaList();
-    handlerViewList();
+    await getViewMetaList();
   }
 
   /**
@@ -285,8 +279,8 @@
     for (const view_id of selectViewIdList.value) {
       await toRaw(table.value).deleteView(view_id);
     }
-    viewList.value = await toRaw(table.value).getViewMetaList();
-    handlerViewList();
+
+    await getViewMetaList();
   }
 
   // 编辑视图
@@ -359,8 +353,7 @@
         type: addViewType.value,
       });
 
-      viewList.value = await toRaw(table.value).getViewMetaList();
-      handlerViewList();
+      getViewMetaList();
 
       addViewName.value = '';
       addViewType.value = 1;
@@ -399,14 +392,14 @@
    * @param  {any} type
    * @return {any}
    */
-  async function changeViewType(row, type) {
-    await toRaw(table.value).setView({
-      viewId: row.view_id,
-      type: type,
-    });
+  // async function changeViewType(row, type) {
+  //   await toRaw(table.value).setView({
+  //     viewId: row.view_id,
+  //     type: type,
+  //   });
 
-    viewList.value = await toRaw(table.value).getViewMetaList();
-  }
+  //   viewList.value = await toRaw(table.value).getViewMetaList();
+  // }
 
   const isEditing = ref(false);
 
@@ -499,17 +492,36 @@
   }
 
   /**
-   * @desc  : 确认信息
+   * @desc  : 确认企业凭证信息
    */
-  async function confirm() {
+  async function confirmInfo() {
     await getTenantAccessToken();
     await getMemberList();
+  }
 
-    // await getNewMemberList();
+  /**
+   * @desc  : 取消企业凭证信息
+   */
+  async function cancelInfo() {
+    if (Verify.value) {
+      openEnterprise.value = false;
+    } else {
+      userType.value = 1;
+      appId.value = '';
+      appSecret.value = '';
+      openEnterprise.value = false;
+    }
   }
 
   // 用户类型 1 个人用户; 2 企业用户
   const userType = ref(1);
+
+  // 企业用户弹窗
+  const openEnterprise = ref(false);
+
+  function setEnterprise() {
+    openEnterprise.value = true;
+  }
 
   // FIXME 暂时写死,  待修改
   const appId = ref('cli_a5fb6ca9bbfbd00b');
@@ -517,6 +529,8 @@
 
   // 过滤之后的视图列表
   const filterViewList = ref([]);
+
+  const loading = ref(false);
 </script>
 
 <template>
@@ -528,43 +542,12 @@
         size="small"
       >
         <el-radio-button :label="1"> 个人用户 </el-radio-button>
-        <el-radio-button :label="2">企业用户</el-radio-button>
-      </el-radio-group>
-    </div>
-    <div
-      class="addView"
-      v-if="userType === 2"
-    >
-      <div class="addView-line">
-        <div class="addView-line-label">App ID:</div>
-        <el-input
-          v-model="appId"
-          type="password"
-          size="small"
-          placeholder="请输入 App ID"
-          show-password
-        />
-      </div>
-
-      <div class="addView-line">
-        <div class="addView-line-label">App Secret:</div>
-        <el-input
-          v-model="appSecret"
-          type="password"
-          size="small"
-          placeholder="请输入 App Secret"
-          show-password
-        />
-      </div>
-
-      <div>
-        <el-button
-          type="primary"
-          size="small"
-          @click="confirm"
-          >确认信息</el-button
+        <el-radio-button
+          :label="2"
+          @click="setEnterprise"
+          >企业用户</el-radio-button
         >
-      </div>
+      </el-radio-group>
     </div>
 
     <div class="batch-button">
@@ -581,6 +564,54 @@
         >新增视图</el-button
       >
     </div>
+
+    <!-- 企业用户弹窗 -->
+    <el-dialog
+      v-model="openEnterprise"
+      title="填写企业凭证"
+    >
+      <div
+        class="addView"
+        v-if="userType === 2"
+      >
+        <div class="addView-line">
+          <div class="addView-line-label">App ID:</div>
+          <el-input
+            v-model="appId"
+            type="password"
+            size="small"
+            placeholder="请输入 App ID"
+            show-password
+          />
+        </div>
+
+        <div class="addView-line">
+          <div class="addView-line-label">App Secret:</div>
+          <el-input
+            v-model="appSecret"
+            type="password"
+            size="small"
+            placeholder="请输入 App Secret"
+            show-password
+          />
+        </div>
+
+        <div>
+          <el-button
+            type="primary"
+            size="small"
+            @click="confirmInfo"
+            >确认</el-button
+          >
+
+          <el-button
+            size="small"
+            @click="cancelInfo"
+            >取消</el-button
+          >
+        </div>
+      </div>
+    </el-dialog>
 
     <!-- 新增视图 -->
     <el-dialog
@@ -693,6 +724,8 @@
       </div>
     </div>
     <el-table
+      v-loading="loading"
+      element-loading-text="加载中..."
       ref="multipleTableRef"
       :data="viewList"
       @selection-change="handleSelectionChange"
