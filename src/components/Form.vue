@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-10 14:32
+ * @LastTime   : 2023-12-10 15:59
  * @desc       : 
 -->
 <script setup>
@@ -79,8 +79,6 @@
   // 表格的管理员 user_id 列表
   const fullAccessIdList = ref([]);
 
-  // TODO 到时候, 拿到个人视图的 user_id 在 fullAccessIdList 中查找即可
-
   /**
    * @desc  : 获取协作者列表
    */
@@ -112,10 +110,6 @@
     } catch (error) {
       // 弹出提示用户错误信息
 
-      // ElMessage({
-      //     type:'success',
-      //     message: '自建应用凭证调用成功~'
-      //   })
       console.error('Error:', error.message);
       throw error;
     }
@@ -262,6 +256,12 @@
    */
   async function handleDelete(index, view_id) {
     await toRaw(table.value).deleteView(view_id);
+    ElMessage({
+      type: 'success',
+      message: '删除成功~',
+      duration: 1500,
+      showClose: true,
+    });
     await getViewMetaList();
   }
 
@@ -272,7 +272,12 @@
     for (const view_id of selectViewIdList.value) {
       await toRaw(table.value).deleteView(view_id);
     }
-
+    ElMessage({
+      type: 'success',
+      message: '批量删除成功~',
+      duration: 1500,
+      showClose: true,
+    });
     await getViewMetaList();
   }
 
@@ -350,15 +355,15 @@
       addViewType.value = 1;
       openAddView.value = false;
 
+      ElMessage({
+        type: 'success',
+        message: '新增视图成功~',
+        duration: 1500,
+
+        showClose: true,
+      });
+
       await getViewMetaList();
-
-      // ElMessage({
-      //   type: 'success',
-      //   message: '新增视图成功~',
-      //   duration: 1500,
-
-      //   showClose: true,
-      // });
     } else {
       ElMessage({
         type: 'error',
