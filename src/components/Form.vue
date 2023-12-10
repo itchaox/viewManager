@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-10 14:26
+ * @LastTime   : 2023-12-10 14:32
  * @desc       : 
 -->
 <script setup>
@@ -85,7 +85,7 @@
    * @desc  : 获取协作者列表
    */
   async function getMemberList() {
-    const apiUrl = '/api/open-apis/drive/permission/member/list';
+    const apiUrl = `${BASE_URL}/open-apis/drive/permission/member/list`;
 
     const data = {
       token: baseId.value,
@@ -131,9 +131,9 @@
    */
   async function getViewAllList() {
     loading.value = true;
-    const apiUrl1 = `/api/open-apis/bitable/v1/apps/${baseId.value}/tables/${tableId.value}/views?page_size=100`;
+    const apiUrl1 = `${BASE_URL}/open-apis/bitable/v1/apps/${baseId.value}/tables/${tableId.value}/views?page_size=100`;
 
-    const apiUrl2 = `/api/open-apis/bitable/v1/apps/${baseId.value}/tables/${tableId.value}/views?page_size=100&page_token=${page_token.value}`;
+    const apiUrl2 = `${BASE_URL}/open-apis/bitable/v1/apps/${baseId.value}/tables/${tableId.value}/views?page_size=100&page_token=${page_token.value}`;
 
     const headers = {
       'Content-Type': 'application/json; charset=utf-8',
