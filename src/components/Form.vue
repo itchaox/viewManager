@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-10 18:34
+ * @LastTime   : 2023-12-10 18:55
  * @desc       : 
 -->
 <script setup>
@@ -292,7 +292,7 @@
   }
 
   // 编辑视图
-  async function handleEdit(index, view_id) {
+  async function handleEdit(view_id) {
     isEditing.value = true;
     activeButtonId.value = view_id;
 
@@ -425,23 +425,6 @@
   }
 
   const activeButtonId = ref();
-  // 双击按钮开始编辑
-  function startEditing(row) {
-    // activeButtonId.value = row.view_id;
-    // isEditing.value = true;
-    viewList.value = viewList.value?.map((item) => {
-      // viewList.value.map((item) => {
-      if (item.view_id === row.view_id) {
-        item.isEditing = true;
-      }
-      return item;
-    });
-
-    // 在下一轮事件循环中，将输入框聚焦
-    nextTick(() => {
-      editInput.value.focus();
-    });
-  }
 
   // 结束编辑，例如在输入框失焦时调用
   async function endEditing(view_id) {
@@ -454,7 +437,6 @@
 
     activeButtonId.value = '';
     isEditing.value = false;
-    await switchView(view_id);
   }
 
   const editInput = ref(null);
@@ -773,13 +755,13 @@
               <el-button
                 class="single-line-ellipsis"
                 v-show="!item?.isEditing && activeButtonId !== scope.row.view_id"
-                @click="switchView(scope.row.view_id)"
                 :style="{ width: '100%' }"
                 type="primary"
                 plain
+                @click="switchView(scope.row.view_id)"
+                @dblclick="handleEdit(scope.row.view_id)"
                 >{{ scope.row.view_name }}</el-button
               >
-              <!-- FIXME 双击直接编辑暂时不做 @dblclick="startEditing(scope.row)" -->
               <el-input
                 v-if="(item?.isEditing && isEditing) || activeButtonId === scope.row.view_id"
                 ref="editInput"
@@ -797,12 +779,14 @@
           label="操作"
         >
           <template #default="scope">
-            <el-button
+            <!-- FIXME 暂时不需求编辑操作 -->
+            <!-- <el-button
               size="small"
-              @click="handleEdit(scope.$index, scope.row.view_id)"
+              @click="handleEdit(scope.row.view_id)"
               link
               ><el-icon size="14"><Edit /></el-icon
-            ></el-button>
+            ></el-button> -->
+
             <!-- FIXME API 不支持修改视图类型, 等支持了再做 -->
             <!-- <el-dropdown trigger="click">
             <el-button
