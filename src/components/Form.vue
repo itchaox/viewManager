@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-10 14:25
+ * @LastTime   : 2023-12-10 14:26
  * @desc       : 
 -->
 <script setup>
@@ -346,11 +346,11 @@
         type: addViewType.value,
       });
 
-      await getViewMetaList();
-
       addViewName.value = '';
       addViewType.value = 1;
       openAddView.value = false;
+
+      await getViewMetaList();
 
       // ElMessage({
       //   type: 'success',
