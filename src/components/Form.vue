@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-10 14:22
+ * @LastTime   : 2023-12-10 14:25
  * @desc       : 
 -->
 <script setup>
@@ -352,13 +352,13 @@
       addViewType.value = 1;
       openAddView.value = false;
 
-      ElMessage({
-        type: 'success',
-        message: '新增视图成功~',
-        duration: 1500,
+      // ElMessage({
+      //   type: 'success',
+      //   message: '新增视图成功~',
+      //   duration: 1500,
 
-        showClose: true,
-      });
+      //   showClose: true,
+      // });
     } else {
       ElMessage({
         type: 'error',
