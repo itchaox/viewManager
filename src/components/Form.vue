@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-10 15:59
+ * @LastTime   : 2023-12-10 17:19
  * @desc       : 
 -->
 <script setup>
@@ -269,6 +269,16 @@
    * @desc  : 批量删除
    */
   async function batchDelete() {
+    if (selectViewIdList.value?.length === 0) {
+      ElMessage({
+        type: 'warning',
+        message: '请先勾选需要删除的视图!',
+        duration: 1500,
+        showClose: true,
+      });
+      return;
+    }
+
     for (const view_id of selectViewIdList.value) {
       await toRaw(table.value).deleteView(view_id);
     }
@@ -295,6 +305,7 @@
     // 在下一轮事件循环中，将输入框聚焦
     nextTick(() => {
       editInput.value.focus();
+      console.log('🚀  editInput:', editInput.value);
     });
   }
 
@@ -346,7 +357,7 @@
   async function confirmAddView() {
     const index = viewList.value.findIndex((item) => item.view_name === addViewName.value);
     if (index === -1) {
-      await toRaw(table.value).addView({
+      const { viewId } = await toRaw(table.value).addView({
         name: addViewName.value,
         type: addViewType.value,
       });
@@ -364,6 +375,8 @@
       });
 
       await getViewMetaList();
+
+      await bitable.ui.switchToView(toRaw(table.value).id, viewId);
     } else {
       ElMessage({
         type: 'error',
@@ -768,6 +781,7 @@
                 v-show="(item?.isEditing && isEditing) || activeButtonId === scope.row.view_id"
                 ref="editInput"
                 @blur="endEditing(scope.row.view_id)"
+                @keydown.enter="endEditing(scope.row.view_id)"
                 :model-value="scope.row.view_name"
                 @change="(value) => handleFileName(value, scope.row.view_id)"
                 @input="(value) => (scope.row.view_name = value)"
