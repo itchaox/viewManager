@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-10 12:18
+ * @LastTime   : 2023-12-10 12:40
  * @desc       : 
 -->
 <script setup>
@@ -15,7 +15,7 @@
 
   const base = bitable.base;
 
-  const viewList = ref();
+  const viewList = ref([]);
   const table = ref();
 
   const selectViewIdList = ref([]);
@@ -130,7 +130,9 @@
    */
   async function getViewAllList() {
     loading.value = true;
-    const apiUrl = `/api/open-apis/bitable/v1/apps/${baseId.value}/tables/${tableId.value}/views?page_size=100`;
+    const apiUrl1 = `/api/open-apis/bitable/v1/apps/${baseId.value}/tables/${tableId.value}/views?page_size=100`;
+
+    const apiUrl2 = `/api/open-apis/bitable/v1/apps/${baseId.value}/tables/${tableId.value}/views?page_size=100&page_token=${page_token.value}`;
 
     const headers = {
       'Content-Type': 'application/json; charset=utf-8',
@@ -139,13 +141,14 @@
 
     try {
       // 发起带有 Authorization 头的 GET 请求
-      const response = await axios.get(apiUrl, { headers });
+      const response = await axios.get(page_token.value ? apiUrl2 : apiUrl1, { headers });
+      debugger;
 
       if (response?.data?.code === 0) {
         const _list = response.data?.data?.items;
 
         // 追加元素
-        viewList.value.push(..._list.map((item) => item));
+        viewList.value.push(..._list?.map((item) => item));
 
         ElMessage({
           type: 'success',
@@ -153,11 +156,11 @@
           duration: 1500,
         });
 
-        if (response.data?.data?.page_token) {
+        if (response.data?.data?.has_more) {
           // 有 token,则 有更多项
           // 视图现在最多200项, page_size 100; 因此这里最多请求2次
           page_token.value = response.data?.data?.page_token;
-          // getViewAllList();
+          await getViewAllList();
         }
       }
     } catch (error) {
@@ -185,7 +188,7 @@
     // 个人用户, 也统一字段名
     // 企业用户, 全部视图范围走 js api
     if (userType.value === 1 || viewRange.value === 1) {
-      viewList.value = viewList.value.map((item) => {
+      viewList.value = viewList.value?.map((item) => {
         return { view_id: item.id, view_name: item.name, view_type: mapViewType(item.type), isEditing: false };
       });
     } else {
@@ -248,7 +251,7 @@
     }
   };
   const handleSelectionChange = (val) => {
-    selectViewIdList.value = val.map((item) => item.view_id);
+    selectViewIdList.value = val?.map((item) => item.view_id);
   };
 
   /**
@@ -288,7 +291,7 @@
     isEditing.value = true;
     activeButtonId.value = view_id;
 
-    viewList.value = viewList.value.map((item) => {
+    viewList.value = viewList.value?.map((item) => {
       if (item.view_id === view_id) {
         item.isEditing = true;
       }
@@ -353,11 +356,11 @@
         type: addViewType.value,
       });
 
-      getViewMetaList();
+      await getViewMetaList();
 
       addViewName.value = '';
       addViewType.value = 1;
-      openAddView.value = false;
+      // openAddView.value = false;
 
       ElMessage({
         type: 'success',
@@ -415,7 +418,7 @@
   function startEditing(row) {
     // activeButtonId.value = row.view_id;
     // isEditing.value = true;
-    viewList.value = viewList.value.map((item) => {
+    viewList.value = viewList.value?.map((item) => {
       // viewList.value.map((item) => {
       if (item.view_id === row.view_id) {
         item.isEditing = true;
@@ -431,7 +434,7 @@
 
   // 结束编辑，例如在输入框失焦时调用
   function endEditing(view_id) {
-    viewList.value = viewList.value.map((item) => {
+    viewList.value = viewList.value?.map((item) => {
       if (item.view_id === view_id) {
         item.isEditing = false;
       }
@@ -723,6 +726,7 @@
         >
       </div>
     </div>
+    <div>总计 {{ viewList.length }} 个视图</div>
     <el-table
       v-loading="loading"
       element-loading-text="加载中..."
