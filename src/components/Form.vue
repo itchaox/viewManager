@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-10 12:40
+ * @LastTime   : 2023-12-10 12:49
  * @desc       : 
 -->
 <script setup>
@@ -142,7 +142,6 @@
     try {
       // 发起带有 Authorization 头的 GET 请求
       const response = await axios.get(page_token.value ? apiUrl2 : apiUrl1, { headers });
-      debugger;
 
       if (response?.data?.code === 0) {
         const _list = response.data?.data?.items;
@@ -236,20 +235,6 @@
     return _charType;
   }
 
-  const multipleTableRef = ref();
-  const multipleSelection = ref([]);
-  const toggleSelection = (rows) => {
-    if (rows) {
-      rows.forEach((row) => {
-        // TODO: improvement typing when refactor table
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        multipleTableRef.value.toggleRowSelection(row, undefined);
-      });
-    } else {
-      multipleTableRef.value.clearSelection();
-    }
-  };
   const handleSelectionChange = (val) => {
     selectViewIdList.value = val?.map((item) => item.view_id);
   };
@@ -726,13 +711,13 @@
         >
       </div>
     </div>
-    <div>总计 {{ viewList.length }} 个视图</div>
+    <div class="total-text">总共 {{ viewList.length }} 个视图</div>
     <el-table
       v-loading="loading"
       element-loading-text="加载中..."
-      ref="multipleTableRef"
       :data="viewList"
       @selection-change="handleSelectionChange"
+      :max-height="430"
     >
       <el-table-column
         :selectable="selectable"
@@ -833,5 +818,10 @@
       font-size: 14px;
       white-space: nowrap;
     }
+  }
+
+  .total-text {
+    font-size: 12px;
+    /* color: #8f959e; */
   }
 </style>
