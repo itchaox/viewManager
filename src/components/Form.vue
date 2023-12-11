@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-11 22:21
+ * @LastTime   : 2023-12-11 22:38
  * @desc       : 
 -->
 <script setup>
@@ -564,6 +564,7 @@
     <el-dialog
       v-model="openEnterprise"
       title="填写自建应用凭证"
+      width="75%"
     >
       <el-link
         href="https://bcmcjimpjd.feishu.cn/docx/L0sBd2M0JokYJ9xFRaPcF4cVnMg"
@@ -577,7 +578,7 @@
         v-if="userType === 2"
       >
         <div class="addView-line">
-          <div class="addView-line-label">App ID:</div>
+          <div class="addView-line-label addView-line-labelDialog">App ID:</div>
           <el-input
             v-model="appId"
             type="password"
@@ -588,7 +589,7 @@
         </div>
 
         <div class="addView-line">
-          <div class="addView-line-label">App Secret:</div>
+          <div class="addView-line-label addView-line-labelDialog">App Secret:</div>
           <el-input
             v-model="appSecret"
             type="password"
@@ -619,6 +620,7 @@
     <el-dialog
       v-model="openAddView"
       title="新增视图"
+      width="75%"
     >
       <div class="addView">
         <div class="addView-line">
@@ -849,6 +851,10 @@
       margin-right: 10px;
       font-size: 14px;
       white-space: nowrap;
+    }
+
+    .addView-line-labelDialog {
+      width: 125px;
     }
   }
 
