@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-10 18:59
+ * @LastTime   : 2023-12-11 22:21
  * @desc       : 
 -->
 <script setup>
@@ -624,6 +624,7 @@
         <div class="addView-line">
           <div class="addView-line-label">视图名字:</div>
           <el-input
+            style="width: 161px"
             v-model="addViewName"
             size="small"
             placeholder="请输入视图名字"
@@ -688,6 +689,7 @@
       <div class="addView-line">
         <div class="addView-line-label">视图名字:</div>
         <el-input
+          style="width: 161px"
           v-model="searchViewName"
           size="small"
           placeholder="请输入视图名字"
