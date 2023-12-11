@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-11 22:38
+ * @LastTime   : 2023-12-11 22:49
  * @desc       : 
 -->
 <script setup>
@@ -867,5 +867,16 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  :deep(.el-dialog) {
+    border-radius: 4px;
+  }
+
+  :deep(.el-dialog__header) {
+    /* color: red !important; */
+    background-color: #f5f6f7;
+    margin-right: 0;
+    border-radius: 4px;
   }
 </style>
