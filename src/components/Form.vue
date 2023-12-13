@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-11 22:49
+ * @LastTime   : 2023-12-14 00:58
  * @desc       : 
 -->
 <script setup>
@@ -24,12 +24,75 @@
   const tableId = ref();
 
   onMounted(async () => {
+    theme.value = await bitable.bridge.getTheme();
+    setThemeColor();
+
     await getViewMetaList();
     const selection = await bitable.base.getSelection();
     baseId.value = selection.baseId;
-
     tableId.value = selection.tableId;
   });
+
+  // 主题颜色 LIGHT; DARK
+  const theme = ref('');
+  // 监听主题变化
+  bitable.bridge.onThemeChange((event) => {
+    console.log('theme change', event.data.theme);
+    theme.value = event.data.theme;
+    setThemeColor();
+  });
+
+  const setThemeColor = () => {
+    const el = document.documentElement;
+    const main = document.querySelector('main');
+
+    const themeStyles = {
+      LIGHT: {
+        '--el-color-primary': 'rgb(20, 86, 240)',
+        '--el-bg-color': '#fff',
+        '--el-border-color-lighter': '#dee0e3',
+        '--el-fill-color-light': '#f5f7fa',
+        '--el-fill-color-blank': '#fff',
+        '--el-text-color-primary': '#303133',
+        '--el-button-text-color': '#434343',
+        '--el-text-color-regular': '#434343',
+        '--el-mask-color': '#f5f6f7',
+        '--el-bg-color-overlay': '#fff',
+        color: '#434343',
+        'background-color': '#fff',
+      },
+      DARK: {
+        '--el-color-primary': '#4571e1',
+        '--el-bg-color': '#252525',
+        '--el-border-color-lighter': '#434343',
+        '--el-fill-color-light': '#434343',
+        '--el-fill-color-blank': '#434343',
+        '--el-text-color-primary': '#fff',
+        '--el-button-text-color': '#fff',
+        '--el-text-color-regular': '#fff',
+        '--el-mask-color': '#434343',
+        '--el-bg-color-overlay': '#303133',
+        color: '#fff',
+        'background-color': '#1d1d1d',
+      },
+    };
+
+    const currentThemeStyles = themeStyles[theme.value];
+
+    // 设置样式变量
+    Object.entries(currentThemeStyles).forEach(([property, value]) => {
+      el.style.setProperty(property, value);
+    });
+
+    // 设置其他样式
+    main.style.backgroundColor = currentThemeStyles['background-color'];
+
+    // 设置文本颜色
+    const themeViewTextColorElements = document.querySelectorAll('.theme-view-text-color');
+    themeViewTextColorElements.forEach((element) => {
+      element.style.color = currentThemeStyles.color;
+    });
+  };
 
   // base.onSelectionChange(async () => {
   //   getViewMetaList();
@@ -531,7 +594,7 @@
 <template>
   <div class="field-manager">
     <div class="addView-line">
-      <div class="addView-line-label">用户类型:</div>
+      <div class="addView-line-label theme-view-text-color">用户类型:</div>
       <el-radio-group
         v-model="userType"
         size="small"
@@ -550,6 +613,7 @@
         @click="batchDelete"
         type="danger"
         size="small"
+        color="#F54A45"
         >批量删除</el-button
       >
       <el-button
@@ -578,7 +642,7 @@
         v-if="userType === 2"
       >
         <div class="addView-line">
-          <div class="addView-line-label addView-line-labelDialog">App ID:</div>
+          <div class="addView-line-label addView-line-labelDialog theme-view-text-color">App ID:</div>
           <el-input
             v-model="appId"
             type="password"
@@ -589,7 +653,7 @@
         </div>
 
         <div class="addView-line">
-          <div class="addView-line-label addView-line-labelDialog">App Secret:</div>
+          <div class="addView-line-label addView-line-labelDialog theme-view-text-color">App Secret:</div>
           <el-input
             v-model="appSecret"
             type="password"
@@ -608,6 +672,7 @@
           >
 
           <el-button
+            type="info"
             size="small"
             @click="cancelInfo"
             >取消</el-button
@@ -624,7 +689,7 @@
     >
       <div class="addView">
         <div class="addView-line">
-          <div class="addView-line-label">视图名字:</div>
+          <div class="addView-line-label theme-view-text-color">视图名字:</div>
           <el-input
             style="width: 161px"
             v-model="addViewName"
@@ -634,7 +699,7 @@
         </div>
 
         <div class="addView-line">
-          <div class="addView-line-label">视图类型:</div>
+          <div class="addView-line-label theme-view-text-color">视图类型:</div>
           <el-select
             v-model="addViewType"
             placeholder="请选择视图类型"
@@ -658,6 +723,7 @@
           >
 
           <el-button
+            type="info"
             size="small"
             @click="cancel"
             >取消</el-button
@@ -671,9 +737,9 @@
     <div class="addView">
       <div
         class="addView-line"
-        v-if="userType === 2 && Verify"
+        v-show="userType === 2 && Verify"
       >
-        <div class="addView-line-label">视图范围:</div>
+        <div class="addView-line-label theme-view-text-color">视图范围:</div>
         <el-select
           v-model="viewRange"
           placeholder="请选择视图范围"
@@ -689,17 +755,18 @@
       </div>
 
       <div class="addView-line">
-        <div class="addView-line-label">视图名字:</div>
+        <div class="addView-line-label theme-view-text-color">视图名字:</div>
         <el-input
           style="width: 161px"
           v-model="searchViewName"
+          clearable
           size="small"
           placeholder="请输入视图名字"
         />
       </div>
 
       <div class="addView-line">
-        <div class="addView-line-label">视图类型:</div>
+        <div class="addView-line-label theme-view-text-color">视图类型:</div>
         <el-select
           v-model="searchViewType"
           placeholder="请选择视图类型"
@@ -723,6 +790,7 @@
         >
 
         <el-button
+          type="info"
           size="small"
           @click="reset"
           >重置</el-button
@@ -734,7 +802,7 @@
       element-loading-text="加载中..."
     >
       <div
-        class="total-text"
+        class="total-text theme-view-text-color"
         v-show="!loading"
       >
         总共 {{ viewList.length }} 个视图
@@ -761,7 +829,7 @@
                 v-show="!item?.isEditing && activeButtonId !== scope.row.view_id"
                 :style="{ width: '100%' }"
                 type="primary"
-                plain
+                :plain="theme === 'LIGHT'"
                 @click="switchView(scope.row.view_id)"
                 @dblclick="handleEdit(scope.row.view_id)"
                 >{{ scope.row.view_name }}</el-button
@@ -833,6 +901,7 @@
       Tahoma, PingFang SC, Microsoft Yahei, Arial, Hiragino Sans GB, sans-serif, Apple Color Emoji, Segoe UI Emoji,
       Segoe UI Symbol, Noto Color Emoji;
     font-weight: 300;
+    color: red;
   }
 
   .batch-button {
@@ -860,7 +929,6 @@
 
   .total-text {
     font-size: 12px;
-    /* color: #8f959e; */
   }
 
   .single-line-ellipsis {
@@ -875,7 +943,7 @@
 
   :deep(.el-dialog__header) {
     /* color: red !important; */
-    background-color: #f5f6f7;
+    /* background-color: #f5f6f7; */
     margin-right: 0;
     border-radius: 4px;
   }
