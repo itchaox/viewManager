@@ -1,3 +1,12 @@
+/*
+ * @Version    : v1.00
+ * @Author     : itchaox
+ * @Date       : 2023-06-21 11:48
+ * @LastAuthor : itchaox
+ * @LastTime   : 2023-12-16 10:22
+ * @desc       :
+ */
+
 import { fileURLToPath, URL } from 'node:url';
 
 import { defineConfig } from 'vite';
@@ -25,6 +34,7 @@ export default defineConfig({
   plugins: [
     vue(),
     AutoImport({
+      imports: ['vue', 'vue-router', 'pinia'],
       resolvers: [ElementPlusResolver()],
     }),
     Components({

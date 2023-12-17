@@ -3,13 +3,23 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-14 00:58
+ * @LastTime   : 2023-12-18 01:02
  * @desc       : 
 -->
 <script setup>
   import { bitable } from '@lark-base-open/js-sdk';
-  import { nextTick, watch, onMounted, ref, toRaw } from 'vue';
   import { BASE_URL } from '@/config';
+  import {
+    AllApplication,
+    Calendar,
+    AlignTopTwo,
+    AlignRightTwo,
+    GridNine,
+    CheckCorrect,
+    ApplicationMenu,
+  } from '@icon-park/vue-next';
+
+  import Drawer from './Drawer.vue';
 
   import axios from 'axios';
 
@@ -22,6 +32,9 @@
 
   const baseId = ref();
   const tableId = ref();
+
+  // 新增视图抽屉
+  const addViewDrawer = ref(false);
 
   onMounted(async () => {
     theme.value = await bitable.bridge.getTheme();
@@ -56,7 +69,8 @@
         '--el-text-color-primary': '#303133',
         '--el-button-text-color': '#434343',
         '--el-text-color-regular': '#434343',
-        '--el-mask-color': '#f5f6f7',
+        // 加载中效果
+        // '--el-mask-color': '#f5f6f7',
         '--el-bg-color-overlay': '#fff',
         color: '#434343',
         'background-color': '#fff',
@@ -70,7 +84,8 @@
         '--el-text-color-primary': '#fff',
         '--el-button-text-color': '#fff',
         '--el-text-color-regular': '#fff',
-        '--el-mask-color': '#434343',
+        // 加载中效果
+        // '--el-mask-color': '#434343',
         '--el-bg-color-overlay': '#303133',
         color: '#fff',
         'background-color': '#1d1d1d',
@@ -123,7 +138,7 @@
       Verify.value = true;
       ElMessage({
         type: 'success',
-        message: '自建应用凭证调用成功~',
+        message: '自建应用凭证调用成功',
         duration: 1500,
         showClose: true,
       });
@@ -215,7 +230,7 @@
         } else {
           ElMessage({
             type: 'success',
-            message: '数据查询成功~',
+            message: '数据查询成功',
             duration: 1500,
 
             showClose: true,
@@ -236,7 +251,7 @@
     viewList.value = await toRaw(table.value).getViewMetaList();
     ElMessage({
       type: 'success',
-      message: '数据查询成功~',
+      message: '数据查询成功',
       duration: 1500,
 
       showClose: true,
@@ -321,7 +336,7 @@
     await toRaw(table.value).deleteView(view_id);
     ElMessage({
       type: 'success',
-      message: '删除成功~',
+      message: '删除成功',
       duration: 1500,
       showClose: true,
     });
@@ -342,12 +357,14 @@
       return;
     }
 
+    loading.value = true;
+
     for (const view_id of selectViewIdList.value) {
       await toRaw(table.value).deleteView(view_id);
     }
     ElMessage({
       type: 'success',
-      message: '批量删除成功~',
+      message: '批量删除成功',
       duration: 1500,
       showClose: true,
     });
@@ -375,18 +392,19 @@
   const openAddView = ref(false);
 
   async function addView() {
-    openAddView.value = true;
+    addViewDrawer.value = true;
+    // openAddView.value = true;
   }
 
   // 查询类型下拉, 对齐 js-sdk
-  const addViewTypeList = ref([
-    { value: 1, label: '表格视图' },
-    { value: 2, label: '看板视图' },
-    { value: 3, label: '表单视图' },
-    { value: 4, label: '画册视图' },
-    { value: 5, label: '甘特视图' },
-    { value: 7, label: '日历视图' },
-  ]);
+  // const addViewTypeList = ref([
+  //   { value: 1, label: '表格视图' },
+  //   { value: 2, label: '看板视图' },
+  //   { value: 3, label: '表单视图' },
+  //   { value: 4, label: '画册视图' },
+  //   { value: 5, label: '甘特视图' },
+  //   { value: 7, label: '日历视图' },
+  // ]);
 
   const newViewType = ref(1);
   const newViewName = ref();
@@ -431,7 +449,7 @@
 
       ElMessage({
         type: 'success',
-        message: '新增视图成功~',
+        message: '新增视图成功',
         duration: 1500,
 
         showClose: true,
@@ -627,6 +645,9 @@
     <!-- 企业用户弹窗 -->
     <el-dialog
       v-model="openEnterprise"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      @close="cancelInfo"
       title="填写自建应用凭证"
       width="75%"
     >
@@ -777,7 +798,62 @@
             :key="item.value"
             :label="item.label"
             :value="item.value"
-          />
+          >
+            <application-menu
+              v-if="item.value === 'all'"
+              class="view-name-icon"
+              theme="outline"
+              size="14"
+              strokeLinejoin="bevel"
+            />
+            <all-application
+              v-if="item.value === 'gallery'"
+              class="view-name-icon"
+              theme="outline"
+              size="14"
+            />
+
+            <calendar
+              v-if="item.value === 'unknown'"
+              class="view-name-icon"
+              theme="outline"
+              size="14"
+              strokeLinejoin="bevel"
+              strokeLinecap="square"
+            />
+
+            <align-top-two
+              v-if="item.value === 'kanban'"
+              class="view-name-icon"
+              theme="outline"
+              size="14"
+            />
+
+            <align-right-two
+              v-if="item.value === 'gantt'"
+              theme="outline"
+              class="view-name-icon"
+              size="14"
+            />
+
+            <grid-nine
+              v-if="item.value === 'grid'"
+              theme="outline"
+              class="view-name-icon"
+              size="14"
+              strokeLinejoin="bevel"
+            />
+            <check-correct
+              v-if="item.value === 'form'"
+              theme="outline"
+              class="view-name-icon"
+              size="14"
+              strokeLinejoin="bevel"
+            />
+            <span>
+              {{ item.label }}
+            </span>
+          </el-option>
         </el-select>
       </div>
 
@@ -817,13 +893,68 @@
           type="selection"
           width="30"
         />
+
         <el-table-column
           label="视图名字"
           :min-width="120"
         >
           <!-- <template #default="scope">{{ scope.row.name }}</template> -->
+
           <template #default="scope">
-            <div :title="scope.row.view_name">
+            <div
+              :title="scope.row.view_name"
+              class="view-name"
+            >
+              <all-application
+                v-if="scope.row?.view_type === 'gallery'"
+                class="view-name-icon"
+                theme="outline"
+                size="20"
+                fill="#aacefb"
+              />
+
+              <calendar
+                v-if="scope.row?.view_type === 'unknown'"
+                class="view-name-icon"
+                theme="outline"
+                size="20"
+                fill="#aacefb"
+                strokeLinejoin="bevel"
+                strokeLinecap="square"
+              />
+
+              <align-top-two
+                v-if="scope.row?.view_type === 'kanban'"
+                class="view-name-icon"
+                theme="outline"
+                size="20"
+                fill="#aacefb"
+              />
+
+              <align-right-two
+                v-if="scope.row?.view_type === 'gantt'"
+                theme="outline"
+                class="view-name-icon"
+                size="20"
+                fill="#aacefb"
+              />
+
+              <grid-nine
+                v-if="scope.row?.view_type === 'grid'"
+                theme="outline"
+                class="view-name-icon"
+                size="20"
+                fill="#aacefb"
+                strokeLinejoin="bevel"
+              />
+              <check-correct
+                v-if="scope.row?.view_type === 'form'"
+                theme="outline"
+                class="view-name-icon"
+                size="20"
+                fill="#aacefb"
+                strokeLinejoin="bevel"
+              />
               <el-button
                 class="single-line-ellipsis"
                 v-show="!item?.isEditing && activeButtonId !== scope.row.view_id"
@@ -892,6 +1023,11 @@
         </el-table-column>
       </el-table>
     </div>
+    <Drawer
+      v-model:model-value="addViewDrawer"
+      :view-list="viewList"
+      :getViewMetaList="getViewMetaList"
+    />
   </div>
 </template>
 
@@ -929,6 +1065,17 @@
 
   .total-text {
     font-size: 12px;
+  }
+
+  .view-name {
+    display: flex;
+    align-items: center;
+  }
+
+  .view-name-icon {
+    margin-right: 5px;
+    position: relative;
+    top: 2px;
   }
 
   .single-line-ellipsis {
