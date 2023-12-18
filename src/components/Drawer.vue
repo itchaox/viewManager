@@ -2,14 +2,14 @@
  * @Version    : v1.00
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
- * @LastAuthor : itchaox
- * @LastTime   : 2023-12-18 00:58
+ * @LastAuthor : wangchao
+ * @LastTime   : 2023-12-18 11:58
  * @desc       : 抽屉
 -->
 
 <script setup lang="ts">
-  import { bitable } from '@lark-base-open/js-sdk';
-  import { Close } from '@element-plus/icons-vue';
+  import { bitable } from "@lark-base-open/js-sdk";
+  import { Close } from "@element-plus/icons-vue";
   import {
     AllApplication,
     Calendar,
@@ -18,7 +18,7 @@
     GridNine,
     CheckCorrect,
     ApplicationMenu,
-  } from '@icon-park/vue-next';
+  } from "@icon-park/vue-next";
 
   const base = bitable.base;
 
@@ -30,7 +30,7 @@
 
   const props = defineProps<Props>();
 
-  const emits = defineEmits(['update:model-value']);
+  const emits = defineEmits(["update:model-value"]);
 
   let table;
   let view;
@@ -73,7 +73,7 @@
    * @desc  : 确认新增视图
    */
   async function confirmAddView() {
-    console.log('222', groupList.value);
+    console.log("222", groupList.value);
 
     const index = props.viewList.findIndex((item) => item.view_name === addViewName.value);
     if (index === -1) {
@@ -89,8 +89,8 @@
       // emits('update:model-value', false);
 
       ElMessage({
-        type: 'success',
-        message: '新增视图成功',
+        type: "success",
+        message: "新增视图成功",
         duration: 1500,
 
         showClose: true,
@@ -144,8 +144,8 @@
       reset();
     } else {
       ElMessage({
-        type: 'error',
-        message: '视图名字已存在,请重新输入!',
+        type: "error",
+        message: "视图名字已存在,请重新输入!",
         duration: 1500,
         showClose: true,
       });
@@ -157,25 +157,25 @@
   }
 
   function reset() {
-    emits('update:model-value', false);
+    emits("update:model-value", false);
 
-    addViewName.value = '';
+    addViewName.value = "";
     addViewType.value = 1;
     filterList.value = [];
     groupList.value = [];
     sortList.value = [];
-    collapse.value = '';
+    collapse.value = "";
     drawerLoading.value = false;
     sync.value = false;
   }
 
   const addViewTypeList = ref([
-    { value: 1, label: '表格视图' },
-    { value: 2, label: '看板视图' },
-    { value: 3, label: '表单视图' },
-    { value: 4, label: '画册视图' },
-    { value: 5, label: '甘特视图' },
-    { value: 7, label: '日历视图' },
+    { value: 1, label: "表格视图" },
+    { value: 2, label: "看板视图" },
+    { value: 3, label: "表单视图" },
+    { value: 4, label: "画册视图" },
+    { value: 5, label: "甘特视图" },
+    { value: 7, label: "日历视图" },
   ]);
 
   // FIXME 筛选
@@ -186,8 +186,8 @@
       id: filterFieldList.value?.[0]?.id,
       name: filterFieldList.value?.[0]?.name,
       type: filterFieldList.value?.[0]?.type,
-      operator: 'is',
-      value: '',
+      operator: "is",
+      value: "",
     });
   };
 
@@ -200,8 +200,8 @@
         name: _activeItem.name,
         type: _activeItem.type,
         id: _activeItem.id,
-        operator: 'is',
-        value: '',
+        operator: "is",
+        value: "",
       };
     }
 
@@ -215,43 +215,43 @@
         name: _activeItem.name,
         type: _activeItem.type,
         id: _activeItem.id,
-        operator: 'is',
-        value: '',
+        operator: "is",
+        value: "",
       };
     }
   };
 
-  const conjunction = ref('and');
+  const conjunction = ref("and");
 
   const filterOperatorList = ref([
     {
-      id: 'is',
-      name: '等于',
+      id: "is",
+      name: "等于",
     },
     {
-      id: 'isNot',
-      name: '不等于',
+      id: "isNot",
+      name: "不等于",
     },
     {
-      id: 'contains',
-      name: '包含',
+      id: "contains",
+      name: "包含",
     },
     {
-      id: 'doesNotContain',
-      name: '不包含',
+      id: "doesNotContain",
+      name: "不包含",
     },
     {
-      id: 'isEmpty',
-      name: '为空',
+      id: "isEmpty",
+      name: "为空",
     },
     {
-      id: 'isNotEmpty',
-      name: '不为空',
+      id: "isNotEmpty",
+      name: "不为空",
     },
   ]);
 
   const showInput = (type) => {
-    return ['is', 'isNot', 'contains', 'doesNotContain'].includes(type);
+    return ["is", "isNot", "contains", "doesNotContain"].includes(type);
   };
 
   // FIXME 分组
@@ -329,13 +329,13 @@
 
     let _text;
     if (textList.includes(type)) {
-      _text = 'A → Z';
+      _text = "A → Z";
     } else if (numberList.includes(type)) {
-      _text = '0 → 9';
+      _text = "0 → 9";
     } else if (optionList.includes(type)) {
-      _text = '顺序';
+      _text = "顺序";
     } else {
-      _text = 'A → Z';
+      _text = "A → Z";
     }
 
     return _text;
@@ -353,13 +353,13 @@
 
     let _text;
     if (textList.includes(type)) {
-      _text = 'Z → A';
+      _text = "Z → A";
     } else if (numberList.includes(type)) {
-      _text = '9 → 0';
+      _text = "9 → 0";
     } else if (optionList.includes(type)) {
-      _text = '倒序';
+      _text = "倒序";
     } else {
-      _text = 'Z → A';
+      _text = "Z → A";
     }
     return _text;
   };
@@ -391,7 +391,7 @@
         <div class="addView-line">
           <div class="addView-line-label theme-view-text-color">视图名字:</div>
           <el-input
-            style="width: 161px"
+            style="width: 182px"
             v-model="addViewName"
             size="small"
             placeholder="请输入视图名字"
