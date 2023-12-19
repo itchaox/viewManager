@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-19 19:32
+ * @LastTime   : 2023-12-20 00:25
  * @desc       : 抽屉
 -->
 
@@ -73,8 +73,6 @@
    * @desc  : 确认新增视图
    */
   async function confirmAddView() {
-    console.log('222', groupList.value);
-
     const index = props.viewList.findIndex((item) => item.view_name === addViewName.value);
     if (index === -1) {
       drawerLoading.value = true;
@@ -90,7 +88,7 @@
 
       ElMessage({
         type: 'success',
-        message: '新增视图成功',
+        message: '新增成功',
         duration: 1500,
 
         showClose: true,
@@ -133,7 +131,7 @@
         await view.applySetting();
       }
 
-      props.getViewMetaList();
+      // props.getViewMetaList();
 
       await bitable.ui.switchToView(table.id, viewId);
 
@@ -169,6 +167,7 @@
     sync.value = false;
   }
 
+  // 查询类型下拉, 对齐 js-sdk
   const addViewTypeList = ref([
     { value: 1, label: '表格视图' },
     { value: 2, label: '看板视图' },

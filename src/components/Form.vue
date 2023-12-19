@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-19 22:20
+ * @LastTime   : 2023-12-20 00:25
  * @desc       : 
 -->
 <script setup>
@@ -156,9 +156,13 @@
     });
   };
 
-  // base.onSelectionChange(async () => {
-  //   getViewMetaList();
-  // });
+  base.onSelectionChange(async (event) => {
+    const hasView = viewList.value.findIndex((item) => item.view_id === event?.data?.viewId);
+    // 新增视图或修改数据表, 则重新调用视图列表
+    if (!event?.data?.fieldId && hasView === -1) {
+      getViewMetaList();
+    }
+  });
 
   const tenant_access_token = ref();
 
@@ -277,7 +281,7 @@
         } else {
           ElMessage({
             type: 'success',
-            message: '数据查询成功',
+            message: '查询成功',
             duration: 1500,
 
             showClose: true,
@@ -298,7 +302,7 @@
     viewList.value = await toRaw(table.value).getViewMetaList();
     ElMessage({
       type: 'success',
-      message: '数据查询成功',
+      message: '查询成功',
       duration: 1500,
 
       showClose: true,
@@ -380,6 +384,7 @@
    * @param  {any} row 行数据
    */
   async function handleDelete(index, view_id) {
+    loading.value = true;
     await toRaw(table.value).deleteView(view_id);
     ElMessage({
       type: 'success',
@@ -443,16 +448,6 @@
     // openAddView.value = true;
   }
 
-  // 查询类型下拉, 对齐 js-sdk
-  // const addViewTypeList = ref([
-  //   { value: 1, label: '表格视图' },
-  //   { value: 2, label: '看板视图' },
-  //   { value: 3, label: '表单视图' },
-  //   { value: 4, label: '画册视图' },
-  //   { value: 5, label: '甘特视图' },
-  //   { value: 7, label: '日历视图' },
-  // ]);
-
   const newViewType = ref(1);
   const newViewName = ref();
 
@@ -481,39 +476,6 @@
   ]);
 
   const viewRange = ref(1);
-
-  async function confirmAddView() {
-    const index = viewList.value.findIndex((item) => item.view_name === addViewName.value);
-    if (index === -1) {
-      const { viewId } = await toRaw(table.value).addView({
-        name: addViewName.value,
-        type: addViewType.value,
-      });
-
-      addViewName.value = '';
-      addViewType.value = 1;
-      openAddView.value = false;
-
-      ElMessage({
-        type: 'success',
-        message: '新增视图成功',
-        duration: 1500,
-
-        showClose: true,
-      });
-
-      await getViewMetaList();
-
-      await bitable.ui.switchToView(toRaw(table.value).id, viewId);
-    } else {
-      ElMessage({
-        type: 'error',
-        message: '视图名字已存在,请重新输入!',
-        duration: 1500,
-        showClose: true,
-      });
-    }
-  }
 
   function cancel() {
     addViewName.value = '';
