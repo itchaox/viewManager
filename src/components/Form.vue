@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-19 20:30
+ * @LastTime   : 2023-12-19 22:05
  * @desc       : 
 -->
 <script setup>
@@ -44,7 +44,54 @@
     const selection = await bitable.base.getSelection();
     baseId.value = selection.baseId;
     tableId.value = selection.tableId;
+
+    // 监听 table 滚动事件
+    const scrollDom = tableRef.value.scrollBarRef.wrapRef;
+    scrollDom.addEventListener('scroll', () => {
+      // 滚动距离
+      let scrollTop = scrollDom.scrollTop;
+      if (scrollTop > 200) {
+        showTableTop.value = true;
+      } else {
+        showTableTop.value = false;
+      }
+    });
   });
+
+  /**
+   * @desc  : 回到表格顶部
+   */
+  const goTableTop = () => {
+    const scrollDom = tableRef.value.scrollBarRef.wrapRef;
+    const startY = scrollDom.scrollTop;
+
+    const targetY = 0;
+    const duration = 500; // 动画持续时间，单位：毫秒
+    let startTime;
+
+    // 增加动画效果, 使回到顶部的过程更加丝滑、流畅
+    const animateScroll = (timestamp) => {
+      if (!startTime) {
+        startTime = timestamp;
+      }
+
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      const newY = easeInOutQuad(progress) * (targetY - startY) + startY;
+
+      scrollDom.scrollTo(0, newY);
+
+      if (progress < 1) {
+        requestAnimationFrame(animateScroll);
+      }
+    };
+
+    requestAnimationFrame(animateScroll);
+  };
+
+  // 缓动函数，此处使用 easeInOutQuad，你可以根据需要选择其他缓动函数
+  const easeInOutQuad = (t) => {
+    return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  };
 
   // 主题颜色 LIGHT; DARK
   const theme = ref('');
@@ -607,6 +654,9 @@
   const filterViewList = ref([]);
 
   const loading = ref(false);
+
+  const tableRef = ref(null);
+  const showTableTop = ref(false);
 </script>
 
 <template>
@@ -831,11 +881,25 @@
       >
         总共 {{ viewList.length }} 个视图
       </div>
+
+      <div
+        class="table-top"
+        v-show="showTableTop"
+        @click="goTableTop"
+      >
+        <el-icon
+          color="rgb(20, 86, 240)"
+          size="34"
+          ><CaretTop
+        /></el-icon>
+      </div>
+
       <el-table
-        class="table"
+        ref="tableRef"
         :data="viewList"
         @selection-change="handleSelectionChange"
         :max-height="430"
+        empty-text="暂无数据"
       >
         <el-table-column
           :selectable="selectable"
@@ -1042,5 +1106,24 @@
     /* background-color: #f5f6f7; */
     margin-right: 0;
     border-radius: 4px;
+  }
+
+  .table-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 999;
+    position: absolute;
+    bottom: 0;
+    right: 60px;
+    /* background-color: red; */
+    border-radius: 100%;
+    border: 1px solid #2955e750;
+    background: #eef5fe;
+    :hover {
+      cursor: pointer;
+      background: #2955e710;
+      border-radius: 100%;
+    }
   }
 </style>
