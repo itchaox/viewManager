@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-19 19:33
+ * @LastTime   : 2023-12-19 20:30
  * @desc       : 
 -->
 <script setup>
@@ -702,60 +702,6 @@
       </div>
     </el-dialog>
 
-    <!-- 新增视图 -->
-    <el-dialog
-      v-model="openAddView"
-      title="新增视图"
-      width="75%"
-    >
-      <div class="addView">
-        <div class="addView-line">
-          <div class="addView-line-label theme-view-text-color">视图名字:</div>
-          <el-input
-            style="width: 182px"
-            v-model="addViewName"
-            size="small"
-            placeholder="请输入视图名字"
-          />
-        </div>
-
-        <div class="addView-line">
-          <div class="addView-line-label theme-view-text-color">视图类型:</div>
-          <el-select
-            v-model="addViewType"
-            placeholder="请选择视图类型"
-            size="small"
-            style="width: 182px"
-          >
-            <el-option
-              v-for="item in addViewTypeList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </div>
-
-        <div>
-          <el-button
-            type="primary"
-            size="small"
-            @click="confirmAddView"
-            >确定</el-button
-          >
-
-          <el-button
-            type="info"
-            size="small"
-            @click="cancel"
-            >取消</el-button
-          >
-        </div>
-      </div>
-    </el-dialog>
-
-    <!-- TODO 批量新增 -->
-
     <div class="addView">
       <div
         class="addView-line"
@@ -886,6 +832,7 @@
         总共 {{ viewList.length }} 个视图
       </div>
       <el-table
+        class="table"
         :data="viewList"
         @selection-change="handleSelectionChange"
         :max-height="430"
