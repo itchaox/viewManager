@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-19 22:05
+ * @LastTime   : 2023-12-19 22:20
  * @desc       : 
 -->
 <script setup>
@@ -661,6 +661,7 @@
 
 <template>
   <div class="field-manager">
+    <div class="tips">Tips: 使用自建应用, 通过个人视图模式轻松筛选个人视图</div>
     <div class="addView-line">
       <div class="addView-line-label theme-view-text-color">使用模式:</div>
       <el-radio-group
@@ -1045,12 +1046,17 @@
 </template>
 
 <style scoped>
-  .player {
+  .field-manager {
     font-family: LarkHackSafariFont, LarkEmojiFont, LarkChineseQuote, -apple-system, BlinkMacSystemFont, Helvetica Neue,
       Tahoma, PingFang SC, Microsoft Yahei, Arial, Hiragino Sans GB, sans-serif, Apple Color Emoji, Segoe UI Emoji,
       Segoe UI Symbol, Noto Color Emoji;
-    font-weight: 300;
-    color: red;
+    /* font-weight: 300; */
+  }
+
+  .tips {
+    font-size: 12px;
+    margin-bottom: 10px;
+    color: #646a73;
   }
 
   .batch-button {
