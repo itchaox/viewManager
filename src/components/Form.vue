@@ -2,13 +2,13 @@
  * @Version    : v1.00
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
- * @LastAuthor : wangchao
- * @LastTime   : 2023-12-18 11:57
+ * @LastAuthor : itchaox
+ * @LastTime   : 2023-12-19 19:33
  * @desc       : 
 -->
 <script setup>
-  import { bitable } from "@lark-base-open/js-sdk";
-  import { BASE_URL } from "@/config";
+  import { bitable } from '@lark-base-open/js-sdk';
+  import { BASE_URL } from '@/config';
   import {
     AllApplication,
     Calendar,
@@ -17,11 +17,11 @@
     GridNine,
     CheckCorrect,
     ApplicationMenu,
-  } from "@icon-park/vue-next";
+  } from '@icon-park/vue-next';
 
-  import Drawer from "./Drawer.vue";
+  import Drawer from './Drawer.vue';
 
-  import axios from "axios";
+  import axios from 'axios';
 
   const base = bitable.base;
 
@@ -47,48 +47,48 @@
   });
 
   // 主题颜色 LIGHT; DARK
-  const theme = ref("");
+  const theme = ref('');
   // 监听主题变化
   bitable.bridge.onThemeChange((event) => {
-    console.log("theme change", event.data.theme);
+    console.log('theme change', event.data.theme);
     theme.value = event.data.theme;
     setThemeColor();
   });
 
   const setThemeColor = () => {
     const el = document.documentElement;
-    const main = document.querySelector("main");
+    const main = document.querySelector('main');
 
     const themeStyles = {
       LIGHT: {
-        "--el-color-primary": "rgb(20, 86, 240)",
-        "--el-bg-color": "#fff",
-        "--el-border-color-lighter": "#dee0e3",
-        "--el-fill-color-light": "#f5f7fa",
-        "--el-fill-color-blank": "#fff",
-        "--el-text-color-primary": "#303133",
-        "--el-button-text-color": "#434343",
-        "--el-text-color-regular": "#434343",
+        '--el-color-primary': 'rgb(20, 86, 240)',
+        '--el-bg-color': '#fff',
+        '--el-border-color-lighter': '#dee0e3',
+        '--el-fill-color-light': '#f5f7fa',
+        '--el-fill-color-blank': '#fff',
+        '--el-text-color-primary': '#303133',
+        '--el-button-text-color': '#434343',
+        '--el-text-color-regular': '#434343',
         // 加载中效果
         // '--el-mask-color': '#f5f6f7',
-        "--el-bg-color-overlay": "#fff",
-        color: "#434343",
-        "background-color": "#fff",
+        '--el-bg-color-overlay': '#fff',
+        color: '#434343',
+        'background-color': '#fff',
       },
       DARK: {
-        "--el-color-primary": "#4571e1",
-        "--el-bg-color": "#252525",
-        "--el-border-color-lighter": "#434343",
-        "--el-fill-color-light": "#434343",
-        "--el-fill-color-blank": "#434343",
-        "--el-text-color-primary": "#fff",
-        "--el-button-text-color": "#fff",
-        "--el-text-color-regular": "#fff",
+        '--el-color-primary': '#4571e1',
+        '--el-bg-color': '#252525',
+        '--el-border-color-lighter': '#434343',
+        '--el-fill-color-light': '#434343',
+        '--el-fill-color-blank': '#434343',
+        '--el-text-color-primary': '#fff',
+        '--el-button-text-color': '#fff',
+        '--el-text-color-regular': '#fff',
         // 加载中效果
         // '--el-mask-color': '#434343',
-        "--el-bg-color-overlay": "#303133",
-        color: "#fff",
-        "background-color": "#1d1d1d",
+        '--el-bg-color-overlay': '#303133',
+        color: '#fff',
+        'background-color': '#1d1d1d',
       },
     };
 
@@ -100,10 +100,10 @@
     });
 
     // 设置其他样式
-    main.style.backgroundColor = currentThemeStyles["background-color"];
+    main.style.backgroundColor = currentThemeStyles['background-color'];
 
     // 设置文本颜色
-    const themeViewTextColorElements = document.querySelectorAll(".theme-view-text-color");
+    const themeViewTextColorElements = document.querySelectorAll('.theme-view-text-color');
     themeViewTextColorElements.forEach((element) => {
       element.style.color = currentThemeStyles.color;
     });
@@ -128,7 +128,7 @@
     };
 
     const headers = {
-      "Content-Type": "application/json; charset=utf-8",
+      'Content-Type': 'application/json; charset=utf-8',
     };
 
     const response = await axios.post(apiUrl, data, { headers });
@@ -137,16 +137,16 @@
       tenant_access_token.value = response?.data?.tenant_access_token;
       Verify.value = true;
       ElMessage({
-        type: "success",
-        message: "自建应用凭证调用成功",
+        type: 'success',
+        message: '自建应用凭证调用成功',
         duration: 1500,
         showClose: true,
       });
       openEnterprise.value = false;
     } else {
       ElMessage({
-        type: "error",
-        message: "app_id 或 app_secret 错误, 请检查后重试!",
+        type: 'error',
+        message: 'app_id 或 app_secret 错误, 请检查后重试!',
         duration: 1500,
         showClose: true,
       });
@@ -165,11 +165,11 @@
 
     const data = {
       token: baseId.value,
-      type: "bitable",
+      type: 'bitable',
     };
 
     const headers = {
-      "Content-Type": "application/json; charset=utf-8",
+      'Content-Type': 'application/json; charset=utf-8',
       Authorization: `Bearer ${tenant_access_token.value}`,
     };
 
@@ -180,7 +180,7 @@
         const members = response?.data?.data?.members;
 
         members.forEach((item) => {
-          if (item.perm === "full_access") {
+          if (item.perm === 'full_access') {
             fullAccessIdList.value.push(item.member_open_id);
           }
         });
@@ -188,7 +188,7 @@
     } catch (error) {
       // 弹出提示用户错误信息
 
-      console.error("Error:", error.message);
+      console.error('Error:', error.message);
       throw error;
     }
   }
@@ -208,7 +208,7 @@
     const apiUrl2 = `${BASE_URL}/open-apis/bitable/v1/apps/${baseId.value}/tables/${tableId.value}/views?page_size=100&page_token=${page_token.value}`;
 
     const headers = {
-      "Content-Type": "application/json; charset=utf-8",
+      'Content-Type': 'application/json; charset=utf-8',
       Authorization: `Bearer ${tenant_access_token.value}`,
     };
 
@@ -229,8 +229,8 @@
           await getViewAllList();
         } else {
           ElMessage({
-            type: "success",
-            message: "数据查询成功",
+            type: 'success',
+            message: '数据查询成功',
             duration: 1500,
 
             showClose: true,
@@ -239,7 +239,7 @@
       }
     } catch (error) {
       // 处理错误
-      console.error("Error:", error.message);
+      console.error('Error:', error.message);
       throw error;
     }
   }
@@ -250,8 +250,8 @@
 
     viewList.value = await toRaw(table.value).getViewMetaList();
     ElMessage({
-      type: "success",
-      message: "数据查询成功",
+      type: 'success',
+      message: '数据查询成功',
       duration: 1500,
 
       showClose: true,
@@ -272,13 +272,13 @@
       if (viewRange.value === 2) {
         // "管理员" 的个人视图
         viewList.value = viewList.value.filter(
-          (item) => item.view_public_level === "Private" && fullAccessIdList.value.includes(item.view_private_owner_id),
+          (item) => item.view_public_level === 'Private' && fullAccessIdList.value.includes(item.view_private_owner_id),
         );
       } else if (viewRange.value === 3) {
         // "非管理员" 的个人视图
         viewList.value = viewList.value.filter(
           (item) =>
-            item.view_public_level === "Private" && !fullAccessIdList.value.includes(item.view_private_owner_id),
+            item.view_public_level === 'Private' && !fullAccessIdList.value.includes(item.view_private_owner_id),
         );
       }
       // viewList.value = viewList.value.map((item) => ({ ...item, isEditing: false }));
@@ -291,22 +291,22 @@
     let _charType;
     switch (type) {
       case 1:
-        _charType = "grid";
+        _charType = 'grid';
         break;
       case 2:
-        _charType = "kanban";
+        _charType = 'kanban';
         break;
       case 3:
-        _charType = "form";
+        _charType = 'form';
         break;
       case 4:
-        _charType = "gallery";
+        _charType = 'gallery';
         break;
       case 5:
-        _charType = "gantt";
+        _charType = 'gantt';
         break;
       case 7:
-        _charType = "unknown";
+        _charType = 'unknown';
         break;
     }
     return _charType;
@@ -335,8 +335,8 @@
   async function handleDelete(index, view_id) {
     await toRaw(table.value).deleteView(view_id);
     ElMessage({
-      type: "success",
-      message: "删除成功",
+      type: 'success',
+      message: '删除成功',
       duration: 1500,
       showClose: true,
     });
@@ -349,8 +349,8 @@
   async function batchDelete() {
     if (selectViewIdList.value?.length === 0) {
       ElMessage({
-        type: "warning",
-        message: "请先勾选需要删除的视图!",
+        type: 'warning',
+        message: '请先勾选需要删除的视图!',
         duration: 1500,
         showClose: true,
       });
@@ -363,8 +363,8 @@
       await toRaw(table.value).deleteView(view_id);
     }
     ElMessage({
-      type: "success",
-      message: "批量删除成功",
+      type: 'success',
+      message: '批量删除成功',
       duration: 1500,
       showClose: true,
     });
@@ -385,7 +385,7 @@
     // 在下一轮事件循环中，将输入框聚焦
     nextTick(() => {
       editInput.value.focus();
-      console.log("🚀  editInput:", typeof editInput.value);
+      console.log('🚀  editInput:', typeof editInput.value);
     });
   }
 
@@ -414,23 +414,23 @@
 
   //  查询的类型下拉, 对齐字符串字典
   const searchViewTypeList = ref([
-    { value: "all", label: "全部视图" },
-    { value: "grid", label: "表格视图" },
-    { value: "kanban", label: "看板视图" },
-    { value: "form", label: "表单视图" },
-    { value: "gallery", label: "画册视图" },
-    { value: "gantt", label: "甘特视图" },
-    { value: "unknown", label: "日历视图" },
+    { value: 'all', label: '全部视图' },
+    { value: 'grid', label: '表格视图' },
+    { value: 'kanban', label: '看板视图' },
+    { value: 'form', label: '表单视图' },
+    { value: 'gallery', label: '画册视图' },
+    { value: 'gantt', label: '甘特视图' },
+    { value: 'unknown', label: '日历视图' },
   ]);
 
-  const searchViewType = ref("all");
+  const searchViewType = ref('all');
   const searchViewName = ref();
 
   const viewRangeList = ref([
-    { value: 1, label: "全部角色视图范围" },
+    { value: 1, label: '全部角色视图范围' },
     // { value: 2, label: '当前用户个人视图' },
-    { value: 2, label: "管理员的个人视图" },
-    { value: 3, label: "非管理员个人视图" },
+    { value: 2, label: '管理员的个人视图' },
+    { value: 3, label: '非管理员个人视图' },
   ]);
 
   const viewRange = ref(1);
@@ -443,13 +443,13 @@
         type: addViewType.value,
       });
 
-      addViewName.value = "";
+      addViewName.value = '';
       addViewType.value = 1;
       openAddView.value = false;
 
       ElMessage({
-        type: "success",
-        message: "新增视图成功",
+        type: 'success',
+        message: '新增视图成功',
         duration: 1500,
 
         showClose: true,
@@ -460,8 +460,8 @@
       await bitable.ui.switchToView(toRaw(table.value).id, viewId);
     } else {
       ElMessage({
-        type: "error",
-        message: "视图名字已存在,请重新输入!",
+        type: 'error',
+        message: '视图名字已存在,请重新输入!',
         duration: 1500,
         showClose: true,
       });
@@ -469,14 +469,14 @@
   }
 
   function cancel() {
-    addViewName.value = "";
+    addViewName.value = '';
     addViewType.value = 1;
     openAddView.value = false;
   }
 
   function cancelAddView() {
     // 重置操作
-    newViewName.value = "";
+    newViewName.value = '';
     newViewType.value = 1;
   }
 
@@ -516,7 +516,7 @@
       return item;
     });
 
-    activeButtonId.value = "";
+    activeButtonId.value = '';
     isEditing.value = false;
   }
 
@@ -549,13 +549,13 @@
 
     // 筛选视图类型和视图名字
     handleFilterViewList();
-    page_token.value = "";
+    page_token.value = '';
   }
 
   function handleFilterViewList() {
     // 筛选视图类型和视图名字
     viewList.value = viewList.value.filter((item) => {
-      const typeMatch = searchViewType.value === "all" || item.view_type === searchViewType.value;
+      const typeMatch = searchViewType.value === 'all' || item.view_type === searchViewType.value;
       const nameMatch = !searchViewName.value || item?.view_name?.includes(searchViewName.value);
       return typeMatch && nameMatch;
     });
@@ -563,8 +563,8 @@
 
   async function reset() {
     viewRange.value = 1;
-    searchViewName.value = "";
-    searchViewType.value = "all";
+    searchViewName.value = '';
+    searchViewType.value = 'all';
     await getViewMetaList();
   }
 
@@ -584,8 +584,8 @@
       openEnterprise.value = false;
     } else {
       userType.value = 1;
-      appId.value = "";
-      appSecret.value = "";
+      appId.value = '';
+      appSecret.value = '';
       openEnterprise.value = false;
     }
   }
@@ -600,8 +600,8 @@
     openEnterprise.value = true;
   }
 
-  const appId = ref("");
-  const appSecret = ref("");
+  const appId = ref('');
+  const appSecret = ref('');
 
   // 过滤之后的视图列表
   const filterViewList = ref([]);
@@ -617,11 +617,11 @@
         v-model="userType"
         size="small"
       >
-        <el-radio-button :label="1">普通模式</el-radio-button>
+        <el-radio-button :label="1">普通视图</el-radio-button>
         <el-radio-button
           :label="2"
           @click="setEnterprise"
-          >个人视图模式</el-radio-button
+          >个人视图</el-radio-button
         >
       </el-radio-group>
     </div>
@@ -725,6 +725,7 @@
             v-model="addViewType"
             placeholder="请选择视图类型"
             size="small"
+            style="width: 182px"
           >
             <el-option
               v-for="item in addViewTypeList"
@@ -778,7 +779,7 @@
       <div class="addView-line">
         <div class="addView-line-label theme-view-text-color">视图名字:</div>
         <el-input
-          style="width: 182px"
+          style="width: 160px"
           v-model="searchViewName"
           clearable
           size="small"
@@ -792,6 +793,7 @@
           v-model="searchViewType"
           placeholder="请选择视图类型"
           size="small"
+          style="width: 160px"
         >
           <el-option
             v-for="item in searchViewTypeList"
