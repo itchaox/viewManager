@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-20 00:25
+ * @LastTime   : 2023-12-20 00:54
  * @desc       : 
 -->
 <script setup>
@@ -44,6 +44,7 @@
     const selection = await bitable.base.getSelection();
     baseId.value = selection.baseId;
     tableId.value = selection.tableId;
+    activeViewId.value = selection.viewId;
 
     // 监听 table 滚动事件
     const scrollDom = tableRef.value.scrollBarRef.wrapRef;
@@ -97,7 +98,6 @@
   const theme = ref('');
   // 监听主题变化
   bitable.bridge.onThemeChange((event) => {
-    console.log('theme change', event.data.theme);
     theme.value = event.data.theme;
     setThemeColor();
   });
@@ -160,7 +160,13 @@
     const hasView = viewList.value.findIndex((item) => item.view_id === event?.data?.viewId);
     // 新增视图或修改数据表, 则重新调用视图列表
     if (!event?.data?.fieldId && hasView === -1) {
+      activeViewId.value = event?.data?.viewId;
       getViewMetaList();
+    }
+
+    // 高亮当前视图按钮
+    if (hasView !== -1 && hasView !== undefined) {
+      activeViewId.value = event?.data?.viewId;
     }
   });
 
@@ -515,6 +521,8 @@
   }
 
   const activeButtonId = ref();
+
+  const activeViewId = ref();
 
   // 结束编辑，例如在输入框失焦时调用
   async function endEditing(view_id) {
@@ -886,7 +894,7 @@
                 class="view-name-icon"
                 theme="outline"
                 size="20"
-                fill="#aacefb"
+                :fill="activeViewId !== scope.row.view_id ? '#aacefb' : 'rgb(20, 86, 240)'"
               />
 
               <calendar
@@ -894,7 +902,7 @@
                 class="view-name-icon"
                 theme="outline"
                 size="20"
-                fill="#aacefb"
+                :fill="activeViewId !== scope.row.view_id ? '#aacefb' : 'rgb(20, 86, 240)'"
                 strokeLinejoin="bevel"
                 strokeLinecap="square"
               />
@@ -904,7 +912,7 @@
                 class="view-name-icon"
                 theme="outline"
                 size="20"
-                fill="#aacefb"
+                :fill="activeViewId !== scope.row.view_id ? '#aacefb' : 'rgb(20, 86, 240)'"
               />
 
               <align-right-two
@@ -912,7 +920,7 @@
                 theme="outline"
                 class="view-name-icon"
                 size="20"
-                fill="#aacefb"
+                :fill="activeViewId !== scope.row.view_id ? '#aacefb' : 'rgb(20, 86, 240)'"
               />
 
               <grid-nine
@@ -920,7 +928,7 @@
                 theme="outline"
                 class="view-name-icon"
                 size="20"
-                fill="#aacefb"
+                :fill="activeViewId !== scope.row.view_id ? '#aacefb' : 'rgb(20, 86, 240)'"
                 strokeLinejoin="bevel"
               />
               <check-correct
@@ -928,7 +936,7 @@
                 theme="outline"
                 class="view-name-icon"
                 size="20"
-                fill="#aacefb"
+                :fill="activeViewId !== scope.row.view_id ? '#aacefb' : 'rgb(20, 86, 240)'"
                 strokeLinejoin="bevel"
               />
               <el-button
@@ -936,7 +944,7 @@
                 v-show="!item?.isEditing && activeButtonId !== scope.row.view_id"
                 :style="{ width: '100%' }"
                 type="primary"
-                :plain="theme === 'LIGHT'"
+                :plain="theme === 'LIGHT' && activeViewId !== scope.row.view_id"
                 @click="switchView(scope.row.view_id)"
                 @dblclick="handleEdit(scope.row.view_id)"
                 >{{ scope.row.view_name }}</el-button
