@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-20 20:55
+ * @LastTime   : 2023-12-20 21:39
  * @desc       : 
 -->
 <script setup>
@@ -65,13 +65,13 @@
   });
 
   /**
-   * @desc  : 回到表格顶部
+   * @desc  : 滚动表格
    */
-  const goTableTop = () => {
+  const scrollTable = (targetY) => {
     const scrollDom = tableRef.value.scrollBarRef.wrapRef;
     const startY = scrollDom.scrollTop;
 
-    const targetY = 0;
+    // const targetY = 0;
     const duration = 500; // 动画持续时间，单位：毫秒
     let startTime;
 
@@ -176,7 +176,22 @@
     // 新增视图或修改数据表, 则重新调用视图列表
     if (!event?.data?.fieldId && hasView === -1 && isTable.value) {
       activeViewId.value = event?.data?.viewId;
-      getViewMetaList();
+      await getViewMetaList();
+      const _index = viewList.value.findIndex((item) => item.view_id === activeViewId.value);
+      const _height = document.querySelector('.el-table__row').offsetHeight;
+
+      // 新增视图后, 滚动到表格底部
+      scrollTable(_index * _height);
+    }
+
+    //FIXME 切换视图
+    if (!event?.data?.fieldId && hasView !== -1 && isTable.value) {
+      activeViewId.value = event?.data?.viewId;
+      const _index = viewList.value.findIndex((item) => item.view_id === activeViewId.value);
+      const _height = document.querySelector('.el-table__row').offsetHeight;
+
+      // 移动表格位置
+      scrollTable(_index * _height);
     }
 
     // 高亮当前视图按钮
@@ -647,6 +662,14 @@
     const tableMetaList = await base.getTableMetaList();
     await bitable.ui.switchToTable(tableMetaList[0]?.id);
   }
+
+  const confirmAddView = () => {
+    const _length = viewList.value.length;
+    const _height = document.querySelector('.el-table__row').offsetHeight;
+
+    // 新增视图后, 滚动到表格底部
+    scrollTable(_length * _height);
+  };
 </script>
 
 <template>
@@ -879,7 +902,7 @@
       <div
         class="table-top"
         v-show="showTableTop"
-        @click="goTableTop"
+        @click="() => scrollTable(0)"
       >
         <el-icon
           color="rgb(20, 86, 240)"
@@ -1034,6 +1057,7 @@
       v-model:model-value="addViewDrawer"
       :view-list="viewList"
       :getViewMetaList="getViewMetaList"
+      @confirmAddView="confirmAddView"
     />
   </div>
   <div v-else>

@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-20 21:01
+ * @LastTime   : 2023-12-20 21:26
  * @desc       : 抽屉
 -->
 
@@ -30,7 +30,7 @@
 
   const props = defineProps<Props>();
 
-  const emits = defineEmits(['update:model-value']);
+  const emits = defineEmits(['update:model-value', 'confirmAddView']);
 
   let table;
   let view;
@@ -88,6 +88,7 @@
         name: addViewName.value,
         type: addViewType.value,
       });
+
       const view = await table.getViewById(viewId);
 
       // addViewName.value = '';
@@ -148,6 +149,7 @@
       // drawerLoading.value = false;
       // sync.value = false;
       reset();
+      emits('confirmAddView');
     } else {
       ElMessage({
         type: 'error',
