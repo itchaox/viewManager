@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-20 00:25
+ * @LastTime   : 2023-12-20 21:01
  * @desc       : 抽屉
 -->
 
@@ -56,6 +56,14 @@
   // );
 
   onMounted(async () => {
+    init();
+  });
+
+  base.onSelectionChange(async (event) => {
+    init();
+  });
+
+  async function init() {
     table = await base.getActiveTable();
     view = await table.getActiveView();
     fieldList.value = await view.getFieldMetaList();
@@ -64,7 +72,7 @@
     filterFieldList.value = fieldList.value.filter((item) => [1, 3, 4].includes(item.type));
     groupFieldList.value = fieldList.value;
     sortFieldList.value = fieldList.value;
-  });
+  }
 
   const addViewName = ref();
   const addViewType = ref(1);
