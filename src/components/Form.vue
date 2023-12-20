@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-20 00:54
+ * @LastTime   : 2023-12-20 20:55
  * @desc       : 
 -->
 <script setup>
@@ -40,11 +40,16 @@
     theme.value = await bitable.bridge.getTheme();
     setThemeColor();
 
-    await getViewMetaList();
     const selection = await bitable.base.getSelection();
+    if (!selection.tableId) {
+      isTable.value = false;
+    }
+
     baseId.value = selection.baseId;
     tableId.value = selection.tableId;
     activeViewId.value = selection.viewId;
+
+    await getViewMetaList();
 
     // 监听 table 滚动事件
     const scrollDom = tableRef.value.scrollBarRef.wrapRef;
@@ -156,10 +161,20 @@
     });
   };
 
+  // 是不是数据表
+  const isTable = ref(true);
+
   base.onSelectionChange(async (event) => {
+    // 判断是否数据表
+    if (event?.data?.tableId) {
+      isTable.value = true;
+    } else {
+      isTable.value = false;
+    }
+
     const hasView = viewList.value.findIndex((item) => item.view_id === event?.data?.viewId);
     // 新增视图或修改数据表, 则重新调用视图列表
-    if (!event?.data?.fieldId && hasView === -1) {
+    if (!event?.data?.fieldId && hasView === -1 && isTable.value) {
       activeViewId.value = event?.data?.viewId;
       getViewMetaList();
     }
@@ -627,10 +642,18 @@
 
   const tableRef = ref(null);
   const showTableTop = ref(false);
+
+  async function goDataBase() {
+    const tableMetaList = await base.getTableMetaList();
+    await bitable.ui.switchToTable(tableMetaList[0]?.id);
+  }
 </script>
 
 <template>
-  <div class="field-manager">
+  <div
+    class="field-manager"
+    v-if="isTable"
+  >
     <div class="tips">Tips: 使用自建应用, 通过个人视图模式轻松筛选个人视图</div>
     <div class="addView-line">
       <div class="addView-line-label theme-view-text-color">使用模式:</div>
@@ -1012,6 +1035,21 @@
       :view-list="viewList"
       :getViewMetaList="getViewMetaList"
     />
+  </div>
+  <div v-else>
+    <el-result
+      icon="error"
+      title="格式错误"
+      sub-title="请选择数据表格式!"
+    >
+      <template #extra>
+        <el-button
+          type="primary"
+          @click="goDataBase"
+          >回到第一个数据表</el-button
+        >
+      </template>
+    </el-result>
   </div>
 </template>
 
