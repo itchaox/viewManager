@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-20 21:26
+ * @LastTime   : 2023-12-22 00:12
  * @desc       : 抽屉
 -->
 
@@ -63,13 +63,29 @@
     init();
   });
 
+  // 文本类字段的集合
+  // 1 文本; 13 电话号码; 15 超链接; 22 地理位置; 99001 条形码
+  const textMap = ref([1, 13, 15, 22, 99001]);
+
+  // 数字类字段的集合
+  // 2 数字; 1005 自动编号; 99002 进度; 99003 货币; 99004 评分
+  const numberMap = ref([2, 1005, 99002, 99003, 99004]);
+
+  // 选择类字段的集合
+  // 3 单选; 4多选;
+  const selectMap = ref([3, 4]);
+
+  // 引用类型
+  // 11 人员; 18 单向关联; 23 群组;
+
   async function init() {
     table = await base.getActiveTable();
     view = await table.getActiveView();
     fieldList.value = await view.getFieldMetaList();
 
-    // 1 文本; 3 单选; 4多选; 11 人员; 18 单向关联; 23 群组
-    filterFieldList.value = fieldList.value.filter((item) => [1, 3, 4].includes(item.type));
+    filterFieldList.value = fieldList.value.filter((item) =>
+      [1, 3, 4, 13, 15, 22, 99001, 2, 1005, 99002, 99003, 99004].includes(item.type),
+    );
     groupFieldList.value = fieldList.value;
     sortFieldList.value = fieldList.value;
   }
@@ -105,11 +121,15 @@
 
       // 筛选
       if (filterList.value?.length > 0) {
-        // FIXME 多选时, 数组需要拷贝一下,否则会报错
+        // FIXME 多选时, 数组需要拷贝一下,否则会报错; 数字类型需转换一下
         await view.addFilterCondition(
           filterList.value.map((item) => ({
             fieldId: item.id,
-            value: Array.isArray(item.value) ? [...item.value] : item.value,
+            value: Array.isArray(item.value)
+              ? [...item.value]
+              : numberMap.value.includes(item.type)
+              ? +item.type
+              : item.value,
             operator: item.operator,
           })),
         );
@@ -203,8 +223,8 @@
   const filterFiledChange = async (item, index) => {
     let _activeItem = filterFieldList.value.find((i) => i.id === item.id);
 
-    // 文本项,不需要再掉数据
-    if (_activeItem?.type === 1) {
+    // 文本项\数字类,不需要再掉数据
+    if (textMap.value.includes(_activeItem?.type) || numberMap.value.includes(_activeItem?.type)) {
       filterList.value[index] = {
         name: _activeItem.name,
         type: _activeItem.type,
@@ -232,7 +252,8 @@
 
   const conjunction = ref('and');
 
-  const filterOperatorList = ref([
+  // 文本类条件列表
+  const textFilterOperatorList = ref([
     {
       id: 'is',
       name: '等于',
@@ -258,6 +279,87 @@
       name: '不为空',
     },
   ]);
+
+  // 全部过滤条件
+  const allFilterOperatorList = [
+    {
+      id: 'is',
+      name: '等于',
+    },
+    {
+      id: 'isNot',
+      name: '不等于',
+    },
+    {
+      id: 'contains',
+      name: '包含',
+    },
+    {
+      id: 'doesNotContain',
+      name: '不包含',
+    },
+
+    {
+      id: 'isGreater',
+      name: '大于',
+    },
+    {
+      id: 'isGreaterEqual',
+      name: '大于或等于',
+    },
+    {
+      id: 'isLess',
+      name: '小于',
+    },
+    {
+      id: 'isLessEqual',
+      name: '小于或等于',
+    },
+    {
+      id: 'isEmpty',
+      name: '为空',
+    },
+    {
+      id: 'isNotEmpty',
+      name: '不为空',
+    },
+  ];
+
+  // 数字类条件列表
+  const numberFilterOperatorList = [
+    {
+      id: 'is',
+      name: '等于',
+    },
+    {
+      id: 'isNot',
+      name: '不等于',
+    },
+    {
+      id: 'isGreater',
+      name: '大于',
+    },
+    {
+      id: 'isGreaterEqual',
+      name: '大于或等于',
+    },
+    {
+      id: 'isLess',
+      name: '小于',
+    },
+    {
+      id: 'isLessEqual',
+      name: '小于或等于',
+    },
+    {
+      id: 'isEmpty',
+      name: '为空',
+    },
+    {
+      id: 'isNotEmpty',
+      name: '不为空',
+    },
+  ];
 
   const showInput = (type) => {
     return ['is', 'isNot', 'contains', 'doesNotContain'].includes(type);
@@ -530,17 +632,28 @@
                     v-model="item.operator"
                     size="small"
                   >
-                    <el-option
-                      v-for="item in filterOperatorList"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.id"
-                    />
+                    <template v-if="textMap.includes(item.type) || selectMap.includes(item.type)">
+                      <el-option
+                        v-for="item in textFilterOperatorList"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id"
+                      />
+                    </template>
+
+                    <template v-if="numberMap.includes(item.type)">
+                      <el-option
+                        v-for="item in numberFilterOperatorList"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id"
+                      />
+                    </template>
                   </el-select>
                   <!-- 值 -->
                   <div class="collapse-line-value">
                     <el-input
-                      v-if="showInput(item.operator) && item.type === 1"
+                      v-if="showInput(item.operator) && (textMap.includes(item.type) || numberMap.includes(item.type))"
                       v-model="item.value"
                       size="small"
                       placeholder="请输入"
@@ -548,7 +661,7 @@
 
                     <!-- FIXME 多选操作,暂时有问题 -->
                     <el-select
-                      v-if="showInput(item.operator) && item.type !== 1"
+                      v-if="showInput(item.operator) && selectMap.includes(item.type)"
                       :multiple="item.type === 4"
                       :collapse-tags="item.type === 4"
                       :collapse-tags-tooltip="item.type === 4"
