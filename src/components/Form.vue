@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-23 00:21
+ * @LastTime   : 2023-12-23 01:10
  * @desc       : 
 -->
 <script setup>
@@ -437,8 +437,8 @@
   async function batchDelete() {
     if (selectViewIdList.value?.length === 0) {
       ElMessage({
-        type: 'warning',
-        message: '请先勾选需要删除的视图!',
+        type: 'error',
+        message: '请先勾选视图!',
         duration: 1500,
         showClose: true,
       });
@@ -695,18 +695,13 @@
 
     <div class="batch-button">
       <el-button
-        @click="batchDelete"
-        type="danger"
-        size="small"
-        color="#F54A45"
-        >批量删除</el-button
-      >
-      <el-button
         type="primary"
         size="small"
         @click="addView"
-        >新增视图</el-button
       >
+        <el-icon><Plus /></el-icon>
+        <span>新增视图</span>
+      </el-button>
     </div>
 
     <!-- 企业用户弹窗 -->
@@ -875,15 +870,19 @@
           type="primary"
           size="small"
           @click="searchView"
-          >查询</el-button
         >
+          <el-icon><Search /></el-icon>
+          <span>查询</span>
+        </el-button>
 
         <el-button
           type="info"
           size="small"
           @click="reset"
-          >重置</el-button
         >
+          <el-icon><Refresh /></el-icon>
+          <span>重置</span>
+        </el-button>
       </div>
     </div>
     <div
@@ -909,118 +908,119 @@
         /></el-icon>
       </div>
 
-      <el-table
-        ref="tableRef"
-        :data="viewList"
-        @selection-change="handleSelectionChange"
-        :max-height="430"
-        empty-text="暂无数据"
-      >
-        <el-table-column
-          :selectable="selectable"
-          type="selection"
-          width="30"
-        />
-
-        <el-table-column
-          label="视图名字"
-          :min-width="120"
+      <div class="view-table">
+        <el-table
+          ref="tableRef"
+          :data="viewList"
+          @selection-change="handleSelectionChange"
+          height="100%"
+          empty-text="暂无数据"
         >
-          <!-- <template #default="scope">{{ scope.row.name }}</template> -->
+          <el-table-column
+            :selectable="selectable"
+            type="selection"
+            width="30"
+          />
 
-          <template #default="scope">
-            <div
-              :title="scope.row.view_name"
-              class="view-name"
-            >
-              <all-application
-                v-if="scope.row?.view_type === 'gallery'"
-                class="view-name-icon"
-                theme="outline"
-                size="20"
-                :fill="activeViewId !== scope.row.view_id ? '#aacefb' : 'rgb(20, 86, 240)'"
-              />
+          <el-table-column
+            label="视图名字"
+            :min-width="120"
+          >
+            <!-- <template #default="scope">{{ scope.row.name }}</template> -->
 
-              <calendar
-                v-if="scope.row?.view_type === 'unknown'"
-                class="view-name-icon"
-                theme="outline"
-                size="20"
-                :fill="activeViewId !== scope.row.view_id ? '#aacefb' : 'rgb(20, 86, 240)'"
-                strokeLinejoin="bevel"
-                strokeLinecap="square"
-              />
-
-              <align-top-two
-                v-if="scope.row?.view_type === 'kanban'"
-                class="view-name-icon"
-                theme="outline"
-                size="20"
-                :fill="activeViewId !== scope.row.view_id ? '#aacefb' : 'rgb(20, 86, 240)'"
-              />
-
-              <align-right-two
-                v-if="scope.row?.view_type === 'gantt'"
-                theme="outline"
-                class="view-name-icon"
-                size="20"
-                :fill="activeViewId !== scope.row.view_id ? '#aacefb' : 'rgb(20, 86, 240)'"
-              />
-
-              <grid-nine
-                v-if="scope.row?.view_type === 'grid'"
-                theme="outline"
-                class="view-name-icon"
-                size="20"
-                :fill="activeViewId !== scope.row.view_id ? '#aacefb' : 'rgb(20, 86, 240)'"
-                strokeLinejoin="bevel"
-              />
-              <check-correct
-                v-if="scope.row?.view_type === 'form'"
-                theme="outline"
-                class="view-name-icon"
-                size="20"
-                :fill="activeViewId !== scope.row.view_id ? '#aacefb' : 'rgb(20, 86, 240)'"
-                strokeLinejoin="bevel"
-              />
-              <el-button
-                class="single-line-ellipsis"
-                v-show="!item?.isEditing && activeButtonId !== scope.row.view_id"
-                :style="{ width: '100%' }"
-                type="primary"
-                :plain="theme === 'LIGHT' && activeViewId !== scope.row.view_id"
-                @click="switchView(scope.row.view_id)"
-                @dblclick="handleEdit(scope.row.view_id)"
-                >{{ scope.row.view_name }}</el-button
+            <template #default="scope">
+              <div
+                :title="scope.row.view_name"
+                class="view-name"
               >
-              <el-input
-                v-if="(item?.isEditing && isEditing) || activeButtonId === scope.row.view_id"
-                ref="editInput"
-                @blur="endEditing(scope.row.view_id)"
-                @keydown.enter="endEditing(scope.row.view_id)"
-                :model-value="scope.row.view_name"
-                @change="(value) => handleFileName(value, scope.row.view_id)"
-                @input="(value) => (scope.row.view_name = value)"
-              />
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column
-          property="name"
-          label="操作"
-          width="60"
-        >
-          <template #default="scope">
-            <!-- FIXME 暂时不需求编辑操作 -->
-            <!-- <el-button
+                <all-application
+                  v-if="scope.row?.view_type === 'gallery'"
+                  class="view-name-icon"
+                  theme="outline"
+                  size="20"
+                  :fill="activeViewId !== scope.row.view_id ? '#aacefb' : 'rgb(20, 86, 240)'"
+                />
+
+                <calendar
+                  v-if="scope.row?.view_type === 'unknown'"
+                  class="view-name-icon"
+                  theme="outline"
+                  size="20"
+                  :fill="activeViewId !== scope.row.view_id ? '#aacefb' : 'rgb(20, 86, 240)'"
+                  strokeLinejoin="bevel"
+                  strokeLinecap="square"
+                />
+
+                <align-top-two
+                  v-if="scope.row?.view_type === 'kanban'"
+                  class="view-name-icon"
+                  theme="outline"
+                  size="20"
+                  :fill="activeViewId !== scope.row.view_id ? '#aacefb' : 'rgb(20, 86, 240)'"
+                />
+
+                <align-right-two
+                  v-if="scope.row?.view_type === 'gantt'"
+                  theme="outline"
+                  class="view-name-icon"
+                  size="20"
+                  :fill="activeViewId !== scope.row.view_id ? '#aacefb' : 'rgb(20, 86, 240)'"
+                />
+
+                <grid-nine
+                  v-if="scope.row?.view_type === 'grid'"
+                  theme="outline"
+                  class="view-name-icon"
+                  size="20"
+                  :fill="activeViewId !== scope.row.view_id ? '#aacefb' : 'rgb(20, 86, 240)'"
+                  strokeLinejoin="bevel"
+                />
+                <check-correct
+                  v-if="scope.row?.view_type === 'form'"
+                  theme="outline"
+                  class="view-name-icon"
+                  size="20"
+                  :fill="activeViewId !== scope.row.view_id ? '#aacefb' : 'rgb(20, 86, 240)'"
+                  strokeLinejoin="bevel"
+                />
+                <el-button
+                  class="single-line-ellipsis"
+                  v-show="!item?.isEditing && activeButtonId !== scope.row.view_id"
+                  :style="{ width: '100%' }"
+                  type="primary"
+                  :plain="theme === 'LIGHT' && activeViewId !== scope.row.view_id"
+                  @click="switchView(scope.row.view_id)"
+                  @dblclick="handleEdit(scope.row.view_id)"
+                  >{{ scope.row.view_name }}</el-button
+                >
+                <el-input
+                  v-if="(item?.isEditing && isEditing) || activeButtonId === scope.row.view_id"
+                  ref="editInput"
+                  @blur="endEditing(scope.row.view_id)"
+                  @keydown.enter="endEditing(scope.row.view_id)"
+                  :model-value="scope.row.view_name"
+                  @change="(value) => handleFileName(value, scope.row.view_id)"
+                  @input="(value) => (scope.row.view_name = value)"
+                />
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column
+            property="name"
+            label="操作"
+            width="60"
+          >
+            <template #default="scope">
+              <!-- FIXME 暂时不需求编辑操作 -->
+              <!-- <el-button
               size="small"
               @click="handleEdit(scope.row.view_id)"
               link
               ><el-icon size="14"><Edit /></el-icon
             ></el-button> -->
 
-            <!-- FIXME API 不支持修改视图类型, 等支持了再做 -->
-            <!-- <el-dropdown trigger="click">
+              <!-- FIXME API 不支持修改视图类型, 等支持了再做 -->
+              <!-- <el-dropdown trigger="click">
             <el-button
               size="small"
               @click="handleEdit(scope.$index, scope.row)"
@@ -1039,17 +1039,30 @@
             </template>
           </el-dropdown> -->
 
-            <el-button
-              v-if="scope.$index !== 0 || viewRange !== 1"
-              size="small"
-              type="danger"
-              link
-              @click="handleDelete(scope.$index, scope.row.view_id)"
-              ><el-icon size="16"><Delete /></el-icon
-            ></el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+              <el-button
+                v-if="scope.$index !== 0 || viewRange !== 1"
+                size="small"
+                type="danger"
+                link
+                @click="handleDelete(scope.$index, scope.row.view_id)"
+                ><el-icon size="16"><Delete /></el-icon
+              ></el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+
+      <div class="delete-button">
+        <el-button
+          @click="batchDelete"
+          type="danger"
+          size="small"
+          color="#F54A45"
+        >
+          <el-icon><Delete /></el-icon>
+          <span>批量删除</span>
+        </el-button>
+      </div>
     </div>
     <Drawer
       v-model:model-value="addViewDrawer"
@@ -1155,9 +1168,8 @@
     align-items: center;
     z-index: 999;
     position: absolute;
-    bottom: 0;
-    right: 60px;
-    /* background-color: red; */
+    bottom: 2%;
+    right: 15%;
     border-radius: 100%;
     border: 1px solid #2955e750;
     background: #eef5fe;
@@ -1166,6 +1178,14 @@
       background: #2955e710;
       border-radius: 100%;
     }
+  }
+
+  .view-table {
+    height: 55vh;
+  }
+
+  .delete-button {
+    margin-top: 14px;
   }
 
   .error {
