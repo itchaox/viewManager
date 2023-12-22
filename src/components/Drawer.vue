@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-23 00:40
+ * @LastTime   : 2023-12-23 01:26
  * @desc       : 抽屉
 -->
 
@@ -882,7 +882,6 @@
         <div>
           <el-button
             type="primary"
-            size="small"
             @click="confirmAddView"
             :loading="drawerLoading"
             >确定</el-button
@@ -890,7 +889,6 @@
 
           <el-button
             type="info"
-            size="small"
             @click="cancel"
             >取消</el-button
           >
