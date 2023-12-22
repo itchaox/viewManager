@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-20 21:39
+ * @LastTime   : 2023-12-23 00:08
  * @desc       : 
 -->
 <script setup>
@@ -52,10 +52,10 @@
     await getViewMetaList();
 
     // 监听 table 滚动事件
-    const scrollDom = tableRef.value.scrollBarRef.wrapRef;
+    const scrollDom = tableRef.value?.scrollBarRef?.wrapRef;
     scrollDom.addEventListener('scroll', () => {
       // 滚动距离
-      let scrollTop = scrollDom.scrollTop;
+      let scrollTop = scrollDom?.scrollTop;
       if (scrollTop > 200) {
         showTableTop.value = true;
       } else {
@@ -68,8 +68,8 @@
    * @desc  : 滚动表格
    */
   const scrollTable = (targetY) => {
-    const scrollDom = tableRef.value.scrollBarRef.wrapRef;
-    const startY = scrollDom.scrollTop;
+    const scrollDom = tableRef.value?.scrollBarRef?.wrapRef;
+    const startY = scrollDom?.scrollTop;
 
     // const targetY = 0;
     const duration = 500; // 动画持续时间，单位：毫秒
@@ -84,7 +84,7 @@
       const progress = Math.min((timestamp - startTime) / duration, 1);
       const newY = easeInOutQuad(progress) * (targetY - startY) + startY;
 
-      scrollDom.scrollTo(0, newY);
+      scrollDom?.scrollTo(0, newY);
 
       if (progress < 1) {
         requestAnimationFrame(animateScroll);
@@ -188,7 +188,7 @@
     if (!event?.data?.fieldId && hasView !== -1 && isTable.value) {
       activeViewId.value = event?.data?.viewId;
       const _index = viewList.value.findIndex((item) => item.view_id === activeViewId.value);
-      const _height = document.querySelector('.el-table__row').offsetHeight;
+      const _height = document.querySelector('.el-table__row')?.offsetHeight;
 
       // 移动表格位置
       scrollTable(_index * _height);
@@ -1067,6 +1067,11 @@
       sub-title="请选择数据表格式!"
     >
       <template #extra>
+        <img
+          class="error"
+          src="../assets/error.png"
+          alt="格式错误"
+        />
         <el-button
           type="primary"
           @click="goDataBase"
@@ -1163,5 +1168,11 @@
       background: #2955e710;
       border-radius: 100%;
     }
+  }
+
+  .error {
+    width: 100%;
+    height: 50%;
+    margin-top: -40px;
   }
 </style>
