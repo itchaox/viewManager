@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-23 00:19
+ * @LastTime   : 2023-12-23 00:40
  * @desc       : 抽屉
 -->
 
@@ -586,6 +586,11 @@
             <template #title>
               <el-icon><Filter /></el-icon>
               <span class="collapse-title">设置筛选条件</span>
+              <span
+                v-if="filterList.length > 0"
+                style="color: #5c82f3"
+                >（{{ filterList.length }}）</span
+              >
             </template>
             <div v-if="filterList.length > 1">
               符合以下
@@ -711,6 +716,11 @@
             <template #title>
               <el-icon><SetUp /></el-icon>
               <span class="collapse-title">设置分组条件</span>
+              <span
+                v-if="groupList.length > 0"
+                style="color: #dd742f"
+                >（{{ groupList.length }}）</span
+              >
             </template>
             <div class="collapse-line-list">
               <div
@@ -786,6 +796,11 @@
             <template #title>
               <el-icon><Sort /></el-icon>
               <span class="collapse-title">设置排序条件</span>
+              <span
+                v-if="sortList.length > 0"
+                style="color: #4493c5"
+                >（{{ sortList.length }}）</span
+              >
             </template>
             <div class="collapse-line-list">
               <div
