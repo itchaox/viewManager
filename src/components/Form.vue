@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-23 00:08
+ * @LastTime   : 2023-12-23 00:21
  * @desc       : 
 -->
 <script setup>
@@ -777,8 +777,8 @@
         <div class="addView-line-label theme-view-text-color">视图范围:</div>
         <el-select
           v-model="viewRange"
+          style="width: 50%"
           placeholder="请选择视图范围"
-          size="small"
         >
           <el-option
             v-for="item in viewRangeList"
@@ -792,10 +792,9 @@
       <div class="addView-line">
         <div class="addView-line-label theme-view-text-color">视图名字:</div>
         <el-input
-          style="width: 160px"
+          style="width: 50%"
           v-model="searchViewName"
           clearable
-          size="small"
           placeholder="请输入视图名字"
         />
       </div>
@@ -805,8 +804,7 @@
         <el-select
           v-model="searchViewType"
           placeholder="请选择视图类型"
-          size="small"
-          style="width: 160px"
+          style="width: 50%"
         >
           <el-option
             v-for="item in searchViewTypeList"

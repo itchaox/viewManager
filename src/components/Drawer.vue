@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-22 23:33
+ * @LastTime   : 2023-12-23 00:19
  * @desc       : 抽屉
 -->
 
@@ -507,9 +507,9 @@
         <div class="addView-line">
           <div class="addView-line-label theme-view-text-color">视图名字:</div>
           <el-input
-            style="width: 160px"
+            style="width: 60%"
+            clearable
             v-model="addViewName"
-            size="small"
             placeholder="请输入视图名字"
           />
         </div>
@@ -519,8 +519,7 @@
           <el-select
             v-model="addViewType"
             placeholder="请选择视图类型"
-            size="small"
-            style="width: 160px"
+            style="width: 60%"
           >
             <el-option
               v-for="item in addViewTypeList"
