@@ -3,13 +3,15 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-22 00:12
+ * @LastTime   : 2023-12-22 23:33
  * @desc       : 抽屉
 -->
 
 <script setup lang="ts">
   import { bitable } from '@lark-base-open/js-sdk';
   import { Close } from '@element-plus/icons-vue';
+  import FieldIcon from './fieldIcon.jsx';
+
   import {
     AllApplication,
     Calendar,
@@ -64,7 +66,7 @@
   });
 
   // 文本类字段的集合
-  // 1 文本; 13 电话号码; 15 超链接; 22 地理位置; 99001 条形码
+  // 1 文本; 13 电话号码; 15 超链接; 22 地理位置; 99001 条形码; 99005 Email
   const textMap = ref([1, 13, 15, 22, 99001]);
 
   // 数字类字段的集合
@@ -77,6 +79,9 @@
 
   // 引用类型
   // 11 人员; 18 单向关联; 23 群组;
+
+  // 日期类型
+  // 5 日期; 1001 创建时间; 1002 修改时间
 
   async function init() {
     table = await base.getActiveTable();
@@ -623,7 +628,12 @@
                       :label="field.name"
                       :title="field.name"
                       :value="field.id"
-                    />
+                    >
+                      <field-icon :fieldType="field.type" />
+                      <span>
+                        {{ field.name }}
+                      </span>
+                    </el-option>
                   </el-select>
                 </div>
                 <div class="collapse-line-other">
@@ -724,7 +734,12 @@
                       :title="field.name"
                       :value="field.id"
                       :disabled="groupList.map((j) => j.id).includes(field.id)"
-                    />
+                    >
+                      <field-icon :fieldType="field.type" />
+                      <span>
+                        {{ field.name }}
+                      </span>
+                    </el-option>
                   </el-select>
                 </div>
                 <div class="collapse-line-other">
@@ -794,7 +809,12 @@
                       :title="field.name"
                       :value="field.id"
                       :disabled="sortList.map((j) => j.id).includes(field.id)"
-                    />
+                    >
+                      <field-icon :fieldType="field.type" />
+                      <span>
+                        {{ field.name }}
+                      </span>
+                    </el-option>
                   </el-select>
                 </div>
                 <div class="collapse-line-other">

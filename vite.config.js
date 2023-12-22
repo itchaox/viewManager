@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-06-21 11:48
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-16 10:22
+ * @LastTime   : 2023-12-22 00:30
  * @desc       :
  */
 
@@ -13,6 +13,8 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
+import vueJsx from '@vitejs/plugin-vue-jsx';
+
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 
 // https://vitejs.dev/config/
@@ -33,6 +35,8 @@ export default defineConfig({
   },
   plugins: [
     vue(),
+    vueJsx(),
+
     AutoImport({
       imports: ['vue', 'vue-router', 'pinia'],
       resolvers: [ElementPlusResolver()],
