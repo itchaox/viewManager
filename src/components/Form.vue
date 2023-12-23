@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-23 10:37
+ * @LastTime   : 2023-12-23 11:34
  * @desc       : 
 -->
 <script setup>
@@ -431,7 +431,23 @@
       duration: 1500,
       showClose: true,
     });
-    await getViewMetaList();
+    // await getViewMetaList();
+
+    if (userType.value === 1 || viewRange.value === 1) {
+      // 个人用户: 手动查询
+      // 企业用户: 全部视图范围还是走手动查询
+      await getViewMetaList();
+    } else {
+      // 先清空视图数组
+      viewList.value = [];
+      // 企业用户,通过掉接口
+      await getViewAllList();
+      await handlerViewList();
+    }
+
+    // 筛选视图类型和视图名字
+    handleFilterViewList();
+    page_token.value = '';
   }
 
   /**
@@ -459,7 +475,23 @@
       duration: 1500,
       showClose: true,
     });
-    await getViewMetaList();
+    // await getViewMetaList();
+
+    if (userType.value === 1 || viewRange.value === 1) {
+      // 个人用户: 手动查询
+      // 企业用户: 全部视图范围还是走手动查询
+      await getViewMetaList();
+    } else {
+      // 先清空视图数组
+      viewList.value = [];
+      // 企业用户,通过掉接口
+      await getViewAllList();
+      handlerViewList();
+    }
+
+    // 筛选视图类型和视图名字
+    handleFilterViewList();
+    page_token.value = '';
   }
 
   // 编辑视图
