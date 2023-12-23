@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-23 01:10
+ * @LastTime   : 2023-12-23 10:31
  * @desc       : 
 -->
 <script setup>
@@ -409,9 +409,12 @@
    * @param  {any} view_id 视图 id
    */
   function handleFileName(view_name, view_id) {
-    toRaw(table.value).setView(view_id, {
-      name: view_name,
-    });
+    const _list = viewList.value.filter((item) => item.view_name === view_name);
+    if (_list.length === 1) {
+      toRaw(table.value).setView(view_id, {
+        name: view_name,
+      });
+    }
   }
 
   /**
@@ -473,7 +476,6 @@
     // 在下一轮事件循环中，将输入框聚焦
     nextTick(() => {
       editInput.value.focus();
-      console.log('🚀  editInput:', typeof editInput.value);
     });
   }
 
@@ -555,7 +557,20 @@
   const activeViewId = ref();
 
   // 结束编辑，例如在输入框失焦时调用
-  async function endEditing(view_id) {
+  async function endEditing(view_id, view_name) {
+    // 包含当前修改的列
+    const _list = viewList.value.filter((item) => item.view_name === view_name);
+
+    if (_list.length > 1) {
+      ElMessage({
+        type: 'error',
+        message: '视图名字已存在,请重新输入!',
+        duration: 1500,
+        showClose: true,
+      });
+      return;
+    }
+
     viewList.value = viewList.value?.map((item) => {
       if (item.view_id === view_id) {
         item.isEditing = false;
@@ -996,8 +1011,8 @@
                 <el-input
                   v-if="(item?.isEditing && isEditing) || activeButtonId === scope.row.view_id"
                   ref="editInput"
-                  @blur="endEditing(scope.row.view_id)"
-                  @keydown.enter="endEditing(scope.row.view_id)"
+                  @blur="endEditing(scope.row.view_id, scope.row.view_name)"
+                  @keydown.enter="endEditing(scope.row.view_id, scope.row.view_name)"
                   :model-value="scope.row.view_name"
                   @change="(value) => handleFileName(value, scope.row.view_id)"
                   @input="(value) => (scope.row.view_name = value)"
