@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-23 01:26
+ * @LastTime   : 2023-12-23 09:19
  * @desc       : 抽屉
 -->
 
@@ -597,7 +597,7 @@
               <el-select
                 v-model="conjunction"
                 size="small"
-                style="width: 25%"
+                style="width: 60px"
               >
                 <el-option
                   key="and"
@@ -645,6 +645,7 @@
                   <el-select
                     v-model="item.operator"
                     size="small"
+                    style="width: 105px"
                   >
                     <template v-if="textMap.includes(item.type) || selectMap.includes(item.type)">
                       <el-option
@@ -665,12 +666,17 @@
                     </template>
                   </el-select>
                   <!-- 值 -->
-                  <div class="collapse-line-value">
+                  <div
+                    class="collapse-line-value"
+                    style="width: 50%"
+                  >
                     <el-input
                       v-if="showInput(item.operator) && (textMap.includes(item.type) || numberMap.includes(item.type))"
                       v-model="item.value"
+                      :title="item.value"
                       size="small"
-                      placeholder="请输入"
+                      :placeholder="`请输入${item.name}`"
+                      suffix-icon="x"
                     />
 
                     <!-- FIXME 多选操作,暂时有问题 -->
@@ -680,8 +686,9 @@
                       :collapse-tags="item.type === 4"
                       :collapse-tags-tooltip="item.type === 4"
                       v-model="item.value"
+                      :title="item?.options?.find((i) => i.id === item.value)?.name"
                       size="small"
-                      placeholder="请选择选项"
+                      :placeholder="`请选择${item.name}`"
                     >
                       <el-option
                         v-for="j in item.options"
@@ -944,6 +951,7 @@
 
   .collapse-line-other {
     display: flex;
+    justify-content: flex-end;
   }
 
   .collapse-line-value {
