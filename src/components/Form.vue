@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-23 10:31
+ * @LastTime   : 2023-12-23 10:37
  * @desc       : 
 -->
 <script setup>
@@ -1200,7 +1200,7 @@
   }
 
   .delete-button {
-    margin-top: 14px;
+    margin-top: 10px;
   }
 
   .error {
