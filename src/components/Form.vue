@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-01 13:45
+ * @LastTime   : 2024-01-01 17:18
  * @desc       : 
 -->
 <script setup>
@@ -1103,7 +1103,6 @@
         <el-button
           @click="batchDelete"
           type="danger"
-          size="small"
           color="#F54A45"
         >
           <el-icon><Delete /></el-icon>
