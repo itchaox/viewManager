@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-01 17:00
+ * @LastTime   : 2024-01-01 17:32
  * @desc       : 抽屉
 -->
 
@@ -618,7 +618,12 @@
       size="85%"
     >
       <template #header="{ close, titleId }">
-        <div :id="titleId">新增视图</div>
+        <div
+          :id="titleId"
+          class="header"
+        >
+          新增视图
+        </div>
         <el-button
           type="danger"
           @click="close"
@@ -1206,5 +1211,18 @@
     span {
       margin-left: 5px;
     }
+  }
+
+  :deep(.el-collapse-item__content) {
+    padding-bottom: 12px;
+  }
+
+  :deep(.el-drawer__header) {
+    margin-bottom: 12px;
+  }
+
+  .header {
+    color: rgb(20, 86, 240);
+    font-weight: 500;
   }
 </style>
