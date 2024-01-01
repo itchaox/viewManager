@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-23 11:34
+ * @LastTime   : 2024-01-01 13:45
  * @desc       : 
 -->
 <script setup>
@@ -960,7 +960,7 @@
           ref="tableRef"
           :data="viewList"
           @selection-change="handleSelectionChange"
-          height="100%"
+          max-height="55vh"
           empty-text="暂无数据"
         >
           <el-table-column
@@ -1228,7 +1228,7 @@
   }
 
   .view-table {
-    height: 55vh;
+    /* height: 55vh; */
   }
 
   .delete-button {

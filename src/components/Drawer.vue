@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-23 09:19
+ * @LastTime   : 2024-01-01 17:00
  * @desc       : 抽屉
 -->
 
@@ -20,6 +20,8 @@
     GridNine,
     CheckCorrect,
     ApplicationMenu,
+    PreviewOpen,
+    PreviewClose,
   } from '@icon-park/vue-next';
 
   const base = bitable.base;
@@ -49,13 +51,33 @@
   // 排序的字段列表
   const sortFieldList = ref([]);
 
-  // watch(
-  //   () => props.modelValue,
-  //   async (newValue, _) => {
-  //     if (newValue) {
-  //     }
-  //   },
-  // );
+  // 字段表格列表
+  const fieldTableList = ref([]);
+
+  // 处理字段表格
+  watch(
+    () => props.modelValue,
+    async (newValue, _) => {
+      if (newValue) {
+        // const _visibleFieldIdList = await view.getVisibleFieldIdList();
+
+        // 处理字段显示隐藏
+        fieldTableList.value = fieldList.value.map((item) => {
+          item = {
+            ...item,
+            isShow: true,
+          };
+
+          // _visibleFieldIdList.forEach((visibleFieldId) => {
+          //   if (item.id === visibleFieldId) {
+          //     item.isShow = true;
+          //   }
+          // });
+          return item;
+        });
+      }
+    },
+  );
 
   onMounted(async () => {
     init();
@@ -97,6 +119,46 @@
 
   const addViewName = ref();
   const addViewType = ref(1);
+
+  watch(
+    () => addViewType.value,
+    (newValue, oldValue) => {
+      // 默认字段都展示
+      fieldTableList.value = fieldTableList.value.map((item) => ({ ...item, isShow: true }));
+
+      // 画册
+      if (newValue === 4) {
+        fieldTableList.value = fieldTableList.value.map((item, index) => {
+          if (index < 4) {
+            item.isShow = true;
+          } else {
+            item.isShow = false;
+          }
+
+          return item;
+        });
+      }
+
+      // 甘特图
+      if (newValue === 5) {
+        fieldTableList.value = fieldTableList.value.map((item) => ({ ...item, isShow: false }));
+      }
+
+      // 日历
+      if (newValue === 7) {
+        fieldTableList.value = fieldTableList.value.map((item, index) => {
+          // 默认显示日期字段
+          if (item.type === 5) {
+            item.isShow = true;
+          } else {
+            item.isShow = false;
+          }
+
+          return item;
+        });
+      }
+    },
+  );
 
   /**
    * @desc  : 确认新增视图
@@ -161,6 +223,22 @@
         );
       }
 
+      // 字段配置
+      const _showFieldIdList = [];
+      const _hideFieldIdList = [];
+
+      fieldTableList.value.map((item) => {
+        if (item.isShow) {
+          _showFieldIdList.push(item.id);
+        } else {
+          _hideFieldIdList.push(item.id);
+        }
+      });
+
+      await view.showField(_showFieldIdList);
+      await view.hideField(_hideFieldIdList);
+
+      // 同步配置
       if (sync.value) {
         await view.applySetting();
       }
@@ -198,6 +276,7 @@
     groupList.value = [];
     sortList.value = [];
     collapse.value = '';
+    fieldTableList.value = [];
     drawerLoading.value = false;
     sync.value = false;
   }
@@ -479,6 +558,53 @@
     }
     return _text;
   };
+
+  const selectFieldIdList = ref([]);
+
+  const handleSelectionChange = (val) => {
+    selectFieldIdList.value = val?.map((item) => item.id);
+  };
+
+  function selectable(row, index) {
+    // 第一个字段不能编辑
+    if (index === 0) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  function batchShow() {
+    fieldTableList.value = fieldTableList.value.map((item) => {
+      if (selectFieldIdList.value.includes(item.id)) {
+        item.isShow = true;
+      }
+
+      return item;
+    });
+
+    ElMessage.success({
+      message: '批量显示配置成功',
+      duration: 1500,
+      showClose: true,
+    });
+  }
+
+  function batchHide() {
+    fieldTableList.value = fieldTableList.value.map((item) => {
+      if (selectFieldIdList.value.includes(item.id)) {
+        item.isShow = false;
+      }
+
+      return item;
+    });
+
+    ElMessage.success({
+      message: '批量隐藏配置成功',
+      duration: 1500,
+      showClose: true,
+    });
+  }
 </script>
 
 <template>
@@ -874,6 +1000,102 @@
               <el-icon><Plus /></el-icon>添加条件
             </el-button>
           </el-collapse-item>
+
+          <!-- FIXME 字段配置 -->
+          <el-collapse-item name="4">
+            <template #title>
+              <el-icon><Setting /></el-icon>
+              <span class="collapse-title">字段配置</span>
+            </template>
+            <div class="collapse-line-list">
+              <el-table
+                :data="fieldTableList"
+                @selection-change="handleSelectionChange"
+                empty-text="暂无数据"
+              >
+                <el-table-column
+                  :selectable="selectable"
+                  type="selection"
+                  width="30"
+                />
+
+                <el-table-column
+                  label="字段名字"
+                  :min-width="120"
+                >
+                  <template #default="scope">
+                    <div
+                      :title="scope?.row?.name"
+                      class="view-name"
+                    >
+                      <field-icon :fieldType="scope?.row?.type" />
+                      <span>
+                        {{ scope?.row?.name }}
+                      </span>
+                    </div>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  property="name"
+                  label="操作"
+                  width="60"
+                >
+                  <template #default="scope">
+                    <el-button
+                      v-show="scope.$index !== 0"
+                      size="small"
+                      type="danger"
+                      link
+                      @click="() => (scope.row.isShow = !scope?.row?.isShow)"
+                    >
+                      <preview-open
+                        v-if="scope.row.isShow"
+                        theme="outline"
+                        size="20"
+                        fill="#333"
+                        strokeLinecap="square"
+                      />
+                      <preview-close
+                        v-else
+                        theme="outline"
+                        size="20"
+                        fill="#333"
+                        strokeLinecap="square"
+                      />
+                    </el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+
+              <div class="button">
+                <el-button
+                  type="primary"
+                  size="small"
+                  @click="batchShow"
+                >
+                  <preview-open
+                    theme="outline"
+                    size="20"
+                    strokeLinecap="square"
+                  />
+                  <span>批量显示</span>
+                </el-button>
+
+                <el-button
+                  type="primary"
+                  size="small"
+                  @click="batchHide"
+                >
+                  <preview-close
+                    theme="outline"
+                    size="20"
+                    strokeLinecap="square"
+                  />
+                  <span>批量隐藏</span>
+                </el-button>
+              </div>
+            </div>
+          </el-collapse-item>
         </el-collapse>
 
         <div
@@ -976,5 +1198,13 @@
   .view-name-icon {
     position: relative;
     top: 2px;
+  }
+
+  .button {
+    margin-top: 10px;
+
+    span {
+      margin-left: 5px;
+    }
   }
 </style>
