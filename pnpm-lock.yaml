@@ -29,6 +29,9 @@ dependencies:
   vue:
     specifier: ^3.2.37
     version: 3.2.37
+  vue-draggable-plus:
+    specifier: ^0.3.4
+    version: 0.3.4(@types/sortablejs@1.15.7)
   vue-i18n:
     specifier: ^9.4.1
     version: 9.4.1(vue@3.2.37)
@@ -803,6 +806,10 @@ packages:
 
   /@types/lodash@4.14.202:
     resolution: {integrity: sha512-OvlIYQK9tNneDlS0VN54LLd5uiPCBOp7gS5Z0f1mjoJYBrtStzgmJBxONW3U6OZqdtNzZPmn9BS/7WI7BFFcFQ==}
+    dev: false
+
+  /@types/sortablejs@1.15.7:
+    resolution: {integrity: sha512-PvgWCx1Lbgm88FdQ6S7OGvLIjWS66mudKPlfdrWil0TjsO5zmoZmzoKiiwRShs1dwPgrlkr0N4ewuy0/+QUXYQ==}
     dev: false
 
   /@types/web-bluetooth@0.0.16:
@@ -1744,6 +1751,18 @@ packages:
         optional: true
     dependencies:
       vue: 3.2.37
+    dev: false
+
+  /vue-draggable-plus@0.3.4(@types/sortablejs@1.15.7):
+    resolution: {integrity: sha512-3HyaQiJZLrhr6fdD66cS2O4HOsxyo8rfrdcvFctmsduRnBTMYwPsLmONN1WU7RGWHQoBBodt5l2PeRCvblgP3A==}
+    peerDependencies:
+      '@types/sortablejs': ^1.15.0
+      '@vue/composition-api': '*'
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+    dependencies:
+      '@types/sortablejs': 1.15.7
     dev: false
 
   /vue-i18n@9.4.1(vue@3.2.37):

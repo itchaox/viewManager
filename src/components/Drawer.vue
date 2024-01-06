@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-06 09:14
+ * @LastTime   : 2024-01-06 23:56
  * @desc       : 抽屉
 -->
 
@@ -24,7 +24,10 @@
     PreviewClose,
     ViewList,
     AlphabeticalSorting,
+    Drag,
   } from '@icon-park/vue-next';
+
+  import { VueDraggable } from 'vue-draggable-plus';
 
   const base = bitable.base;
 
@@ -607,6 +610,9 @@
       showClose: true,
     });
   }
+
+  const el = ref();
+  const el2 = ref();
 </script>
 
 <template>
@@ -865,34 +871,51 @@
                 >（{{ groupList.length }}）</span
               >
             </template>
-            <div class="collapse-line-list">
+            <VueDraggable
+              ref="el"
+              v-model="groupList"
+              animation="150"
+              handle=".handle"
+              class="collapse-line-list"
+            >
+              <!-- <div class="collapse-line-list"> -->
               <div
                 class="collapse-line"
                 v-for="(item, index) in groupList"
                 :key="item.id"
               >
-                <!-- 字段名 -->
-                <div class="collapse-line-filed">
-                  <el-select
-                    size="small"
-                    v-model="item.id"
-                    :title="item.name"
-                    @change="groupFiledChange(item, index)"
-                  >
-                    <el-option
-                      v-for="field in groupFieldList"
-                      :key="field.id"
-                      :label="field.name"
-                      :title="field.name"
-                      :value="field.id"
-                      :disabled="groupList.map((j) => j.id).includes(field.id)"
+                <div class="drag">
+                  <Drag
+                    class="handle cursor-move"
+                    theme="outline"
+                    size="18"
+                    fill="#333"
+                    strokeLinejoin="miter"
+                    strokeLinecap="butt"
+                  />
+                  <!-- 字段名 -->
+                  <div class="collapse-line-filed">
+                    <el-select
+                      size="small"
+                      v-model="item.id"
+                      :title="item.name"
+                      @change="groupFiledChange(item, index)"
                     >
-                      <field-icon :fieldType="field.type" />
-                      <span>
-                        {{ field.name }}
-                      </span>
-                    </el-option>
-                  </el-select>
+                      <el-option
+                        v-for="field in groupFieldList"
+                        :key="field.id"
+                        :label="field.name"
+                        :title="field.name"
+                        :value="field.id"
+                        :disabled="groupList.map((j) => j.id).includes(field.id)"
+                      >
+                        <field-icon :fieldType="field.type" />
+                        <span>
+                          {{ field.name }}
+                        </span>
+                      </el-option>
+                    </el-select>
+                  </div>
                 </div>
                 <div class="collapse-line-other">
                   <!-- 值 -->
@@ -921,7 +944,8 @@
                   />
                 </div>
               </div>
-            </div>
+              <!-- </div> -->
+            </VueDraggable>
             <el-button
               v-if="groupList.length < 3"
               text
@@ -945,35 +969,54 @@
                 >（{{ sortList.length }}）</span
               >
             </template>
-            <div class="collapse-line-list">
+            <VueDraggable
+              ref="el2"
+              v-model="sortList"
+              animation="150"
+              handle=".handle2"
+              class="collapse-line-list"
+            >
+              <!-- <div class="collapse-line-list"> -->
+
               <div
                 class="collapse-line"
                 v-for="(item, index) in sortList"
                 :key="item.id"
               >
-                <!-- 字段名 -->
-                <div class="collapse-line-filed">
-                  <el-select
-                    size="small"
-                    v-model="item.id"
-                    :title="item.name"
-                    @change="sortFiledChange(item, index)"
-                  >
-                    <el-option
-                      v-for="field in sortFieldList"
-                      :key="field.id"
-                      :label="field.name"
-                      :title="field.name"
-                      :value="field.id"
-                      :disabled="sortList.map((j) => j.id).includes(field.id)"
+                <div class="drag2">
+                  <Drag
+                    class="handle2 cursor-move"
+                    theme="outline"
+                    size="18"
+                    fill="#333"
+                    strokeLinejoin="miter"
+                    strokeLinecap="butt"
+                  />
+                  <!-- 字段名 -->
+                  <div class="collapse-line-filed">
+                    <el-select
+                      size="small"
+                      v-model="item.id"
+                      :title="item.name"
+                      @change="sortFiledChange(item, index)"
                     >
-                      <field-icon :fieldType="field.type" />
-                      <span>
-                        {{ field.name }}
-                      </span>
-                    </el-option>
-                  </el-select>
+                      <el-option
+                        v-for="field in sortFieldList"
+                        :key="field.id"
+                        :label="field.name"
+                        :title="field.name"
+                        :value="field.id"
+                        :disabled="sortList.map((j) => j.id).includes(field.id)"
+                      >
+                        <field-icon :fieldType="field.type" />
+                        <span>
+                          {{ field.name }}
+                        </span>
+                      </el-option>
+                    </el-select>
+                  </div>
                 </div>
+
                 <div class="collapse-line-other">
                   <!-- 值 -->
                   <div class="collapse-line-value">
@@ -1001,7 +1044,8 @@
                   />
                 </div>
               </div>
-            </div>
+              <!-- </div> -->
+            </VueDraggable>
             <el-button
               v-if="sortFieldList.length > sortList.length"
               text
@@ -1231,5 +1275,33 @@
   .header {
     color: rgb(20, 86, 240);
     font-weight: 500;
+  }
+
+  .cursor-move {
+    cursor: grab;
+  }
+
+  .drag {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .handle {
+      position: relative;
+      padding-top: 5px;
+      margin-right: 10px;
+    }
+  }
+
+  .drag2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .handle2 {
+      position: relative;
+      padding-top: 5px;
+      margin-right: 10px;
+    }
   }
 </style>
