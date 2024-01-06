@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-22 00:35
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-22 23:35
+ * @LastTime   : 2024-01-06 08:58
  * @desc       : 字段列表 icon
  */
 import { defineComponent } from 'vue';
@@ -23,6 +23,7 @@ import {
   DocSearchTwo,
   OrderedList,
   FileWithdrawalOne,
+  FileConversionOne,
   EmailSuccessfully,
   PhoneTelephone,
   Local,
@@ -194,6 +195,14 @@ export default defineComponent({
             size='14'
             style={iconStyle}
             strokeLinejoin='miter'
+          />
+        )}
+
+        {fieldType === 21 && (
+          <FileConversionOne
+            style={iconStyle}
+            theme='filled'
+            size='14'
           />
         )}
 

@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-01 17:32
+ * @LastTime   : 2024-01-06 09:14
  * @desc       : 抽屉
 -->
 
@@ -22,6 +22,8 @@
     ApplicationMenu,
     PreviewOpen,
     PreviewClose,
+    ViewList,
+    AlphabeticalSorting,
   } from '@icon-park/vue-next';
 
   const base = bitable.base;
@@ -852,7 +854,10 @@
             v-if="addViewType === 1 || addViewType === 5"
           >
             <template #title>
-              <el-icon><SetUp /></el-icon>
+              <ViewList
+                theme="outline"
+                strokeLinejoin="bevel"
+              />
               <span class="collapse-title">设置分组条件</span>
               <span
                 v-if="groupList.length > 0"
@@ -932,7 +937,7 @@
             v-if="addViewType !== 7"
           >
             <template #title>
-              <el-icon><Sort /></el-icon>
+              <AlphabeticalSorting theme="outline" />
               <span class="collapse-title">设置排序条件</span>
               <span
                 v-if="sortList.length > 0"
@@ -1158,6 +1163,8 @@
 
   .collapse-title {
     margin-left: 5px;
+    position: relative;
+    bottom: 1px;
   }
 
   .collapse-line-list {
