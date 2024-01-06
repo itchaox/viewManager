@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-06 23:56
+ * @LastTime   : 2024-01-07 00:44
  * @desc       : 抽屉
 -->
 
@@ -533,7 +533,7 @@
     } else if (numberList.includes(type)) {
       _text = '0 → 9';
     } else if (optionList.includes(type)) {
-      _text = '顺序';
+      _text = '选项顺序';
     } else {
       _text = 'A → Z';
     }
@@ -557,7 +557,7 @@
     } else if (numberList.includes(type)) {
       _text = '9 → 0';
     } else if (optionList.includes(type)) {
-      _text = '倒序';
+      _text = '选项倒序';
     } else {
       _text = 'Z → A';
     }
@@ -896,6 +896,7 @@
                   <!-- 字段名 -->
                   <div class="collapse-line-filed">
                     <el-select
+                      :style="{ width: 'auto' }"
                       size="small"
                       v-model="item.id"
                       :title="item.name"
@@ -922,12 +923,14 @@
                   <div class="collapse-line-value">
                     <el-button-group size="small">
                       <el-button
+                        class="collapse-btn"
                         type="primary"
                         :plain="item.desc"
                         @click="() => (item.desc = !item.desc)"
                         >{{ getGroupTextOrder(item.type) }}</el-button
                       >
                       <el-button
+                        class="collapse-btn"
                         type="primary"
                         :plain="!item.desc"
                         @click="() => (item.desc = !item.desc)"
@@ -1022,12 +1025,14 @@
                   <div class="collapse-line-value">
                     <el-button-group size="small">
                       <el-button
+                        class="collapse-btn"
                         type="primary"
                         :plain="item.desc"
                         @click="() => (item.desc = !item.desc)"
                         >{{ getGroupTextOrder(item.type) }}</el-button
                       >
                       <el-button
+                        class="collapse-btn"
                         type="primary"
                         :plain="!item.desc"
                         @click="() => (item.desc = !item.desc)"
@@ -1228,6 +1233,7 @@
   }
 
   .collapse-line-other {
+    width: 75%;
     display: flex;
     justify-content: flex-end;
   }
@@ -1303,5 +1309,9 @@
       padding-top: 5px;
       margin-right: 10px;
     }
+  }
+
+  .collapse-btn {
+    width: 65px;
   }
 </style>
