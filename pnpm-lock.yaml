@@ -35,6 +35,9 @@ dependencies:
   vue-i18n:
     specifier: ^9.4.1
     version: 9.4.1(vue@3.2.37)
+  vue-sonner:
+    specifier: ^1.0.2
+    version: 1.0.2
 
 devDependencies:
   '@vitejs/plugin-vue':
@@ -1775,6 +1778,10 @@ packages:
       '@intlify/shared': 9.4.1
       '@vue/devtools-api': 6.5.1
       vue: 3.2.37
+    dev: false
+
+  /vue-sonner@1.0.2:
+    resolution: {integrity: sha512-BXIyb9lGSMUjTpOukISp7oV9nrczgbfYz+TnDeoap3io3ayGXiWv+/3eQ9UKnmofwUlC4nh/H5jzBOO89lRItQ==}
     dev: false
 
   /vue@3.2.37:

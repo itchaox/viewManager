@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    BetterToaster: typeof import('./src/components/common/BetterToaster.vue')['default']
     Drawer: typeof import('./src/components/Drawer.vue')['default']
     ElAffix: typeof import('element-plus/es')['ElAffix']
     ElBacktop: typeof import('element-plus/es')['ElBacktop']

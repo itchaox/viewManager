@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-01 17:18
+ * @LastTime   : 2024-01-07 09:10
  * @desc       : 
 -->
 <script setup>
@@ -18,6 +18,8 @@
     CheckCorrect,
     ApplicationMenu,
   } from '@icon-park/vue-next';
+
+  import { toast } from 'vue-sonner';
 
   import Drawer from './Drawer.vue';
 
@@ -223,20 +225,10 @@
     if (response?.data?.code === 0) {
       tenant_access_token.value = response?.data?.tenant_access_token;
       Verify.value = true;
-      ElMessage({
-        type: 'success',
-        message: '自建应用凭证调用成功',
-        duration: 1500,
-        showClose: true,
-      });
+      toast.success('自建应用凭证调用成功');
       openEnterprise.value = false;
     } else {
-      ElMessage({
-        type: 'error',
-        message: 'app_id 或 app_secret 错误, 请检查后重试!',
-        duration: 1500,
-        showClose: true,
-      });
+      toast.error('app_id 或 app_secret 错误, 请检查后重试!');
     }
     // expire 时间到了自动刷新问题, 分钟
   }
@@ -315,13 +307,7 @@
           page_token.value = response.data?.data?.page_token;
           await getViewAllList();
         } else {
-          ElMessage({
-            type: 'success',
-            message: '查询成功',
-            duration: 1500,
-
-            showClose: true,
-          });
+          toast.success('查询成功');
         }
       }
     } catch (error) {
@@ -336,13 +322,7 @@
     table.value = await base.getActiveTable();
 
     viewList.value = await toRaw(table.value).getViewMetaList();
-    ElMessage({
-      type: 'success',
-      message: '查询成功',
-      duration: 1500,
-
-      showClose: true,
-    });
+    toast.success('查询成功');
 
     handlerViewList();
   }
@@ -425,12 +405,7 @@
   async function handleDelete(index, view_id) {
     loading.value = true;
     await toRaw(table.value).deleteView(view_id);
-    ElMessage({
-      type: 'success',
-      message: '删除成功',
-      duration: 1500,
-      showClose: true,
-    });
+    toast.success('删除成功');
     // await getViewMetaList();
 
     if (userType.value === 1 || viewRange.value === 1) {
@@ -455,12 +430,7 @@
    */
   async function batchDelete() {
     if (selectViewIdList.value?.length === 0) {
-      ElMessage({
-        type: 'error',
-        message: '请先勾选视图!',
-        duration: 1500,
-        showClose: true,
-      });
+      toast.error('请先勾选视图！');
       return;
     }
 
@@ -469,12 +439,7 @@
     for (const view_id of selectViewIdList.value) {
       await toRaw(table.value).deleteView(view_id);
     }
-    ElMessage({
-      type: 'success',
-      message: '批量删除成功',
-      duration: 1500,
-      showClose: true,
-    });
+    toast.success('批量删除成功');
     // await getViewMetaList();
 
     if (userType.value === 1 || viewRange.value === 1) {
@@ -594,12 +559,7 @@
     const _list = viewList.value.filter((item) => item.view_name === view_name);
 
     if (_list.length > 1) {
-      ElMessage({
-        type: 'error',
-        message: '视图名字已存在,请重新输入!',
-        duration: 1500,
-        showClose: true,
-      });
+      toast.error('视图名字已存在,请重新输入！');
       return;
     }
 
@@ -942,6 +902,10 @@
       >
         总共 {{ viewList.length }} 个视图
       </div>
+      <div
+        v-show="loading"
+        class="total-text"
+      ></div>
 
       <div
         class="table-top"
@@ -1177,6 +1141,8 @@
   }
 
   .total-text {
+    height: 14px;
+    line-height: 14px;
     font-size: 14px;
   }
 

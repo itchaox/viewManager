@@ -3,13 +3,15 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-07 00:44
+ * @LastTime   : 2024-01-07 09:02
  * @desc       : 抽屉
 -->
 
 <script setup lang="ts">
   import { bitable } from '@lark-base-open/js-sdk';
   import { Close } from '@element-plus/icons-vue';
+
+  import { toast } from 'vue-sonner';
   import FieldIcon from './fieldIcon.jsx';
 
   import {
@@ -183,13 +185,7 @@
       // addViewType.value = 1;
       // emits('update:model-value', false);
 
-      ElMessage({
-        type: 'success',
-        message: '新增成功',
-        duration: 1500,
-
-        showClose: true,
-      });
+      toast.success('新增成功');
 
       // 筛选
       if (filterList.value?.length > 0) {
@@ -259,12 +255,7 @@
       reset();
       emits('confirmAddView');
     } else {
-      ElMessage({
-        type: 'error',
-        message: '视图名字已存在,请重新输入!',
-        duration: 1500,
-        showClose: true,
-      });
+      toast.error('视图名字已存在，请重新输入！');
     }
   }
 
@@ -580,6 +571,11 @@
   }
 
   function batchShow() {
+    if (selectFieldIdList.value.length === 0) {
+      toast.warning('请先勾选字段');
+      return;
+    }
+
     fieldTableList.value = fieldTableList.value.map((item) => {
       if (selectFieldIdList.value.includes(item.id)) {
         item.isShow = true;
@@ -588,14 +584,15 @@
       return item;
     });
 
-    ElMessage.success({
-      message: '批量显示配置成功',
-      duration: 1500,
-      showClose: true,
-    });
+    toast.success('批量显示配置成功');
   }
 
   function batchHide() {
+    if (selectFieldIdList.value.length === 0) {
+      toast.warning('请先勾选字段');
+      return;
+    }
+
     fieldTableList.value = fieldTableList.value.map((item) => {
       if (selectFieldIdList.value.includes(item.id)) {
         item.isShow = false;
@@ -604,11 +601,7 @@
       return item;
     });
 
-    ElMessage.success({
-      message: '批量隐藏配置成功',
-      duration: 1500,
-      showClose: true,
-    });
+    toast.success('批量隐藏配置成功');
   }
 
   const el = ref();
