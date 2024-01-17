@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-17 21:41
+ * @LastTime   : 2024-01-17 21:59
  * @desc       : 
 -->
 <script setup>
@@ -1057,7 +1057,7 @@
                 type="danger"
                 link
                 @click="handleDelete(scope.$index, scope.row.view_id)"
-                ><el-icon size="16"><Delete /></el-icon
+                ><el-icon size="20"><Delete /></el-icon
               ></el-button>
             </template>
           </el-table-column>
