@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-07 09:02
+ * @LastTime   : 2024-01-17 21:51
  * @desc       : 抽屉
 -->
 
@@ -1079,6 +1079,7 @@
                     <div
                       :title="scope?.row?.name"
                       class="view-name"
+                      :style="{ color: scope.row.isShow ? '#1f2329' : '#bbbfc4' }"
                     >
                       <field-icon :fieldType="scope?.row?.type" />
                       <span>
