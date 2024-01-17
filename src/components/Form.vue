@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-17 22:15
+ * @LastTime   : 2024-01-17 23:58
  * @desc       : 
 -->
 <script setup>
@@ -52,6 +52,7 @@
     activeViewId.value = selection.viewId;
 
     await getViewMetaList();
+    handleFilterViewList();
 
     // 监听 table 滚动事件
     const scrollDom = tableRef.value?.scrollBarRef?.wrapRef;
@@ -208,6 +209,7 @@
     if (hasView !== -1 && hasView !== undefined) {
       activeViewId.value = event?.data?.viewId;
     }
+    handleFilterViewList();
   });
 
   const tenant_access_token = ref();
@@ -437,8 +439,13 @@
    * @desc  : 批量删除
    */
   async function batchDelete() {
+    if (selectViewIdList.value.length === viewList.value.length) {
+      toast.warning('请至少保留一个视图！');
+      return;
+    }
+
     if (selectViewIdList.value?.length === 0) {
-      toast.error('请先勾选视图！');
+      toast.warning('请先勾选视图！');
       return;
     }
 
@@ -587,7 +594,8 @@
   function selectable(row, index) {
     // 第一个视图不能删除, 个人视图删除时不做显示
     if (index === 0 && viewRange.value === 1) {
-      return false;
+      // return false;
+      return true;
     } else {
       return true;
     }
@@ -616,7 +624,8 @@
 
   function handleFilterViewList() {
     // 筛选视图类型和视图名字
-    viewList.value = viewList.value.filter((item) => {
+    // viewList.value = viewList.value.filter((item) => {
+    filterViewList.value = viewList.value.filter((item) => {
       const typeMatch = searchViewType.value === 'all' || item.view_type === searchViewType.value;
       const nameMatch = !searchViewName.value || item?.view_name?.includes(searchViewName.value);
       return typeMatch && nameMatch;
@@ -628,6 +637,7 @@
     searchViewName.value = '';
     searchViewType.value = 'all';
     await getViewMetaList();
+    handleFilterViewList();
   }
 
   /**
@@ -909,7 +919,7 @@
         class="total-text theme-view-text-color"
         v-show="!loading"
       >
-        总共 {{ viewList.length }} 个视图
+        总共 {{ filterViewList.length }} 个视图
       </div>
       <div
         v-show="loading"
@@ -929,14 +939,16 @@
       </div>
 
       <div class="view-table">
+        <!-- :data="viewList" -->
         <el-table
           ref="tableRef"
-          :data="viewList"
+          :data="filterViewList"
           @selection-change="handleSelectionChange"
           max-height="55vh"
           empty-text="暂无数据"
         >
           <el-table-column
+            v-if="filterViewList.length > 1"
             :selectable="selectable"
             type="selection"
             width="30"
@@ -944,6 +956,7 @@
 
           <el-table-column
             label="视图名字"
+            align="center"
             :min-width="120"
           >
             <!-- <template #default="scope">{{ scope.row.name }}</template> -->
@@ -1026,6 +1039,7 @@
             </template>
           </el-table-column>
           <el-table-column
+            v-if="viewList.length > 1"
             property="name"
             label="操作"
             width="60"
@@ -1060,7 +1074,7 @@
           </el-dropdown> -->
 
               <el-button
-                v-if="scope.$index !== 0 || viewRange !== 1"
+                v-if="viewList.length > 1 || viewRange !== 1"
                 size="small"
                 type="danger"
                 link
@@ -1074,6 +1088,7 @@
 
       <div class="delete-button">
         <el-button
+          v-if="filterViewList.length > 1"
           @click="batchDelete"
           type="danger"
           color="#F54A45"
