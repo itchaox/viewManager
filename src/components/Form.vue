@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-07 09:10
+ * @LastTime   : 2024-01-17 21:41
  * @desc       : 
 -->
 <script setup>
@@ -796,6 +796,7 @@
         <el-input
           style="width: 50%"
           v-model="searchViewName"
+          @keydown.enter="searchView"
           clearable
           placeholder="请输入视图名字"
         />
