@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-17 22:11
+ * @LastTime   : 2024-01-17 22:15
  * @desc       : 
 -->
 <script setup>
@@ -64,6 +64,12 @@
         showTableTop.value = false;
       }
     });
+
+    const _index = viewList.value.findIndex((item) => item.view_id === activeViewId.value);
+    const _height = document.querySelector('.el-table__row')?.offsetHeight;
+
+    // 移动表格位置
+    scrollTable(_index * _height);
   });
 
   /**
