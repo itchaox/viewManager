@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-17 21:59
+ * @LastTime   : 2024-01-17 22:11
  * @desc       : 
 -->
 <script setup>
@@ -177,6 +177,8 @@
     const hasView = viewList.value.findIndex((item) => item.view_id === event?.data?.viewId);
     // 新增视图或修改数据表, 则重新调用视图列表
     if (!event?.data?.fieldId && hasView === -1 && isTable.value) {
+      addViewDrawer.value = false;
+
       activeViewId.value = event?.data?.viewId;
       await getViewMetaList();
       const _index = viewList.value.findIndex((item) => item.view_id === activeViewId.value);
