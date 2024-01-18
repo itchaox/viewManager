@@ -2,13 +2,13 @@
  * @Version    : v1.00
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
- * @LastAuthor : itchaox
- * @LastTime   : 2024-01-17 23:58
+ * @LastAuthor : wangchao
+ * @LastTime   : 2024-01-18 10:01
  * @desc       : 
 -->
 <script setup>
-  import { bitable } from '@lark-base-open/js-sdk';
-  import { BASE_URL } from '@/config';
+  import { bitable } from "@lark-base-open/js-sdk";
+  import { BASE_URL } from "@/config";
   import {
     AllApplication,
     Calendar,
@@ -17,13 +17,13 @@
     GridNine,
     CheckCorrect,
     ApplicationMenu,
-  } from '@icon-park/vue-next';
+  } from "@icon-park/vue-next";
 
-  import { toast } from 'vue-sonner';
+  import { toast } from "vue-sonner";
 
-  import Drawer from './Drawer.vue';
+  import Drawer from "./Drawer.vue";
 
-  import axios from 'axios';
+  import axios from "axios";
 
   const base = bitable.base;
 
@@ -56,7 +56,7 @@
 
     // 监听 table 滚动事件
     const scrollDom = tableRef.value?.scrollBarRef?.wrapRef;
-    scrollDom.addEventListener('scroll', () => {
+    await scrollDom.addEventListener("scroll", () => {
       // 滚动距离
       let scrollTop = scrollDom?.scrollTop;
       if (scrollTop > 200) {
@@ -67,7 +67,7 @@
     });
 
     const _index = viewList.value.findIndex((item) => item.view_id === activeViewId.value);
-    const _height = document.querySelector('.el-table__row')?.offsetHeight;
+    const _height = document.querySelector(".el-table__row")?.offsetHeight;
 
     // 移动表格位置
     scrollTable(_index * _height);
@@ -109,7 +109,7 @@
   };
 
   // 主题颜色 LIGHT; DARK
-  const theme = ref('');
+  const theme = ref("");
   // 监听主题变化
   bitable.bridge.onThemeChange((event) => {
     theme.value = event.data.theme;
@@ -118,38 +118,38 @@
 
   const setThemeColor = () => {
     const el = document.documentElement;
-    const main = document.querySelector('main');
+    const main = document.querySelector("main");
 
     const themeStyles = {
       LIGHT: {
-        '--el-color-primary': 'rgb(20, 86, 240)',
-        '--el-bg-color': '#fff',
-        '--el-border-color-lighter': '#dee0e3',
-        '--el-fill-color-light': '#f5f7fa',
-        '--el-fill-color-blank': '#fff',
-        '--el-text-color-primary': '#303133',
-        '--el-button-text-color': '#434343',
-        '--el-text-color-regular': '#434343',
+        "--el-color-primary": "rgb(20, 86, 240)",
+        "--el-bg-color": "#fff",
+        "--el-border-color-lighter": "#dee0e3",
+        "--el-fill-color-light": "#f5f7fa",
+        "--el-fill-color-blank": "#fff",
+        "--el-text-color-primary": "#303133",
+        "--el-button-text-color": "#434343",
+        "--el-text-color-regular": "#434343",
         // 加载中效果
         // '--el-mask-color': '#f5f6f7',
-        '--el-bg-color-overlay': '#fff',
-        color: '#434343',
-        'background-color': '#fff',
+        "--el-bg-color-overlay": "#fff",
+        color: "#434343",
+        "background-color": "#fff",
       },
       DARK: {
-        '--el-color-primary': '#4571e1',
-        '--el-bg-color': '#252525',
-        '--el-border-color-lighter': '#434343',
-        '--el-fill-color-light': '#434343',
-        '--el-fill-color-blank': '#434343',
-        '--el-text-color-primary': '#fff',
-        '--el-button-text-color': '#fff',
-        '--el-text-color-regular': '#fff',
+        "--el-color-primary": "#4571e1",
+        "--el-bg-color": "#252525",
+        "--el-border-color-lighter": "#434343",
+        "--el-fill-color-light": "#434343",
+        "--el-fill-color-blank": "#434343",
+        "--el-text-color-primary": "#fff",
+        "--el-button-text-color": "#fff",
+        "--el-text-color-regular": "#fff",
         // 加载中效果
         // '--el-mask-color': '#434343',
-        '--el-bg-color-overlay': '#303133',
-        color: '#fff',
-        'background-color': '#1d1d1d',
+        "--el-bg-color-overlay": "#303133",
+        color: "#fff",
+        "background-color": "#1d1d1d",
       },
     };
 
@@ -161,10 +161,10 @@
     });
 
     // 设置其他样式
-    main.style.backgroundColor = currentThemeStyles['background-color'];
+    main.style.backgroundColor = currentThemeStyles["background-color"];
 
     // 设置文本颜色
-    const themeViewTextColorElements = document.querySelectorAll('.theme-view-text-color');
+    const themeViewTextColorElements = document.querySelectorAll(".theme-view-text-color");
     themeViewTextColorElements.forEach((element) => {
       element.style.color = currentThemeStyles.color;
     });
@@ -189,7 +189,7 @@
       activeViewId.value = event?.data?.viewId;
       await getViewMetaList();
       const _index = viewList.value.findIndex((item) => item.view_id === activeViewId.value);
-      const _height = document.querySelector('.el-table__row').offsetHeight;
+      const _height = document.querySelector(".el-table__row").offsetHeight;
 
       // 新增视图后, 滚动到表格底部
       scrollTable(_index * _height);
@@ -199,7 +199,7 @@
     if (!event?.data?.fieldId && hasView !== -1 && isTable.value) {
       activeViewId.value = event?.data?.viewId;
       const _index = viewList.value.findIndex((item) => item.view_id === activeViewId.value);
-      const _height = document.querySelector('.el-table__row')?.offsetHeight;
+      const _height = document.querySelector(".el-table__row")?.offsetHeight;
 
       // 移动表格位置
       scrollTable(_index * _height);
@@ -227,7 +227,7 @@
     };
 
     const headers = {
-      'Content-Type': 'application/json; charset=utf-8',
+      "Content-Type": "application/json; charset=utf-8",
     };
 
     const response = await axios.post(apiUrl, data, { headers });
@@ -235,10 +235,10 @@
     if (response?.data?.code === 0) {
       tenant_access_token.value = response?.data?.tenant_access_token;
       Verify.value = true;
-      toast.success('自建应用凭证调用成功');
+      toast.success("自建应用凭证调用成功");
       openEnterprise.value = false;
     } else {
-      toast.error('app_id 或 app_secret 错误, 请检查后重试!');
+      toast.error("app_id 或 app_secret 错误, 请检查后重试!");
     }
     // expire 时间到了自动刷新问题, 分钟
   }
@@ -254,11 +254,11 @@
 
     const data = {
       token: baseId.value,
-      type: 'bitable',
+      type: "bitable",
     };
 
     const headers = {
-      'Content-Type': 'application/json; charset=utf-8',
+      "Content-Type": "application/json; charset=utf-8",
       Authorization: `Bearer ${tenant_access_token.value}`,
     };
 
@@ -269,7 +269,7 @@
         const members = response?.data?.data?.members;
 
         members.forEach((item) => {
-          if (item.perm === 'full_access') {
+          if (item.perm === "full_access") {
             fullAccessIdList.value.push(item.member_open_id);
           }
         });
@@ -277,7 +277,7 @@
     } catch (error) {
       // 弹出提示用户错误信息
 
-      console.error('Error:', error.message);
+      console.error("Error:", error.message);
       throw error;
     }
   }
@@ -297,7 +297,7 @@
     const apiUrl2 = `${BASE_URL}/open-apis/bitable/v1/apps/${baseId.value}/tables/${tableId.value}/views?page_size=100&page_token=${page_token.value}`;
 
     const headers = {
-      'Content-Type': 'application/json; charset=utf-8',
+      "Content-Type": "application/json; charset=utf-8",
       Authorization: `Bearer ${tenant_access_token.value}`,
     };
 
@@ -317,12 +317,12 @@
           page_token.value = response.data?.data?.page_token;
           await getViewAllList();
         } else {
-          toast.success('查询成功');
+          toast.success("查询成功");
         }
       }
     } catch (error) {
       // 处理错误
-      console.error('Error:', error.message);
+      console.error("Error:", error.message);
       throw error;
     }
   }
@@ -332,7 +332,7 @@
     table.value = await base.getActiveTable();
 
     viewList.value = await toRaw(table.value).getViewMetaList();
-    toast.success('查询成功');
+    toast.success("查询成功");
 
     handlerViewList();
   }
@@ -349,13 +349,13 @@
       if (viewRange.value === 2) {
         // "管理员" 的个人视图
         viewList.value = viewList.value.filter(
-          (item) => item.view_public_level === 'Private' && fullAccessIdList.value.includes(item.view_private_owner_id),
+          (item) => item.view_public_level === "Private" && fullAccessIdList.value.includes(item.view_private_owner_id),
         );
       } else if (viewRange.value === 3) {
         // "非管理员" 的个人视图
         viewList.value = viewList.value.filter(
           (item) =>
-            item.view_public_level === 'Private' && !fullAccessIdList.value.includes(item.view_private_owner_id),
+            item.view_public_level === "Private" && !fullAccessIdList.value.includes(item.view_private_owner_id),
         );
       }
       // viewList.value = viewList.value.map((item) => ({ ...item, isEditing: false }));
@@ -368,22 +368,22 @@
     let _charType;
     switch (type) {
       case 1:
-        _charType = 'grid';
+        _charType = "grid";
         break;
       case 2:
-        _charType = 'kanban';
+        _charType = "kanban";
         break;
       case 3:
-        _charType = 'form';
+        _charType = "form";
         break;
       case 4:
-        _charType = 'gallery';
+        _charType = "gallery";
         break;
       case 5:
-        _charType = 'gantt';
+        _charType = "gantt";
         break;
       case 7:
-        _charType = 'unknown';
+        _charType = "unknown";
         break;
     }
     return _charType;
@@ -415,7 +415,7 @@
   async function handleDelete(index, view_id) {
     loading.value = true;
     await toRaw(table.value).deleteView(view_id);
-    toast.success('删除成功');
+    toast.success("删除成功");
     // await getViewMetaList();
 
     if (userType.value === 1 || viewRange.value === 1) {
@@ -432,7 +432,7 @@
 
     // 筛选视图类型和视图名字
     handleFilterViewList();
-    page_token.value = '';
+    page_token.value = "";
   }
 
   /**
@@ -440,12 +440,12 @@
    */
   async function batchDelete() {
     if (selectViewIdList.value.length === viewList.value.length) {
-      toast.warning('请至少保留一个视图！');
+      toast.warning("请至少保留一个视图！");
       return;
     }
 
     if (selectViewIdList.value?.length === 0) {
-      toast.warning('请先勾选视图！');
+      toast.warning("请先勾选视图！");
       return;
     }
 
@@ -454,7 +454,7 @@
     for (const view_id of selectViewIdList.value) {
       await toRaw(table.value).deleteView(view_id);
     }
-    toast.success('批量删除成功');
+    toast.success("批量删除成功");
     // await getViewMetaList();
 
     if (userType.value === 1 || viewRange.value === 1) {
@@ -471,7 +471,7 @@
 
     // 筛选视图类型和视图名字
     handleFilterViewList();
-    page_token.value = '';
+    page_token.value = "";
   }
 
   // 编辑视图
@@ -506,36 +506,36 @@
 
   //  查询的类型下拉, 对齐字符串字典
   const searchViewTypeList = ref([
-    { value: 'all', label: '全部视图' },
-    { value: 'grid', label: '表格视图' },
-    { value: 'kanban', label: '看板视图' },
-    { value: 'form', label: '表单视图' },
-    { value: 'gallery', label: '画册视图' },
-    { value: 'gantt', label: '甘特视图' },
-    { value: 'unknown', label: '日历视图' },
+    { value: "all", label: "全部视图" },
+    { value: "grid", label: "表格视图" },
+    { value: "kanban", label: "看板视图" },
+    { value: "form", label: "表单视图" },
+    { value: "gallery", label: "画册视图" },
+    { value: "gantt", label: "甘特视图" },
+    { value: "unknown", label: "日历视图" },
   ]);
 
-  const searchViewType = ref('all');
+  const searchViewType = ref("all");
   const searchViewName = ref();
 
   const viewRangeList = ref([
-    { value: 1, label: '全部角色视图范围' },
+    { value: 1, label: "全部角色视图范围" },
     // { value: 2, label: '当前用户个人视图' },
-    { value: 2, label: '管理员的个人视图' },
-    { value: 3, label: '非管理员个人视图' },
+    { value: 2, label: "管理员的个人视图" },
+    { value: 3, label: "非管理员个人视图" },
   ]);
 
   const viewRange = ref(1);
 
   function cancel() {
-    addViewName.value = '';
+    addViewName.value = "";
     addViewType.value = 1;
     openAddView.value = false;
   }
 
   function cancelAddView() {
     // 重置操作
-    newViewName.value = '';
+    newViewName.value = "";
     newViewType.value = 1;
   }
 
@@ -574,7 +574,7 @@
     const _list = viewList.value.filter((item) => item.view_name === view_name);
 
     if (_list.length > 1) {
-      toast.error('视图名字已存在,请重新输入！');
+      toast.error("视图名字已存在,请重新输入！");
       return;
     }
 
@@ -585,7 +585,7 @@
       return item;
     });
 
-    activeButtonId.value = '';
+    activeButtonId.value = "";
     isEditing.value = false;
   }
 
@@ -619,14 +619,14 @@
 
     // 筛选视图类型和视图名字
     handleFilterViewList();
-    page_token.value = '';
+    page_token.value = "";
   }
 
   function handleFilterViewList() {
     // 筛选视图类型和视图名字
     // viewList.value = viewList.value.filter((item) => {
     filterViewList.value = viewList.value.filter((item) => {
-      const typeMatch = searchViewType.value === 'all' || item.view_type === searchViewType.value;
+      const typeMatch = searchViewType.value === "all" || item.view_type === searchViewType.value;
       const nameMatch = !searchViewName.value || item?.view_name?.includes(searchViewName.value);
       return typeMatch && nameMatch;
     });
@@ -634,8 +634,8 @@
 
   async function reset() {
     viewRange.value = 1;
-    searchViewName.value = '';
-    searchViewType.value = 'all';
+    searchViewName.value = "";
+    searchViewType.value = "all";
     await getViewMetaList();
     handleFilterViewList();
   }
@@ -656,8 +656,8 @@
       openEnterprise.value = false;
     } else {
       userType.value = 1;
-      appId.value = '';
-      appSecret.value = '';
+      appId.value = "";
+      appSecret.value = "";
       openEnterprise.value = false;
     }
   }
@@ -672,8 +672,8 @@
     openEnterprise.value = true;
   }
 
-  const appId = ref('');
-  const appSecret = ref('');
+  const appId = ref("");
+  const appSecret = ref("");
 
   // 过滤之后的视图列表
   const filterViewList = ref([]);
@@ -690,7 +690,7 @@
 
   const confirmAddView = () => {
     const _length = viewList.value.length;
-    const _height = document.querySelector('.el-table__row').offsetHeight;
+    const _height = document.querySelector(".el-table__row").offsetHeight;
 
     // 新增视图后, 滚动到表格底部
     scrollTable(_length * _height);
