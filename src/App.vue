@@ -2,13 +2,13 @@
  * @Version    : v1.00
  * @Author     : itchaox
  * @Date       : 2023-09-25 20:55
- * @LastAuthor : itchaox
- * @LastTime   : 2024-01-07 08:57
+ * @LastAuthor : wangchao
+ * @LastTime   : 2024-01-18 10:18
  * @desc       : 
 -->
 <script setup>
-  import Form from './components/Form.vue';
-  import { Toaster } from 'vue-sonner';
+  import Form from "./components/Form.vue";
+  import { Toaster } from "vue-sonner";
 </script>
 
 <template>
@@ -20,7 +20,7 @@
       closeButton
       :duration="1500"
       :toastOptions="{
-        style: { width: '50vw' },
+        style: { width: '50vw', margin: '0 auto' },
       }"
     />
 
