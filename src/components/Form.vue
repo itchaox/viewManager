@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-17 23:58
+ * @LastTime   : 2024-01-18 22:31
  * @desc       : 
 -->
 <script setup>
@@ -1008,6 +1008,18 @@
                   :fill="activeViewId !== scope.row.view_id ? '#aacefb' : 'rgb(20, 86, 240)'"
                   strokeLinejoin="bevel"
                 />
+                <!-- <img
+                  v-if="scope.row?.view_type === 'grid'"
+                  src="@/assets/table.svg"
+                  alt=""
+                  class="view-name-icon"
+                  :style="{
+                    width: '20px',
+                    height: '20px',
+                    fill: activeViewId !== scope.row.view_id ? '#aacefb' : 'rgb(20, 86, 240)',
+                  }"
+                /> -->
+
                 <check-correct
                   v-if="scope.row?.view_type === 'form'"
                   theme="outline"
