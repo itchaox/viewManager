@@ -7,6 +7,9 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AllViewDrawer: typeof import('./src/components/AllViewDrawer.vue')['default']
+    AllViewFieldDrawer: typeof import('./src/components/AllViewFieldDrawer.vue')['default']
+    copy: typeof import('./src/components/Drawer copy.vue')['default']
     Drawer: typeof import('./src/components/Drawer.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElButtonGroup: typeof import('element-plus/es')['ElButtonGroup']

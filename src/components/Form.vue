@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-18 22:33
+ * @LastTime   : 2024-01-18 23:12
  * @desc       : 
 -->
 <script setup>
@@ -17,11 +17,13 @@
     GridNine,
     CheckCorrect,
     ApplicationMenu,
+    PreviewOpen,
   } from '@icon-park/vue-next';
 
   import { toast } from 'vue-sonner';
 
   import Drawer from './Drawer.vue';
+  import AllViewFieldDrawer from './AllViewFieldDrawer.vue';
 
   import axios from 'axios';
 
@@ -498,6 +500,12 @@
     // openAddView.value = true;
   }
 
+  const batchAllViewFieldDrawer = ref(false);
+
+  async function batchAllViewField() {
+    batchAllViewFieldDrawer.value = true;
+  }
+
   const newViewType = ref(1);
   const newViewName = ref();
 
@@ -726,6 +734,20 @@
       >
         <el-icon><Plus /></el-icon>
         <span>新增视图</span>
+      </el-button>
+
+      <el-button
+        type="danger"
+        size="small"
+        @click="batchAllViewField"
+      >
+        <preview-open
+          theme="outline"
+          size="18"
+          strokeLinecap="square"
+          style="margin-right: 5px"
+        />
+        <span>显示 / 隐藏所有视图字段</span>
       </el-button>
     </div>
 
@@ -1114,6 +1136,11 @@
       v-model:model-value="addViewDrawer"
       :view-list="viewList"
       :getViewMetaList="getViewMetaList"
+      @confirmAddView="confirmAddView"
+    />
+
+    <AllViewFieldDrawer
+      v-model:model-value="batchAllViewFieldDrawer"
       @confirmAddView="confirmAddView"
     />
   </div>

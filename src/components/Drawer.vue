@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-17 21:51
+ * @LastTime   : 2024-01-18 23:34
  * @desc       : 抽屉
 -->
 
@@ -67,6 +67,9 @@
     async (newValue, _) => {
       if (newValue) {
         // const _visibleFieldIdList = await view.getVisibleFieldIdList();
+        table = await base.getActiveTable();
+        view = await table.getActiveView();
+        fieldList.value = await view.getFieldMetaList();
 
         // 处理字段显示隐藏
         fieldTableList.value = fieldList.value.map((item) => {
