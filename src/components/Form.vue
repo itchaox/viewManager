@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-18 22:31
+ * @LastTime   : 2024-01-18 22:33
  * @desc       : 
 -->
 <script setup>
@@ -56,7 +56,7 @@
 
     // 监听 table 滚动事件
     const scrollDom = tableRef.value?.scrollBarRef?.wrapRef;
-    scrollDom.addEventListener('scroll', () => {
+    await scrollDom.addEventListener('scroll', () => {
       // 滚动距离
       let scrollTop = scrollDom?.scrollTop;
       if (scrollTop > 200) {
