@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-20 18:21
+ * @LastTime   : 2024-01-20 21:56
  * @desc       : 
 -->
 <script setup>
@@ -1030,7 +1030,7 @@
               strokeLinejoin="bevel"
             />
             <span>
-              {{ item.label }}
+              {{ $t(item.label) }}
             </span>
           </el-option>
         </el-select>

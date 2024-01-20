@@ -3,13 +3,12 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-20 13:48
+ * @LastTime   : 2024-01-20 21:35
  * @desc       : 所有视图字段配置的抽屉
 -->
 
 <script setup lang="ts">
   import { bitable } from '@lark-base-open/js-sdk';
-  import { Close } from '@element-plus/icons-vue';
 
   import { toast } from 'vue-sonner';
   import FieldIcon from './fieldIcon.jsx';
@@ -17,6 +16,9 @@
   import { PreviewOpen, PreviewClose } from '@icon-park/vue-next';
 
   const base = bitable.base;
+
+  import { useI18n } from 'vue-i18n';
+  const { t } = useI18n();
 
   interface Props {
     modelValue: Boolean;
@@ -98,7 +100,7 @@
       await view.hideField(_hideFieldIdList);
     }
 
-    toast.success('字段配置成功');
+    toast.success(t('Field Configuration Successful'));
     emits('confirmAddView');
 
     reset();
@@ -123,7 +125,7 @@
 
   function batchShow() {
     if (selectFieldIdList.value.length === 0) {
-      toast.warning('请先勾选字段');
+      toast.warning(t('Please check the fields first'));
       return;
     }
 
@@ -135,12 +137,12 @@
       return item;
     });
 
-    toast.success('批量显示配置成功');
+    toast.success(t('Batch Display Configuration Success'));
   }
 
   function batchHide() {
     if (selectFieldIdList.value.length === 0) {
-      toast.warning('请先勾选字段');
+      toast.warning(t('Please check the fields first'));
       return;
     }
 
@@ -152,7 +154,7 @@
       return item;
     });
 
-    toast.success('批量隐藏配置成功');
+    toast.success(t('Batch Hide Configuration Successful'));
   }
 
   function cancel() {
@@ -182,7 +184,7 @@
           :id="titleId"
           class="header"
         >
-          批量配置字段显隐
+          {{ $t('Batch configure field hiding') }}
         </div>
         <el-button
           @mousedown="(e) => e.preventDefault()"
@@ -191,7 +193,7 @@
           size="small"
         >
           <el-icon class="el-icon--left"><CircleCloseFilled /></el-icon>
-          关闭
+          {{ $t('Close') }}
         </el-button>
       </template>
 
@@ -201,7 +203,7 @@
             max-height="70vh"
             :data="fieldTableList"
             @selection-change="handleSelectionChange"
-            empty-text="暂无数据"
+            :empty-text="$t('no data')"
           >
             <el-table-column
               :selectable="selectable"
@@ -210,7 +212,7 @@
             />
 
             <el-table-column
-              label="字段名字"
+              :label="$t('field name')"
               :min-width="120"
             >
               <template #default="scope">
@@ -228,8 +230,8 @@
             </el-table-column>
             <el-table-column
               property="name"
-              label="操作"
-              width="60"
+              :label="$t('operation')"
+              width="70"
             >
               <template #default="scope">
                 <el-button
@@ -271,7 +273,7 @@
                 size="20"
                 strokeLinecap="square"
               />
-              <span>批量显示</span>
+              <span>{{ $t('batch display') }}</span>
             </el-button>
 
             <el-button
@@ -285,7 +287,7 @@
                 size="20"
                 strokeLinecap="square"
               />
-              <span>批量隐藏</span>
+              <span>{{ $t('Batch hide') }}</span>
             </el-button>
           </div>
         </div>
@@ -296,14 +298,14 @@
             type="primary"
             @click="confirmAddView"
             :loading="drawerLoading"
-            >确定</el-button
+            >{{ $t('Confirm') }}</el-button
           >
 
           <el-button
             @mousedown="(e) => e.preventDefault()"
             type="info"
             @click="cancel"
-            >取消</el-button
+            >{{ $t('Cancel') }}</el-button
           >
         </div>
       </div>

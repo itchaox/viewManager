@@ -19,7 +19,7 @@
   "Operating Guidelines": "操作指引",
   "Please enter App ID": "请输入 App ID",
   "Please enter App Secret": "请输入 App Secret",
-  "Confirm": "确认",
+  "Confirm": "确定",
   "Cancel": "取消",
   "View range": "视图范围:",
   "Please select the view range": "请选择视图范围",
@@ -50,5 +50,13 @@
   "Confirm deletion of the selected": "确认删除所选的 {0} 个视图吗?",
   "Loading": "加载中...",
   "Please select the data table format": "请选择数据表格式!",
-  "no data": "暂无数据"
+  "no data": "暂无数据",
+  "Field Configuration Successful": "字段配置成功",
+  "Please check the fields first": "请先勾选字段",
+  "Batch Display Configuration Success": "批量显示配置成功",
+  "Batch Hide Configuration Successful": "批量隐藏配置成功",
+  "Close": "关闭",
+  "field name": "字段名字",
+  "batch display": "批量显示",
+  "Batch hide": "批量隐藏"
 }
