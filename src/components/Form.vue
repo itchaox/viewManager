@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-20 14:07
+ * @LastTime   : 2024-01-20 14:50
  * @desc       : 
 -->
 <script setup>
@@ -201,15 +201,32 @@
     const hasView = viewList.value.findIndex((item) => item.view_id === event?.data?.viewId);
     // 新增视图或修改数据表, 则重新调用视图列表
     if (!event?.data?.fieldId && hasView === -1 && isTable.value) {
+      searchViewName.value = '';
+      searchViewType.value = 'all';
       addViewDrawer.value = false;
 
       activeViewId.value = event?.data?.viewId;
       await getViewMetaList();
       const _index = viewList.value.findIndex((item) => item.view_id === activeViewId.value);
-      const _height = document.querySelector('.el-table__row').offsetHeight;
+      const _height = document.querySelector('.el-table__row')?.offsetHeight;
 
       // 新增视图后, 滚动到表格底部
       scrollTable(_index * _height);
+
+      handleFilterViewList();
+    }
+
+    // 切换数据表
+    if (event?.data?.tableId !== tableId.value && isTable.value) {
+      const selection = await bitable.base.getSelection();
+      if (!selection.tableId) {
+        isTable.value = false;
+      } else {
+        tableId.value = selection.tableId;
+      }
+
+      searchViewName.value = '';
+      searchViewType.value = 'all';
     }
 
     //FIXME 切换视图
@@ -226,7 +243,8 @@
     if (hasView !== -1 && hasView !== undefined) {
       activeViewId.value = event?.data?.viewId;
     }
-    handleFilterViewList();
+
+    // handleFilterViewList();
   });
 
   const tenant_access_token = ref();
@@ -1054,7 +1072,7 @@
 
       <div
         class="table-top"
-        v-show="showTableTop"
+        v-if="showTableTop && !loading"
         @click="() => scrollTable(0)"
       >
         <el-icon
@@ -1393,7 +1411,7 @@
     z-index: 999;
     position: absolute;
     bottom: 8%;
-    right: 19%;
+    right: 20%;
     border-radius: 100%;
     border: 1px solid #2955e750;
     background: #eef5fe;
