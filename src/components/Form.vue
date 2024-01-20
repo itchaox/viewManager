@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-20 14:50
+ * @LastTime   : 2024-01-20 16:36
  * @desc       : 
 -->
 <script setup>
@@ -1063,7 +1063,7 @@
         class="total-text theme-view-text-color"
         v-show="!loading"
       >
-        总共 {{ filterViewList.length }} 个视图
+        总数: {{ filterViewList.length }} 个
       </div>
       <div
         v-show="loading"
@@ -1077,7 +1077,7 @@
       >
         <el-icon
           color="rgb(20, 86, 240)"
-          size="34"
+          size="30"
           ><CaretTop
         /></el-icon>
       </div>
@@ -1251,6 +1251,7 @@
         </el-table>
       </div>
 
+      <div class="select-text theme-view-text-color">已选: {{ selectViewIdList.length }} 个</div>
       <div
         class="delete-button"
         v-if="filterViewList.length >= 1"
@@ -1356,7 +1357,7 @@
   }
 
   .addView-line {
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     display: flex;
     align-items: center;
     .addView-line-label {
@@ -1374,6 +1375,13 @@
     height: 14px;
     line-height: 14px;
     font-size: 14px;
+  }
+
+  .select-text {
+    margin-top: 5px;
+    font-size: 14px;
+    height: 14px;
+    line-height: 14px;
   }
 
   .view-name {
@@ -1410,8 +1418,8 @@
     align-items: center;
     z-index: 999;
     position: absolute;
-    bottom: 8%;
-    right: 20%;
+    bottom: 5.4%;
+    right: 17%;
     border-radius: 100%;
     border: 1px solid #2955e750;
     background: #eef5fe;
@@ -1427,7 +1435,7 @@
   }
 
   .delete-button {
-    margin-top: 10px;
+    margin-top: 5px;
   }
 
   .error {
@@ -1437,7 +1445,7 @@
   }
 
   .el-divider--horizontal {
-    margin: 10px 0;
+    margin: 8px 0;
   }
 
   /* 自定义勾选框样式 */
