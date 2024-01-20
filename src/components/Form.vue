@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-20 13:46
+ * @LastTime   : 2024-01-20 14:07
  * @desc       : 
 -->
 <script setup>
@@ -73,6 +73,21 @@
 
     // 移动表格位置
     scrollTable(_index * _height);
+
+    toRaw(table.value).onFieldAdd((event) => {
+      addViewDrawer.value = false;
+      batchAllViewFieldDrawer.value = false;
+    });
+
+    toRaw(table.value).onFieldModify((event) => {
+      addViewDrawer.value = false;
+      batchAllViewFieldDrawer.value = false;
+    });
+
+    toRaw(table.value).onFieldDelete((event) => {
+      addViewDrawer.value = false;
+      batchAllViewFieldDrawer.value = false;
+    });
   });
 
   /**
