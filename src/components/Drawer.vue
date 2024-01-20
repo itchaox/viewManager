@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-20 10:08
+ * @LastTime   : 2024-01-20 11:50
  * @desc       : 抽屉
 -->
 
@@ -690,14 +690,29 @@
                 class="view-name-icon"
                 size="14"
               />
-
+              <!-- 
               <grid-nine
                 v-if="item.value === 1"
                 theme="outline"
                 class="view-name-icon"
                 size="14"
                 strokeLinejoin="bevel"
+              /> -->
+
+              <img
+                v-if="item.value === 1 && addViewType !== 1"
+                src="@/assets/table.svg"
+                style="width: 16px; height: 16px"
+                class="view-name-icon"
               />
+
+              <img
+                v-if="item.value === 1 && addViewType === 1"
+                src="@/assets/table2.svg"
+                style="width: 16px; height: 16px"
+                class="view-name-icon"
+              />
+
               <check-correct
                 v-if="item.value === 3"
                 theme="outline"

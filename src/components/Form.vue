@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-20 11:15
+ * @LastTime   : 2024-01-20 11:47
  * @desc       : 
 -->
 <script setup>
@@ -958,13 +958,28 @@
               size="14"
             />
 
-            <grid-nine
+            <!-- <grid-nine
               v-if="item.value === 'grid'"
               theme="outline"
               class="view-name-icon"
               size="14"
               strokeLinejoin="bevel"
+            /> -->
+
+            <img
+              v-if="item.value === 'grid' && searchViewType !== 'grid'"
+              src="@/assets/table.svg"
+              style="width: 16px; height: 16px"
+              class="view-name-icon"
             />
+
+            <img
+              v-if="item.value === 'grid' && searchViewType === 'grid'"
+              src="@/assets/table2.svg"
+              style="width: 16px; height: 16px"
+              class="view-name-icon"
+            />
+
             <check-correct
               v-if="item.value === 'form'"
               theme="outline"
@@ -1092,7 +1107,7 @@
                   size="20"
                   :fill="activeViewId !== scope.row.view_id ? '#aacefb' : 'rgb(20, 86, 240)'"
                 />
-
+                <!-- 
                 <grid-nine
                   v-if="scope.row?.view_type === 'grid'"
                   theme="outline"
@@ -1100,18 +1115,19 @@
                   size="20"
                   :fill="activeViewId !== scope.row.view_id ? '#aacefb' : 'rgb(20, 86, 240)'"
                   strokeLinejoin="bevel"
-                />
-                <!-- <img
-                  v-if="scope.row?.view_type === 'grid'"
-                  src="@/assets/table.svg"
-                  alt=""
-                  class="view-name-icon"
-                  :style="{
-                    width: '20px',
-                    height: '20px',
-                    fill: activeViewId !== scope.row.view_id ? '#aacefb' : 'rgb(20, 86, 240)',
-                  }"
                 /> -->
+
+                <img
+                  v-if="scope.row?.view_type === 'grid' && activeViewId !== scope.row.view_id"
+                  src="@/assets/table1.svg"
+                  style="width: 22px; height: 24px; margin-right: 5px"
+                />
+
+                <img
+                  v-if="scope.row?.view_type === 'grid' && activeViewId === scope.row.view_id"
+                  src="@/assets/table2.svg"
+                  style="width: 22px; height: 24px; margin-right: 5px"
+                />
 
                 <check-correct
                   v-if="scope.row?.view_type === 'form'"
