@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-20 09:55
+ * @LastTime   : 2024-01-20 11:09
  * @desc       : 所有视图字段配置的抽屉
 -->
 
@@ -99,6 +99,7 @@
     }
 
     toast.success('字段配置成功');
+    emits('confirmAddView');
 
     reset();
   }

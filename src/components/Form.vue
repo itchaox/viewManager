@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-20 10:54
+ * @LastTime   : 2024-01-20 11:15
  * @desc       : 
 -->
 <script setup>
@@ -726,7 +726,6 @@
     let _hideFieldIdList = _allFieldIdList.filter((id) => !_showFieldIdList.includes(id));
 
     const viewList = await toRaw(table.value).getViewList();
-    // debugger;
     for (const view of viewList) {
       await view.showField(_showFieldIdList);
       await view.hideField(_hideFieldIdList);
@@ -739,6 +738,10 @@
   const allLoading = ref(false);
 
   const popconfirmVisible = ref(false);
+
+  function confirmBatchViewField() {
+    tableRef.value.clearSelection();
+  }
 </script>
 
 <template>
@@ -1239,6 +1242,7 @@
     <AllViewFieldDrawer
       v-model:model-value="batchAllViewFieldDrawer"
       :selectViewIdList="selectViewIdList"
+      @confirmAddView="confirmBatchViewField"
     />
   </div>
   <div v-else>
