@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-20 11:47
+ * @LastTime   : 2024-01-20 11:54
  * @desc       : 
 -->
 <script setup>
@@ -1056,6 +1056,7 @@
             width="40"
           />
           <el-table-column
+            v-if="filterViewList.length >= 1"
             class="custom-checkbox"
             :selectable="selectable"
             type="selection"
@@ -1207,7 +1208,10 @@
         </el-table>
       </div>
 
-      <div class="delete-button">
+      <div
+        class="delete-button"
+        v-if="filterViewList.length >= 1"
+      >
         <el-popconfirm
           v-if="filterViewList.length > 1"
           :visible.sync="popconfirmVisible"
