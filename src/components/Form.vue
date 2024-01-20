@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-20 09:00
+ * @LastTime   : 2024-01-20 09:49
  * @desc       : 
 -->
 <script setup>
@@ -451,6 +451,13 @@
       return;
     }
 
+    popconfirmVisible.value = true;
+  }
+
+  /**
+   * @desc  : 批量删除
+   */
+  async function confirmBatchDelete() {
     loading.value = true;
 
     for (const view_id of selectViewIdList.value) {
@@ -474,6 +481,7 @@
     // 筛选视图类型和视图名字
     handleFilterViewList();
     page_token.value = '';
+    popconfirmVisible.value = false;
   }
 
   // 编辑视图
@@ -503,6 +511,11 @@
   const batchAllViewFieldDrawer = ref(false);
 
   async function batchAllViewField() {
+    if (selectViewIdList.value?.length === 0) {
+      toast.warning('请先勾选视图！');
+      return;
+    }
+
     batchAllViewFieldDrawer.value = true;
   }
 
@@ -724,6 +737,8 @@
   }
 
   const allLoading = ref(false);
+
+  const popconfirmVisible = ref(false);
 </script>
 
 <template>
@@ -742,7 +757,7 @@
       icon-color="rgb(20, 86, 240)"
       cancel-button-type="info"
       :hide-after="50"
-      title="是否确认把当前视图字段显隐同步至所有视图?"
+      title="确认把当前视图字段显隐同步至所有视图吗?"
     >
       <template #reference>
         <el-button type="primary">
@@ -784,7 +799,7 @@
         <span>新增视图</span>
       </el-button>
 
-      <el-button
+      <!-- <el-button
         type="danger"
         size="small"
         @click="batchAllViewField"
@@ -796,7 +811,7 @@
           style="margin-right: 5px"
         />
         <span>显示 / 隐藏所有视图字段</span>
-      </el-button>
+      </el-button> -->
     </div>
 
     <!-- 企业用户弹窗 -->
@@ -1018,7 +1033,6 @@
           empty-text="暂无数据"
         >
           <el-table-column
-            v-if="filterViewList.length > 1"
             :selectable="selectable"
             type="selection"
             width="30"
@@ -1169,14 +1183,43 @@
       </div>
 
       <div class="delete-button">
-        <el-button
+        <el-popconfirm
           v-if="filterViewList.length > 1"
-          @click="batchDelete"
-          type="danger"
-          color="#F54A45"
+          :visible.sync="popconfirmVisible"
+          width="60vw"
+          confirm-button-text="确认"
+          cancel-button-text="取消"
+          @confirm="confirmBatchDelete"
+          @cancel="() => (popconfirmVisible = false)"
+          :icon="InfoFilled"
+          icon-color="rgb(20, 86, 240)"
+          cancel-button-type="info"
+          :hide-after="50"
+          :title="`确认删除所选的 ${selectViewIdList.length} 个视图吗?`"
         >
-          <el-icon><Delete /></el-icon>
-          <span>批量删除</span>
+          <template #reference>
+            <el-button
+              @click="batchDelete"
+              type="danger"
+              color="#F54A45"
+            >
+              <el-icon><Delete /></el-icon>
+              <span>批量删除</span>
+            </el-button>
+          </template>
+        </el-popconfirm>
+
+        <el-button
+          @click="batchAllViewField"
+          type="primary"
+        >
+          <preview-open
+            theme="outline"
+            size="18"
+            strokeLinecap="square"
+            style="margin-right: 5px"
+          />
+          <span>批量配置字段显隐</span>
         </el-button>
       </div>
     </div>
@@ -1189,7 +1232,7 @@
 
     <AllViewFieldDrawer
       v-model:model-value="batchAllViewFieldDrawer"
-      @confirmAddView="confirmAddView"
+      :selectViewIdList="selectViewIdList"
     />
   </div>
   <div v-else>
@@ -1291,8 +1334,8 @@
     align-items: center;
     z-index: 999;
     position: absolute;
-    bottom: 2%;
-    right: 15%;
+    bottom: 8%;
+    right: 19%;
     border-radius: 100%;
     border: 1px solid #2955e750;
     background: #eef5fe;

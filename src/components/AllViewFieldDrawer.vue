@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-18 23:41
+ * @LastTime   : 2024-01-20 09:55
  * @desc       : 所有视图字段配置的抽屉
 -->
 
@@ -20,6 +20,7 @@
 
   interface Props {
     modelValue: Boolean;
+    selectViewIdList: string[];
   }
 
   const props = defineProps<Props>();
@@ -78,10 +79,9 @@
   async function confirmAddView() {
     drawerLoading.value = true;
 
-    // const view: any = 'a';
-    const viewList = await table.getViewList();
-    // debugger;
-    for (const view of viewList) {
+    for (const id of props.selectViewIdList) {
+      const view = await table.getViewById(id);
+
       // 字段配置
       const _showFieldIdList = [];
       const _hideFieldIdList = [];
@@ -96,8 +96,9 @@
 
       await view.showField(_showFieldIdList);
       await view.hideField(_hideFieldIdList);
-      // debugger;
     }
+
+    toast.success('字段配置成功');
 
     reset();
   }
@@ -180,7 +181,7 @@
           :id="titleId"
           class="header"
         >
-          显示 / 隐藏所有视图字段
+          批量配置字段显隐
         </div>
         <el-button
           type="danger"
