@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-18 23:12
+ * @LastTime   : 2024-01-20 09:00
  * @desc       : 
 -->
 <script setup>
@@ -703,13 +703,61 @@
     // 新增视图后, 滚动到表格底部
     scrollTable(_length * _height);
   };
+
+  async function syncAllViewField() {
+    allLoading.value = true;
+    let _view = await toRaw(table.value).getActiveView();
+    let _fieldMetaList = await _view.getFieldMetaList();
+    let _allFieldIdList = _fieldMetaList.map((item) => item.id);
+    let _showFieldIdList = await _view.getVisibleFieldIdList();
+    let _hideFieldIdList = _allFieldIdList.filter((id) => !_showFieldIdList.includes(id));
+
+    const viewList = await toRaw(table.value).getViewList();
+    // debugger;
+    for (const view of viewList) {
+      await view.showField(_showFieldIdList);
+      await view.hideField(_hideFieldIdList);
+    }
+
+    allLoading.value = false;
+    toast.success('同步配置成功');
+  }
+
+  const allLoading = ref(false);
 </script>
 
 <template>
   <div
     class="field-manager"
     v-if="isTable"
+    v-loading="allLoading"
+    element-loading-text="加载中..."
   >
+    <el-popconfirm
+      width="60vw"
+      confirm-button-text="确认"
+      cancel-button-text="取消"
+      @confirm="syncAllViewField"
+      :icon="InfoFilled"
+      icon-color="rgb(20, 86, 240)"
+      cancel-button-type="info"
+      :hide-after="50"
+      title="是否确认把当前视图字段显隐同步至所有视图?"
+    >
+      <template #reference>
+        <el-button type="primary">
+          <preview-open
+            theme="outline"
+            size="18"
+            strokeLinecap="square"
+            style="margin-right: 5px"
+          />
+          同步所有视图字段显隐
+        </el-button>
+      </template>
+    </el-popconfirm>
+
+    <el-divider />
     <div class="tips">Tips: 使用自建应用, 通过个人视图模式轻松筛选个人视图</div>
     <div class="addView-line">
       <div class="addView-line-label theme-view-text-color">使用模式:</div>
@@ -966,7 +1014,7 @@
           ref="tableRef"
           :data="filterViewList"
           @selection-change="handleSelectionChange"
-          max-height="55vh"
+          max-height="52vh"
           empty-text="暂无数据"
         >
           <el-table-column
@@ -1181,7 +1229,7 @@
   }
 
   .batch-button {
-    margin-bottom: 14px;
+    /* margin-bottom: 14px; */
   }
 
   .addView {
@@ -1267,5 +1315,9 @@
     width: 100%;
     height: 50%;
     margin-top: -40px;
+  }
+
+  .el-divider--horizontal {
+    margin: 10px 0;
   }
 </style>

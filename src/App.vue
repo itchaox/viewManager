@@ -2,13 +2,13 @@
  * @Version    : v1.00
  * @Author     : itchaox
  * @Date       : 2023-09-25 20:55
- * @LastAuthor : wangchao
- * @LastTime   : 2024-01-18 10:18
+ * @LastAuthor : itchaox
+ * @LastTime   : 2024-01-20 08:57
  * @desc       : 
 -->
 <script setup>
-  import Form from "./components/Form.vue";
-  import { Toaster } from "vue-sonner";
+  import Form from './components/Form.vue';
+  import { Toaster } from 'vue-sonner';
 </script>
 
 <template>
@@ -31,8 +31,10 @@
 <style scoped>
   main {
     padding: 1rem;
+    padding-top: 0;
     height: 95vh;
   }
+
   h4 {
     font-size: calc(1.275rem + 0.3vw);
     margin-bottom: 1rem;
