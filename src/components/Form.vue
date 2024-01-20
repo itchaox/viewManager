@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-20 16:36
+ * @LastTime   : 2024-01-20 18:21
  * @desc       : 
 -->
 <script setup>
@@ -26,6 +26,9 @@
   import AllViewFieldDrawer from './AllViewFieldDrawer.vue';
 
   import axios from 'axios';
+
+  import { useI18n } from 'vue-i18n';
+  const { t } = useI18n();
 
   const base = bitable.base;
 
@@ -270,10 +273,10 @@
     if (response?.data?.code === 0) {
       tenant_access_token.value = response?.data?.tenant_access_token;
       Verify.value = true;
-      toast.success('自建应用凭证调用成功');
+      toast.success(t('Self-built application credentials called successfully'));
       openEnterprise.value = false;
     } else {
-      toast.error('app_id 或 app_secret 错误, 请检查后重试!');
+      toast.error(t('app_id or app_secret error'));
     }
     // expire 时间到了自动刷新问题, 分钟
   }
@@ -352,7 +355,7 @@
           page_token.value = response.data?.data?.page_token;
           await getViewAllList();
         } else {
-          toast.success('查询成功');
+          toast.success(t('Successful query'));
         }
       }
     } catch (error) {
@@ -367,7 +370,7 @@
     table.value = await base.getActiveTable();
 
     viewList.value = await toRaw(table.value).getViewMetaList();
-    toast.success('查询成功');
+    toast.success(t('Successful query'));
 
     handlerViewList();
   }
@@ -450,7 +453,7 @@
   async function handleDelete(index, view_id) {
     loading.value = true;
     await toRaw(table.value).deleteView(view_id);
-    toast.success('删除成功');
+    toast.success(t('Deleted successfully'));
     // await getViewMetaList();
 
     if (userType.value === 1 || viewRange.value === 1) {
@@ -475,12 +478,12 @@
    */
   async function batchDelete() {
     if (selectViewIdList.value.length === viewList.value.length) {
-      toast.warning('请至少保留一个视图！');
+      toast.warning(t('Please keep at least one view'));
       return;
     }
 
     if (selectViewIdList.value?.length === 0) {
-      toast.warning('请先勾选视图！');
+      toast.warning(t('Please check View first'));
       return;
     }
 
@@ -496,7 +499,7 @@
     for (const view_id of selectViewIdList.value) {
       await toRaw(table.value).deleteView(view_id);
     }
-    toast.success('批量删除成功');
+    toast.success(t('Batch Delete Success'));
     // await getViewMetaList();
 
     if (userType.value === 1 || viewRange.value === 1) {
@@ -545,7 +548,7 @@
 
   async function batchAllViewField() {
     if (selectViewIdList.value?.length === 0) {
-      toast.warning('请先勾选视图！');
+      toast.warning(t('Please check View first'));
       return;
     }
 
@@ -560,23 +563,23 @@
 
   //  查询的类型下拉, 对齐字符串字典
   const searchViewTypeList = ref([
-    { value: 'all', label: '全部视图' },
-    { value: 'grid', label: '表格视图' },
-    { value: 'kanban', label: '看板视图' },
-    { value: 'form', label: '表单视图' },
-    { value: 'gallery', label: '画册视图' },
-    { value: 'gantt', label: '甘特视图' },
-    { value: 'unknown', label: '日历视图' },
+    { value: 'all', label: 'Full view' },
+    { value: 'grid', label: 'table view' },
+    { value: 'kanban', label: 'Kanban view' },
+    { value: 'form', label: 'form view' },
+    { value: 'gallery', label: 'Album view' },
+    { value: 'gantt', label: 'Gantt view' },
+    { value: 'unknown', label: 'calendar view' },
   ]);
 
   const searchViewType = ref('all');
   const searchViewName = ref();
 
   const viewRangeList = ref([
-    { value: 1, label: '全部角色视图范围' },
+    { value: 1, label: 'Full Role View Scope' },
     // { value: 2, label: '当前用户个人视图' },
-    { value: 2, label: '管理员的个人视图' },
-    { value: 3, label: '非管理员个人视图' },
+    { value: 2, label: 'Personal view for administrators' },
+    { value: 3, label: 'Non-administrator personal view' },
   ]);
 
   const viewRange = ref(1);
@@ -628,7 +631,7 @@
     const _list = viewList.value.filter((item) => item.view_name === view_name);
 
     if (_list.length > 1) {
-      toast.error('视图名字已存在,请重新输入！');
+      toast.error(t('The view name already exists'));
       return;
     }
 
@@ -765,7 +768,7 @@
     }
 
     allLoading.value = false;
-    toast.success('同步配置成功');
+    toast.success(t('Synchronization Configuration Successful'));
   }
 
   const allLoading = ref(false);
@@ -782,18 +785,18 @@
     class="field-manager"
     v-if="isTable"
     v-loading="allLoading"
-    element-loading-text="加载中..."
+    :element-loading-text="$t('Loading')"
   >
     <el-popconfirm
       width="60vw"
-      confirm-button-text="确认"
-      cancel-button-text="取消"
+      :confirm-button-text="$t('Confirm')"
+      :cancel-button-text="$t('Cancel')"
       @confirm="syncAllViewField"
       :icon="InfoFilled"
       icon-color="rgb(20, 86, 240)"
       cancel-button-type="info"
       :hide-after="50"
-      title="确认把当前视图字段显隐同步至所有视图吗?"
+      :title="$t('Are you sure to synchronize the current view fields explicitly and implicitly to all views')"
     >
       <template #reference>
         <el-button
@@ -806,24 +809,24 @@
             strokeLinecap="square"
             style="margin-right: 5px"
           />
-          同步所有视图字段显隐
+          {{ $t('Synchronize all view field hides') }}
         </el-button>
       </template>
     </el-popconfirm>
 
     <el-divider />
-    <div class="tips">Tips: 使用自建应用, 通过个人视图模式轻松筛选个人视图</div>
+    <div class="tips">{{ $t('tips') }}</div>
     <div class="addView-line">
-      <div class="addView-line-label theme-view-text-color">使用模式:</div>
+      <div class="addView-line-label theme-view-text-color">{{ $t('Usage Mode') }}</div>
       <el-radio-group
         v-model="userType"
         size="small"
       >
-        <el-radio-button :label="1">普通视图</el-radio-button>
+        <el-radio-button :label="1">{{ $t('normal view') }}</el-radio-button>
         <el-radio-button
           :label="2"
           @click="setEnterprise"
-          >个人视图</el-radio-button
+          >{{ $t('personal view') }}</el-radio-button
         >
       </el-radio-group>
     </div>
@@ -836,7 +839,7 @@
         @mousedown="(e) => e.preventDefault()"
       >
         <el-icon><Plus /></el-icon>
-        <span>新增视图</span>
+        <span>{{ $t('Add View') }}</span>
       </el-button>
 
       <!-- <el-button
@@ -860,7 +863,7 @@
       :close-on-click-modal="false"
       :close-on-press-escape="false"
       @close="cancelInfo"
-      title="填写自建应用凭证"
+      :title="$t('Fill out the self-build application credentials')"
       width="75%"
     >
       <el-link
@@ -868,7 +871,7 @@
         target="_blank"
         type="primary"
       >
-        <el-icon><QuestionFilled /></el-icon>操作指引
+        <el-icon><QuestionFilled /></el-icon>{{ $t('Operating Guidelines') }}
       </el-link>
       <div
         class="addView"
@@ -880,7 +883,7 @@
             v-model="appId"
             type="password"
             size="small"
-            placeholder="请输入 App ID"
+            :placeholder="$t('Please enter App ID')"
             show-password
           />
         </div>
@@ -891,7 +894,7 @@
             v-model="appSecret"
             type="password"
             size="small"
-            placeholder="请输入 App Secret"
+            :placeholder="$t('Please enter App Secret')"
             show-password
           />
         </div>
@@ -902,7 +905,7 @@
             type="primary"
             size="small"
             @click="confirmInfo"
-            >确认</el-button
+            >{{ $t('Confirm') }}</el-button
           >
 
           <el-button
@@ -910,7 +913,7 @@
             type="info"
             size="small"
             @click="cancelInfo"
-            >取消</el-button
+            >{{ $t('Cancel') }}</el-button
           >
         </div>
       </div>
@@ -921,43 +924,43 @@
         class="addView-line"
         v-show="userType === 2 && Verify"
       >
-        <div class="addView-line-label theme-view-text-color">视图范围:</div>
+        <div class="addView-line-label theme-view-text-color">{{ $t('View range') }}</div>
         <el-select
           v-model="viewRange"
           style="width: 50%"
-          placeholder="请选择视图范围"
+          :placeholder="$t('Please select the view range')"
         >
           <el-option
             v-for="item in viewRangeList"
             :key="item.value"
-            :label="item.label"
+            :label="$t(item.label)"
             :value="item.value"
           />
         </el-select>
       </div>
 
       <div class="addView-line">
-        <div class="addView-line-label theme-view-text-color">视图名字:</div>
+        <div class="addView-line-label theme-view-text-color">{{ $t('View Name') }}</div>
         <el-input
           style="width: 50%"
           v-model="searchViewName"
           @keydown.enter="searchView"
           clearable
-          placeholder="请输入视图名字"
+          :placeholder="$t('Please enter a view name')"
         />
       </div>
 
       <div class="addView-line">
-        <div class="addView-line-label theme-view-text-color">视图类型:</div>
+        <div class="addView-line-label theme-view-text-color">{{ $t('View type') }}</div>
         <el-select
           v-model="searchViewType"
-          placeholder="请选择视图类型"
+          :placeholder="$t('Please select the view type')"
           style="width: 50%"
         >
           <el-option
             v-for="item in searchViewTypeList"
             :key="item.value"
-            :label="item.label"
+            :label="$t(item.label)"
             :value="item.value"
           >
             <application-menu
@@ -1041,7 +1044,7 @@
           @click="searchView"
         >
           <el-icon><Search /></el-icon>
-          <span>查询</span>
+          <span>{{ $t('Search') }}</span>
         </el-button>
 
         <el-button
@@ -1051,19 +1054,19 @@
           @click="reset"
         >
           <el-icon><Refresh /></el-icon>
-          <span>重置</span>
+          <span>{{ $t('Reset') }}</span>
         </el-button>
       </div>
     </div>
     <div
       v-loading="loading"
-      element-loading-text="加载中..."
+      :element-loading-text="$t('Loading')"
     >
       <div
         class="total-text theme-view-text-color"
         v-show="!loading"
       >
-        总数: {{ filterViewList.length }} 个
+        {{ $t('total number', [filterViewList.length]) }}
       </div>
       <div
         v-show="loading"
@@ -1089,7 +1092,7 @@
           :data="filterViewList"
           @selection-change="handleSelectionChange"
           max-height="52vh"
-          empty-text="暂无数据"
+          :empty-text="$t('no data')"
         >
           <el-table-column
             class="table-index"
@@ -1105,7 +1108,7 @@
           />
 
           <el-table-column
-            label="视图名字"
+            :label="$t('view name1')"
             align="center"
             :min-width="120"
           >
@@ -1205,8 +1208,8 @@
           <el-table-column
             v-if="viewList.length > 1"
             property="name"
-            label="操作"
-            width="60"
+            :label="$t('operation')"
+            width="70"
           >
             <template #default="scope">
               <!-- FIXME 暂时不需求编辑操作 -->
@@ -1251,7 +1254,7 @@
         </el-table>
       </div>
 
-      <div class="select-text theme-view-text-color">已选: {{ selectViewIdList.length }} 个</div>
+      <div class="select-text theme-view-text-color">{{ $t('selected', [selectViewIdList.length]) }}</div>
       <div
         class="delete-button"
         v-if="filterViewList.length >= 1"
@@ -1260,15 +1263,15 @@
           v-if="filterViewList.length > 1"
           :visible.sync="popconfirmVisible"
           width="60vw"
-          confirm-button-text="确认"
-          cancel-button-text="取消"
+          :confirm-button-text="$t('Confirm')"
+          :cancel-button-text="$t('Cancel')"
           @confirm="confirmBatchDelete"
           @cancel="() => (popconfirmVisible = false)"
           :icon="InfoFilled"
           icon-color="rgb(20, 86, 240)"
           cancel-button-type="info"
           :hide-after="50"
-          :title="`确认删除所选的 ${selectViewIdList.length} 个视图吗?`"
+          :title="$t('Confirm deletion of the selected', [selectViewIdList.length])"
         >
           <template #reference>
             <el-button
@@ -1278,7 +1281,7 @@
               color="#F54A45"
             >
               <el-icon><Delete /></el-icon>
-              <span>批量删除</span>
+              <span>{{ $t('batch deletion') }}</span>
             </el-button>
           </template>
         </el-popconfirm>
@@ -1294,7 +1297,7 @@
             strokeLinecap="square"
             style="margin-right: 5px"
           />
-          <span>批量配置字段显隐</span>
+          <span>{{ $t('Batch configure field hiding') }}</span>
         </el-button>
       </div>
     </div>
@@ -1314,20 +1317,20 @@
   <div v-else>
     <el-result
       icon="error"
-      title="格式错误"
-      sub-title="请选择数据表格式!"
+      :title="$t('format error')"
+      :sub-title="$t('Please select the data table format')"
     >
       <template #extra>
         <img
           class="error"
           src="../assets/error.png"
-          alt="格式错误"
+          :alt="$t('format error')"
         />
         <el-button
           @mousedown="(e) => e.preventDefault()"
           type="primary"
           @click="goDataBase"
-          >回到第一个数据表</el-button
+          >{{ $t('Back to the first data table') }}</el-button
         >
       </template>
     </el-result>
@@ -1361,6 +1364,7 @@
     display: flex;
     align-items: center;
     .addView-line-label {
+      width: 75px;
       margin-right: 10px;
       font-size: 14px;
       white-space: nowrap;
