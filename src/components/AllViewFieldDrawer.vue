@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-20 11:09
+ * @LastTime   : 2024-01-20 13:48
  * @desc       : 所有视图字段配置的抽屉
 -->
 
@@ -185,6 +185,7 @@
           批量配置字段显隐
         </div>
         <el-button
+          @mousedown="(e) => e.preventDefault()"
           type="danger"
           @click="close"
           size="small"
@@ -232,6 +233,7 @@
             >
               <template #default="scope">
                 <el-button
+                  @mousedown="(e) => e.preventDefault()"
                   v-show="scope.$index !== 0"
                   size="small"
                   type="danger"
@@ -259,6 +261,7 @@
 
           <div class="button">
             <el-button
+              @mousedown="(e) => e.preventDefault()"
               type="primary"
               size="small"
               @click="batchShow"
@@ -272,6 +275,7 @@
             </el-button>
 
             <el-button
+              @mousedown="(e) => e.preventDefault()"
               type="primary"
               size="small"
               @click="batchHide"
@@ -288,6 +292,7 @@
 
         <div>
           <el-button
+            @mousedown="(e) => e.preventDefault()"
             type="primary"
             @click="confirmAddView"
             :loading="drawerLoading"
@@ -295,6 +300,7 @@
           >
 
           <el-button
+            @mousedown="(e) => e.preventDefault()"
             type="info"
             @click="cancel"
             >取消</el-button

@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-20 11:54
+ * @LastTime   : 2024-01-20 13:46
  * @desc       : 
 -->
 <script setup>
@@ -763,7 +763,10 @@
       title="确认把当前视图字段显隐同步至所有视图吗?"
     >
       <template #reference>
-        <el-button type="primary">
+        <el-button
+          type="primary"
+          @mousedown="(e) => e.preventDefault()"
+        >
           <preview-open
             theme="outline"
             size="18"
@@ -797,6 +800,7 @@
         type="primary"
         size="small"
         @click="addView"
+        @mousedown="(e) => e.preventDefault()"
       >
         <el-icon><Plus /></el-icon>
         <span>新增视图</span>
@@ -861,6 +865,7 @@
 
         <div>
           <el-button
+            @mousedown="(e) => e.preventDefault()"
             type="primary"
             size="small"
             @click="confirmInfo"
@@ -868,6 +873,7 @@
           >
 
           <el-button
+            @mousedown="(e) => e.preventDefault()"
             type="info"
             size="small"
             @click="cancelInfo"
@@ -996,6 +1002,7 @@
 
       <div>
         <el-button
+          @mousedown="(e) => e.preventDefault()"
           type="primary"
           size="small"
           @click="searchView"
@@ -1005,6 +1012,7 @@
         </el-button>
 
         <el-button
+          @mousedown="(e) => e.preventDefault()"
           type="info"
           size="small"
           @click="reset"
@@ -1139,6 +1147,7 @@
                   strokeLinejoin="bevel"
                 />
                 <el-button
+                  @mousedown="(e) => e.preventDefault()"
                   class="single-line-ellipsis"
                   v-show="!item?.isEditing && activeButtonId !== scope.row.view_id"
                   :style="{ width: '100%' }"
@@ -1196,6 +1205,7 @@
           </el-dropdown> -->
 
               <el-button
+                @mousedown="(e) => e.preventDefault()"
                 v-if="viewList.length > 1 || viewRange !== 1"
                 size="small"
                 type="danger"
@@ -1228,6 +1238,7 @@
         >
           <template #reference>
             <el-button
+              @mousedown="(e) => e.preventDefault()"
               @click="batchDelete"
               type="danger"
               color="#F54A45"
@@ -1239,6 +1250,7 @@
         </el-popconfirm>
 
         <el-button
+          @mousedown="(e) => e.preventDefault()"
           @click="batchAllViewField"
           type="primary"
         >
@@ -1278,6 +1290,7 @@
           alt="格式错误"
         />
         <el-button
+          @mousedown="(e) => e.preventDefault()"
           type="primary"
           @click="goDataBase"
           >回到第一个数据表</el-button
