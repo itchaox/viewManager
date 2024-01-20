@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-20 10:28
+ * @LastTime   : 2024-01-20 10:54
  * @desc       : 
 -->
 <script setup>
@@ -1035,9 +1035,10 @@
           <el-table-column
             class="table-index"
             type="index"
-            width="50"
+            width="40"
           />
           <el-table-column
+            class="custom-checkbox"
             :selectable="selectable"
             type="selection"
             width="30"
@@ -1369,11 +1370,13 @@
     margin: 10px 0;
   }
 
-  .table-index {
-    color: red;
+  /* 自定义勾选框样式 */
+  :deep(.el-checkbox__input) {
+    zoom: 130%;
+    /* background-color: red; */
   }
 
-  :deep(.el-table__row .cell) {
-    /* padding: 0 6px; */
+  :deep(.el-table .cell) {
+    padding: 0 7px;
   }
 </style>
