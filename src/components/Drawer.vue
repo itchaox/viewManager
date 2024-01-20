@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-18 23:34
+ * @LastTime   : 2024-01-20 10:08
  * @desc       : 抽屉
 -->
 
@@ -181,7 +181,6 @@
         name: addViewName.value,
         type: addViewType.value,
       });
-
       const view = await table.getViewById(viewId);
 
       // addViewName.value = '';

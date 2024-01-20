@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-20 09:49
+ * @LastTime   : 2024-01-20 10:28
  * @desc       : 
 -->
 <script setup>
@@ -1033,6 +1033,11 @@
           empty-text="暂无数据"
         >
           <el-table-column
+            class="table-index"
+            type="index"
+            width="50"
+          />
+          <el-table-column
             :selectable="selectable"
             type="selection"
             width="30"
@@ -1362,5 +1367,13 @@
 
   .el-divider--horizontal {
     margin: 10px 0;
+  }
+
+  .table-index {
+    color: red;
+  }
+
+  :deep(.el-table__row .cell) {
+    /* padding: 0 6px; */
   }
 </style>
