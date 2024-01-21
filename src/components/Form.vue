@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-20 21:56
+ * @LastTime   : 2024-01-21 09:24
  * @desc       : 
 -->
 <script setup>
@@ -882,7 +882,6 @@
           <el-input
             v-model="appId"
             type="password"
-            size="small"
             :placeholder="$t('Please enter App ID')"
             show-password
           />
@@ -893,7 +892,6 @@
           <el-input
             v-model="appSecret"
             type="password"
-            size="small"
             :placeholder="$t('Please enter App Secret')"
             show-password
           />
@@ -903,7 +901,6 @@
           <el-button
             @mousedown="(e) => e.preventDefault()"
             type="primary"
-            size="small"
             @click="confirmInfo"
             >{{ $t('Confirm') }}</el-button
           >
@@ -911,7 +908,6 @@
           <el-button
             @mousedown="(e) => e.preventDefault()"
             type="info"
-            size="small"
             @click="cancelInfo"
             >{{ $t('Cancel') }}</el-button
           >
@@ -1254,7 +1250,12 @@
         </el-table>
       </div>
 
-      <div class="select-text theme-view-text-color">{{ $t('selected', [selectViewIdList.length]) }}</div>
+      <div
+        class="select-text theme-view-text-color"
+        v-if="filterViewList.length >= 1"
+      >
+        {{ $t('selected', [selectViewIdList.length]) }}
+      </div>
       <div
         class="delete-button"
         v-if="filterViewList.length >= 1"

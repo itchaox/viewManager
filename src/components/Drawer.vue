@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-20 13:47
+ * @LastTime   : 2024-01-21 09:09
  * @desc       : 抽屉
 -->
 
@@ -13,6 +13,8 @@
 
   import { toast } from 'vue-sonner';
   import FieldIcon from './fieldIcon.jsx';
+  import { useI18n } from 'vue-i18n';
+  const { t } = useI18n();
 
   import {
     AllApplication,
@@ -187,7 +189,7 @@
       // addViewType.value = 1;
       // emits('update:model-value', false);
 
-      toast.success('新增成功');
+      toast.success(t('Added successfully'));
 
       // 筛选
       if (filterList.value?.length > 0) {
@@ -257,7 +259,7 @@
       reset();
       emits('confirmAddView');
     } else {
-      toast.error('视图名字已存在，请重新输入！');
+      toast.error(t('The view name already exists'));
     }
   }
 
@@ -281,12 +283,19 @@
 
   // 查询类型下拉, 对齐 js-sdk
   const addViewTypeList = ref([
-    { value: 1, label: '表格视图' },
-    { value: 2, label: '看板视图' },
-    { value: 3, label: '表单视图' },
-    { value: 4, label: '画册视图' },
-    { value: 5, label: '甘特视图' },
-    { value: 7, label: '日历视图' },
+    // { value: 1, label: '表格视图' },
+    // { value: 2, label: '看板视图' },
+    // { value: 3, label: '表单视图' },
+    // { value: 4, label: '画册视图' },
+    // { value: 5, label: '甘特视图' },
+    // { value: 7, label: '日历视图' },
+
+    { value: 1, label: 'table view' },
+    { value: 2, label: 'Kanban view' },
+    { value: 3, label: 'form view' },
+    { value: 4, label: 'Album view' },
+    { value: 5, label: 'Gantt view' },
+    { value: 7, label: 'calendar view' },
   ]);
 
   // FIXME 筛选
@@ -338,27 +347,27 @@
   const textFilterOperatorList = ref([
     {
       id: 'is',
-      name: '等于',
+      name: 'equal',
     },
     {
       id: 'isNot',
-      name: '不等于',
+      name: 'not equal',
     },
     {
       id: 'contains',
-      name: '包含',
+      name: 'include',
     },
     {
       id: 'doesNotContain',
-      name: '不包含',
+      name: 'exclude',
     },
     {
       id: 'isEmpty',
-      name: '为空',
+      name: 'empty',
     },
     {
       id: 'isNotEmpty',
-      name: '不为空',
+      name: 'not empty',
     },
   ]);
 
@@ -411,35 +420,35 @@
   const numberFilterOperatorList = [
     {
       id: 'is',
-      name: '等于',
+      name: 'equal',
     },
     {
       id: 'isNot',
-      name: '不等于',
+      name: 'not equal',
     },
     {
       id: 'isGreater',
-      name: '大于',
+      name: 'more than',
     },
     {
       id: 'isGreaterEqual',
-      name: '大于或等于',
+      name: 'greater than or equal to',
     },
     {
       id: 'isLess',
-      name: '小于',
+      name: 'less than',
     },
     {
       id: 'isLessEqual',
-      name: '小于或等于',
+      name: 'Less than or equal to',
     },
     {
       id: 'isEmpty',
-      name: '为空',
+      name: 'empty',
     },
     {
       id: 'isNotEmpty',
-      name: '不为空',
+      name: 'not empty',
     },
   ];
 
@@ -526,7 +535,7 @@
     } else if (numberList.includes(type)) {
       _text = '0 → 9';
     } else if (optionList.includes(type)) {
-      _text = '选项顺序';
+      _text = t('Order of options');
     } else {
       _text = 'A → Z';
     }
@@ -550,7 +559,7 @@
     } else if (numberList.includes(type)) {
       _text = '9 → 0';
     } else if (optionList.includes(type)) {
-      _text = '选项倒序';
+      _text = t('Options in reverse order');
     } else {
       _text = 'Z → A';
     }
@@ -574,7 +583,7 @@
 
   function batchShow() {
     if (selectFieldIdList.value.length === 0) {
-      toast.warning('请先勾选字段');
+      toast.warning(t('Please check the fields first'));
       return;
     }
 
@@ -586,12 +595,12 @@
       return item;
     });
 
-    toast.success('批量显示配置成功');
+    toast.success(t('Batch Display Configuration Success'));
   }
 
   function batchHide() {
     if (selectFieldIdList.value.length === 0) {
-      toast.warning('请先勾选字段');
+      toast.warning(t('Please check the fields first'));
       return;
     }
 
@@ -603,7 +612,7 @@
       return item;
     });
 
-    toast.success('批量隐藏配置成功');
+    toast.success(t('Batch Hide Configuration Successful'));
   }
 
   const el = ref();
@@ -625,7 +634,7 @@
           :id="titleId"
           class="header"
         >
-          新增视图
+          {{ $t('Add View') }}
         </div>
         <el-button
           @mousedown="(e) => e.preventDefault()"
@@ -634,32 +643,32 @@
           size="small"
         >
           <el-icon class="el-icon--left"><CircleCloseFilled /></el-icon>
-          关闭
+          {{ $t('Close') }}
         </el-button>
       </template>
 
       <div class="addView">
         <div class="addView-line">
-          <div class="addView-line-label theme-view-text-color">视图名字:</div>
+          <div class="addView-line-label theme-view-text-color">{{ $t('View Name') }}</div>
           <el-input
             style="width: 60%"
             clearable
             v-model="addViewName"
-            placeholder="请输入视图名字"
+            :placeholder="$t('Please enter a view name')"
           />
         </div>
 
         <div class="addView-line">
-          <div class="addView-line-label theme-view-text-color">视图类型:</div>
+          <div class="addView-line-label theme-view-text-color">{{ $t('View type') }}</div>
           <el-select
             v-model="addViewType"
-            placeholder="请选择视图类型"
+            :placeholder="$t('Please select the view type')"
             style="width: 60%"
           >
             <el-option
               v-for="item in addViewTypeList"
               :key="item.value"
-              :label="item.label"
+              :label="$t(item.label)"
               :value="item.value"
             >
               <all-application
@@ -721,7 +730,7 @@
                 size="14"
                 strokeLinejoin="bevel"
               />
-              {{ item.label }}
+              {{ $t(item.label) }}
             </el-option>
           </el-select>
         </div>
@@ -735,7 +744,7 @@
           <el-collapse-item name="1">
             <template #title>
               <el-icon><Filter /></el-icon>
-              <span class="collapse-title">设置筛选条件</span>
+              <span class="collapse-title">{{ $t('Setting Filter Criteria') }}</span>
               <span
                 v-if="filterList.length > 0"
                 style="color: #5c82f3"
@@ -743,7 +752,7 @@
               >
             </template>
             <div v-if="filterList.length > 1">
-              符合以下
+              {{ $t('Meets the following') }}
               <el-select
                 v-model="conjunction"
                 size="small"
@@ -751,16 +760,16 @@
               >
                 <el-option
                   key="and"
-                  label="所有"
+                  :label="$t('all')"
                   value="and"
                 />
                 <el-option
                   key="or"
-                  label="任一"
+                  :label="$t('any')"
                   value="or"
                 />
               </el-select>
-              条件
+              {{ $t('condition') }}
             </div>
             <div class="collapse-line-list">
               <div
@@ -801,7 +810,7 @@
                       <el-option
                         v-for="item in textFilterOperatorList"
                         :key="item.id"
-                        :label="item.name"
+                        :label="$t(item.name)"
                         :value="item.id"
                       />
                     </template>
@@ -810,7 +819,7 @@
                       <el-option
                         v-for="item in numberFilterOperatorList"
                         :key="item.id"
-                        :label="item.name"
+                        :label="$t(item.name)"
                         :value="item.id"
                       />
                     </template>
@@ -825,7 +834,7 @@
                       v-model="item.value"
                       :title="item.value"
                       size="small"
-                      :placeholder="`请输入${item.name}`"
+                      :placeholder="$t('Please enter', [item.name])"
                       suffix-icon="x"
                     />
 
@@ -838,7 +847,7 @@
                       v-model="item.value"
                       :title="item?.options?.find((i) => i.id === item.value)?.name"
                       size="small"
-                      :placeholder="`请选择${item.name}`"
+                      :placeholder="$t('Please select', [item.name])"
                     >
                       <el-option
                         v-for="j in item.options"
@@ -863,7 +872,7 @@
               text
               @click="addFilter"
             >
-              <el-icon><Plus /></el-icon>添加条件
+              <el-icon style="margin-right: 3px"><Plus /></el-icon>{{ $t('Add condition') }}
             </el-button>
           </el-collapse-item>
 
@@ -877,7 +886,7 @@
                 theme="outline"
                 strokeLinejoin="bevel"
               />
-              <span class="collapse-title">设置分组条件</span>
+              <span class="collapse-title">{{ $t('Setting grouping conditions') }}</span>
               <span
                 v-if="groupList.length > 0"
                 style="color: #dd742f"
@@ -971,7 +980,7 @@
               text
               @click="addGroup"
             >
-              <el-icon><Plus /></el-icon>添加条件
+              <el-icon style="margin-right: 3px"><Plus /></el-icon>{{ $t('Add condition') }}
             </el-button>
           </el-collapse-item>
 
@@ -982,7 +991,7 @@
           >
             <template #title>
               <AlphabeticalSorting theme="outline" />
-              <span class="collapse-title">设置排序条件</span>
+              <span class="collapse-title">{{ $t('Setting Sort Criteria') }}</span>
               <span
                 v-if="sortList.length > 0"
                 style="color: #4493c5"
@@ -1077,7 +1086,7 @@
               text
               @click="addSort"
             >
-              <el-icon><Plus /></el-icon>添加条件
+              <el-icon style="margin-right: 3px"><Plus /></el-icon>{{ $t('Add condition') }}
             </el-button>
           </el-collapse-item>
 
@@ -1085,13 +1094,13 @@
           <el-collapse-item name="4">
             <template #title>
               <el-icon><Setting /></el-icon>
-              <span class="collapse-title">字段配置</span>
+              <span class="collapse-title">{{ $t('Field Configuration') }}</span>
             </template>
             <div class="collapse-line-list">
               <el-table
                 :data="fieldTableList"
                 @selection-change="handleSelectionChange"
-                empty-text="暂无数据"
+                :empty-text="$t('no data')"
               >
                 <el-table-column
                   :selectable="selectable"
@@ -1100,7 +1109,7 @@
                 />
 
                 <el-table-column
-                  label="字段名字"
+                  :label="$t('field name')"
                   :min-width="120"
                 >
                   <template #default="scope">
@@ -1118,7 +1127,7 @@
                 </el-table-column>
                 <el-table-column
                   property="name"
-                  label="操作"
+                  :label="$t('operation')"
                   width="60"
                 >
                   <template #default="scope">
@@ -1161,7 +1170,7 @@
                     size="20"
                     strokeLinecap="square"
                   />
-                  <span>批量显示</span>
+                  <span>{{ $t('batch display') }}</span>
                 </el-button>
 
                 <el-button
@@ -1175,7 +1184,7 @@
                     size="20"
                     strokeLinecap="square"
                   />
-                  <span>批量隐藏</span>
+                  <span>{{ $t('Batch hide') }}</span>
                 </el-button>
               </div>
             </div>
@@ -1186,7 +1195,7 @@
           class="sync"
           v-if="filterList.length > 0 || groupList.length > 0 || sortList.length > 0"
         >
-          <span> 是否同步给所有人</span>
+          <span>{{ $t('Is it synchronized to everyone') }}</span>
           <el-switch
             v-model="sync"
             size="small"
@@ -1198,14 +1207,14 @@
             type="primary"
             @click="confirmAddView"
             :loading="drawerLoading"
-            >确定</el-button
+            >{{ $t('Confirm') }}</el-button
           >
 
           <el-button
             @mousedown="(e) => e.preventDefault()"
             type="info"
             @click="cancel"
-            >取消</el-button
+            >{{ $t('Cancel') }}</el-button
           >
         </div>
       </div>
@@ -1223,6 +1232,7 @@
     display: flex;
     align-items: center;
     .addView-line-label {
+      width: 75px;
       margin-right: 10px;
       font-size: 14px;
       white-space: nowrap;
