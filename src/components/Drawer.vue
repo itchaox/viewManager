@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-21 09:09
+ * @LastTime   : 2024-01-21 09:34
  * @desc       : 抽屉
 -->
 
@@ -87,6 +87,12 @@
           // });
           return item;
         });
+
+        filterFieldList.value = fieldList.value.filter((item) =>
+          [1, 3, 4, 13, 15, 22, 99001, 2, 1005, 99002, 99003, 99004].includes(item.type),
+        );
+        groupFieldList.value = fieldList.value;
+        sortFieldList.value = fieldList.value;
       }
     },
   );
