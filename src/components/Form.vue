@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-21 09:24
+ * @LastTime   : 2024-01-21 16:15
  * @desc       : 
 -->
 <script setup>
@@ -922,6 +922,7 @@
       >
         <div class="addView-line-label theme-view-text-color">{{ $t('View range') }}</div>
         <el-select
+          filterable
           v-model="viewRange"
           style="width: 50%"
           :placeholder="$t('Please select the view range')"
@@ -949,6 +950,7 @@
       <div class="addView-line">
         <div class="addView-line-label theme-view-text-color">{{ $t('View type') }}</div>
         <el-select
+          filterable
           v-model="searchViewType"
           :placeholder="$t('Please select the view type')"
           style="width: 50%"

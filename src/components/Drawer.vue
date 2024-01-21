@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-21 09:34
+ * @LastTime   : 2024-01-21 16:17
  * @desc       : 抽屉
 -->
 
@@ -667,6 +667,7 @@
         <div class="addView-line">
           <div class="addView-line-label theme-view-text-color">{{ $t('View type') }}</div>
           <el-select
+            filterable
             v-model="addViewType"
             :placeholder="$t('Please select the view type')"
             style="width: 60%"
@@ -786,6 +787,7 @@
                 <!-- 字段名 -->
                 <div class="collapse-line-filed">
                   <el-select
+                    filterable
                     size="small"
                     v-model="item.id"
                     :title="item.name"
@@ -808,6 +810,7 @@
                 <div class="collapse-line-other">
                   <!-- 条件 -->
                   <el-select
+                    filterable
                     v-model="item.operator"
                     size="small"
                     style="width: 105px"
@@ -846,6 +849,7 @@
 
                     <!-- FIXME 多选操作,暂时有问题 -->
                     <el-select
+                      filterable
                       v-if="showInput(item.operator) && selectMap.includes(item.type)"
                       :multiple="item.type === 4"
                       :collapse-tags="item.type === 4"
@@ -924,6 +928,7 @@
                   <!-- 字段名 -->
                   <div class="collapse-line-filed">
                     <el-select
+                      filterable
                       :style="{ width: 'auto' }"
                       size="small"
                       v-model="item.id"
@@ -1030,6 +1035,7 @@
                   <!-- 字段名 -->
                   <div class="collapse-line-filed">
                     <el-select
+                      filterable
                       size="small"
                       v-model="item.id"
                       :title="item.name"
