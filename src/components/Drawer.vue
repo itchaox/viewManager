@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-21 16:17
+ * @LastTime   : 2024-01-21 16:31
  * @desc       : 抽屉
 -->
 
@@ -68,6 +68,7 @@
     () => props.modelValue,
     async (newValue, _) => {
       if (newValue) {
+        sync.value = true;
         // const _visibleFieldIdList = await view.getVisibleFieldIdList();
         table = await base.getActiveTable();
         view = await table.getActiveView();
@@ -1208,10 +1209,7 @@
           v-if="filterList.length > 0 || groupList.length > 0 || sortList.length > 0"
         >
           <span>{{ $t('Is it synchronized to everyone') }}</span>
-          <el-switch
-            v-model="sync"
-            size="small"
-          />
+          <el-switch v-model="sync" />
         </div>
         <div>
           <el-button
