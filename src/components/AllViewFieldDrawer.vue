@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-20 21:35
+ * @LastTime   : 2024-01-21 16:49
  * @desc       : 所有视图字段配置的抽屉
 -->
 
@@ -190,7 +190,6 @@
           @mousedown="(e) => e.preventDefault()"
           type="danger"
           @click="close"
-          size="small"
         >
           <el-icon class="el-icon--left"><CircleCloseFilled /></el-icon>
           {{ $t('Close') }}
@@ -200,7 +199,7 @@
       <div class="addView">
         <div class="collapse-line-list">
           <el-table
-            max-height="70vh"
+            max-height="65vh"
             :data="fieldTableList"
             @selection-change="handleSelectionChange"
             :empty-text="$t('no data')"
@@ -237,7 +236,6 @@
                 <el-button
                   @mousedown="(e) => e.preventDefault()"
                   v-show="scope.$index !== 0"
-                  size="small"
                   type="danger"
                   link
                   @click="() => (scope.row.isShow = !scope?.row?.isShow)"
@@ -265,7 +263,6 @@
             <el-button
               @mousedown="(e) => e.preventDefault()"
               type="primary"
-              size="small"
               @click="batchShow"
             >
               <preview-open
@@ -279,7 +276,6 @@
             <el-button
               @mousedown="(e) => e.preventDefault()"
               type="primary"
-              size="small"
               @click="batchHide"
             >
               <preview-close

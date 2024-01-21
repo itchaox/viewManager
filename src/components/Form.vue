@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-21 16:15
+ * @LastTime   : 2024-01-21 16:47
  * @desc       : 
 -->
 <script setup>
@@ -834,7 +834,6 @@
     <div class="batch-button">
       <el-button
         type="primary"
-        size="small"
         @click="addView"
         @mousedown="(e) => e.preventDefault()"
       >
@@ -1038,7 +1037,6 @@
         <el-button
           @mousedown="(e) => e.preventDefault()"
           type="primary"
-          size="small"
           @click="searchView"
         >
           <el-icon><Search /></el-icon>
@@ -1048,7 +1046,6 @@
         <el-button
           @mousedown="(e) => e.preventDefault()"
           type="info"
-          size="small"
           @click="reset"
         >
           <el-icon><Refresh /></el-icon>
@@ -1089,7 +1086,7 @@
           ref="tableRef"
           :data="filterViewList"
           @selection-change="handleSelectionChange"
-          max-height="52vh"
+          max-height="49vh"
           :empty-text="$t('no data')"
         >
           <el-table-column
@@ -1425,8 +1422,8 @@
     align-items: center;
     z-index: 999;
     position: absolute;
-    bottom: 5.4%;
-    right: 17%;
+    bottom: 6.2%;
+    right: 19%;
     border-radius: 100%;
     border: 1px solid #2955e750;
     background: #eef5fe;

@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-21 16:31
+ * @LastTime   : 2024-01-21 16:39
  * @desc       : 抽屉
 -->
 
@@ -647,7 +647,6 @@
           @mousedown="(e) => e.preventDefault()"
           type="danger"
           @click="close"
-          size="small"
         >
           <el-icon class="el-icon--left"><CircleCloseFilled /></el-icon>
           {{ $t('Close') }}
@@ -789,7 +788,6 @@
                 <div class="collapse-line-filed">
                   <el-select
                     filterable
-                    size="small"
                     v-model="item.id"
                     :title="item.name"
                     @change="filterFiledChange(item, index)"
@@ -813,7 +811,6 @@
                   <el-select
                     filterable
                     v-model="item.operator"
-                    size="small"
                     style="width: 105px"
                   >
                     <template v-if="textMap.includes(item.type) || selectMap.includes(item.type)">
@@ -843,7 +840,6 @@
                       v-if="showInput(item.operator) && (textMap.includes(item.type) || numberMap.includes(item.type))"
                       v-model="item.value"
                       :title="item.value"
-                      size="small"
                       :placeholder="$t('Please enter', [item.name])"
                       suffix-icon="x"
                     />
@@ -857,7 +853,6 @@
                       :collapse-tags-tooltip="item.type === 4"
                       v-model="item.value"
                       :title="item?.options?.find((i) => i.id === item.value)?.name"
-                      size="small"
                       :placeholder="$t('Please select', [item.name])"
                     >
                       <el-option
@@ -931,7 +926,6 @@
                     <el-select
                       filterable
                       :style="{ width: 'auto' }"
-                      size="small"
                       v-model="item.id"
                       :title="item.name"
                       @change="groupFiledChange(item, index)"
@@ -955,7 +949,7 @@
                 <div class="collapse-line-other">
                   <!-- 值 -->
                   <div class="collapse-line-value">
-                    <el-button-group size="small">
+                    <el-button-group>
                       <el-button
                         @mousedown="(e) => e.preventDefault()"
                         class="collapse-btn"
@@ -1037,7 +1031,6 @@
                   <div class="collapse-line-filed">
                     <el-select
                       filterable
-                      size="small"
                       v-model="item.id"
                       :title="item.name"
                       @change="sortFiledChange(item, index)"
@@ -1062,7 +1055,7 @@
                 <div class="collapse-line-other">
                   <!-- 值 -->
                   <div class="collapse-line-value">
-                    <el-button-group size="small">
+                    <el-button-group>
                       <el-button
                         @mousedown="(e) => e.preventDefault()"
                         class="collapse-btn"
@@ -1147,7 +1140,6 @@
                     <el-button
                       @mousedown="(e) => e.preventDefault()"
                       v-show="scope.$index !== 0"
-                      size="small"
                       type="danger"
                       link
                       @click="() => (scope.row.isShow = !scope?.row?.isShow)"
@@ -1175,7 +1167,6 @@
                 <el-button
                   @mousedown="(e) => e.preventDefault()"
                   type="primary"
-                  size="small"
                   @click="batchShow"
                 >
                   <preview-open
@@ -1189,7 +1180,6 @@
                 <el-button
                   @mousedown="(e) => e.preventDefault()"
                   type="primary"
-                  size="small"
                   @click="batchHide"
                 >
                   <preview-close
@@ -1272,7 +1262,7 @@
     flex-wrap: nowrap;
     justify-content: space-between;
     margin-bottom: 10px;
-    height: 24px;
+    /* height: 24px; */
   }
 
   .collapse-line-filed {
@@ -1359,6 +1349,6 @@
   }
 
   .collapse-btn {
-    width: 65px;
+    width: 72px;
   }
 </style>
