@@ -83,5 +83,9 @@
   "more than": "More Than",
   "less than": "Less Than",
   "Less than or equal to": "Less Than or Equal ",
-  "greater than or equal to": "Greater Than or Equal"
+  "greater than or equal to": "Greater Than or Equal",
+  "Display Status": "Display Status",
+  "default": "Default",
+  "show": "Show",
+  "hide": "Hide"
 }

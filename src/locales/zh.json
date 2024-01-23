@@ -83,5 +83,9 @@
   "more than": "大于",
   "greater than or equal to": "大于或等于",
   "less than": "小于",
-  "Less than or equal to": "小于或等于"
+  "Less than or equal to": "小于或等于",
+  "Display Status": "显示状态",
+  "default": "默认",
+  "show": "显示",
+  "hide": "隐藏"
 }

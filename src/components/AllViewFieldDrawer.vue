@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-24 00:02
+ * @LastTime   : 2024-01-24 00:15
  * @desc       : 所有视图字段配置的抽屉
 -->
 
@@ -260,7 +260,7 @@
               </template>
             </el-table-column>
             <el-table-column
-              label="显示状态"
+              :label="$t('Display Status')"
               align="center"
             >
               <template #default="scope">
@@ -268,17 +268,17 @@
                   <span
                     v-if="scope?.row?.status === 'default'"
                     style="color: #1f2329"
-                    >默认</span
+                    >{{ $t('default') }}</span
                   >
                   <span
                     v-if="scope?.row?.status === 'show'"
                     style="color: rgb(20, 86, 240)"
-                    >显示</span
+                    >{{ $t('show') }}</span
                   >
                   <span
                     v-if="scope?.row?.status === 'hide'"
                     style="color: #bbbfc4"
-                    >隐藏</span
+                    >{{ $t('hide') }}</span
                   >
                 </div>
               </template>
