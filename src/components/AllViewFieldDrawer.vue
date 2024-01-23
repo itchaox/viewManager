@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-21 16:49
+ * @LastTime   : 2024-01-24 00:02
  * @desc       : 所有视图字段配置的抽屉
 -->
 
@@ -52,7 +52,8 @@
         fieldTableList.value = fieldList.value.map((item) => {
           item = {
             ...item,
-            isShow: true,
+            // isShow: true,
+            status: 'default',
           };
 
           return item;
@@ -89,9 +90,15 @@
       const _hideFieldIdList = [];
 
       fieldTableList.value.map((item) => {
-        if (item.isShow) {
+        // if (item.isShow) {
+        //   _showFieldIdList.push(item.id);
+        // } else {
+        //   _hideFieldIdList.push(item.id);
+        // }
+
+        if (item.status === 'show') {
           _showFieldIdList.push(item.id);
-        } else {
+        } else if (item.status === 'hide') {
           _hideFieldIdList.push(item.id);
         }
       });
@@ -131,7 +138,8 @@
 
     fieldTableList.value = fieldTableList.value.map((item) => {
       if (selectFieldIdList.value.includes(item.id)) {
-        item.isShow = true;
+        // item.isShow = true;
+        item.status = 'show';
       }
 
       return item;
@@ -148,7 +156,8 @@
 
     fieldTableList.value = fieldTableList.value.map((item) => {
       if (selectFieldIdList.value.includes(item.id)) {
-        item.isShow = false;
+        // item.isShow = false;
+        item.status = 'hide';
       }
 
       return item;
@@ -166,6 +175,32 @@
 
     fieldTableList.value = [];
     drawerLoading.value = false;
+  }
+
+  function handleMouseOver(row, action) {
+    // 鼠标悬停时修改颜色
+    row.hoverColor = 'rgb(20, 86, 240)';
+  }
+
+  function handleMouseOut(row, action) {
+    // 鼠标移出时恢复初始颜色
+    row.hoverColor = null;
+    row.hoverHideColor = null;
+  }
+
+  function getIconColor(row, action) {
+    // 获取按钮颜色，考虑悬停时的颜色
+    return row.hoverColor || '#333';
+  }
+
+  function handleMouseOverHide(row, action) {
+    // 鼠标悬停时修改颜色
+    row.hoverHideColor = 'rgb(20, 86, 240)';
+  }
+
+  function getIconHideColor(row, action) {
+    // 获取按钮颜色，考虑悬停时的颜色
+    return row.hoverHideColor || '#333';
   }
 </script>
 
@@ -210,15 +245,12 @@
               width="30"
             />
 
-            <el-table-column
-              :label="$t('field name')"
-              :min-width="120"
-            >
+            <el-table-column :label="$t('field name')">
               <template #default="scope">
                 <div
                   :title="scope?.row?.name"
                   class="view-name"
-                  :style="{ color: scope.row.isShow ? '#1f2329' : '#bbbfc4' }"
+                  :style="{ color: scope.row.status === 'hide' ? '#bbbfc4' : '#1f2329' }"
                 >
                   <field-icon :fieldType="scope?.row?.type" />
                   <span>
@@ -228,33 +260,72 @@
               </template>
             </el-table-column>
             <el-table-column
-              property="name"
-              :label="$t('operation')"
-              width="70"
+              label="显示状态"
+              align="center"
             >
               <template #default="scope">
-                <el-button
-                  @mousedown="(e) => e.preventDefault()"
-                  v-show="scope.$index !== 0"
-                  type="danger"
-                  link
-                  @click="() => (scope.row.isShow = !scope?.row?.isShow)"
-                >
-                  <preview-open
-                    v-if="scope.row.isShow"
-                    theme="outline"
-                    size="20"
-                    fill="#333"
-                    strokeLinecap="square"
-                  />
-                  <preview-close
-                    v-else
-                    theme="outline"
-                    size="20"
-                    fill="#333"
-                    strokeLinecap="square"
-                  />
-                </el-button>
+                <div :title="scope?.row?.status">
+                  <span
+                    v-if="scope?.row?.status === 'default'"
+                    style="color: #1f2329"
+                    >默认</span
+                  >
+                  <span
+                    v-if="scope?.row?.status === 'show'"
+                    style="color: rgb(20, 86, 240)"
+                    >显示</span
+                  >
+                  <span
+                    v-if="scope?.row?.status === 'hide'"
+                    style="color: #bbbfc4"
+                    >隐藏</span
+                  >
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              property="name"
+              align="center"
+              :label="$t('operation')"
+            >
+              <template #default="scope">
+                <div class="operate">
+                  <el-button
+                    @mousedown="(e) => e.preventDefault()"
+                    v-show="scope.$index !== 0"
+                    type="danger"
+                    link
+                    @click="() => (scope.row.status = 'show')"
+                  >
+                    <preview-open
+                      class="operate-btn"
+                      theme="outline"
+                      size="20"
+                      strokeLinecap="square"
+                      :fill="getIconColor(scope.row, 'show')"
+                      @mouseover="handleMouseOver(scope.row, 'show')"
+                      @mouseout="handleMouseOut(scope.row, 'show')"
+                    />
+                  </el-button>
+
+                  <el-button
+                    @mousedown="(e) => e.preventDefault()"
+                    v-show="scope.$index !== 0"
+                    type="danger"
+                    link
+                    @click="() => (scope.row.status = 'hide')"
+                  >
+                    <preview-close
+                      class="operate-btn"
+                      theme="outline"
+                      size="20"
+                      strokeLinecap="square"
+                      :fill="getIconHideColor(scope.row, 'hide')"
+                      @mouseover="handleMouseOverHide(scope.row, 'hide')"
+                      @mouseout="handleMouseOut(scope.row, 'hide')"
+                    />
+                  </el-button>
+                </div>
               </template>
             </el-table-column>
           </el-table>
@@ -436,5 +507,17 @@
 
   .collapse-btn {
     width: 65px;
+  }
+
+  .operate {
+    display: flex;
+  }
+
+  .operate-btn {
+    padding: 1px 4px;
+    cursor: pointer;
+    &:hover {
+      background-color: #3370ff1a;
+    }
   }
 </style>
