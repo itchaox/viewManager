@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-04-08 14:13
+ * @LastTime   : 2024-04-08 14:18
  * @desc       : 
 -->
 <script setup>
@@ -982,7 +982,6 @@
 
         <el-button
           @mousedown="(e) => e.preventDefault()"
-          type="info"
           @click="() => (isShowOtherSet = false)"
           >{{ $t('Cancel') }}</el-button
         >
@@ -1081,7 +1080,6 @@
 
           <el-button
             @mousedown="(e) => e.preventDefault()"
-            type="info"
             @click="cancelInfo"
             >{{ $t('Cancel') }}</el-button
           >
@@ -1220,7 +1218,6 @@
 
         <el-button
           @mousedown="(e) => e.preventDefault()"
-          type="info"
           @click="reset"
         >
           <el-icon><Refresh /></el-icon>

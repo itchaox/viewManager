@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-12-16 09:57
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-24 00:15
+ * @LastTime   : 2024-04-08 14:17
  * @desc       : 所有视图字段配置的抽屉
 -->
 
@@ -370,7 +370,6 @@
 
           <el-button
             @mousedown="(e) => e.preventDefault()"
-            type="info"
             @click="cancel"
             >{{ $t('Cancel') }}</el-button
           >
