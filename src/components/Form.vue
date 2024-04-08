@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-01-21 16:47
+ * @LastTime   : 2024-04-08 14:13
  * @desc       : 
 -->
 <script setup>
@@ -18,6 +18,7 @@
     CheckCorrect,
     ApplicationMenu,
     PreviewOpen,
+    Config,
   } from '@icon-park/vue-next';
 
   import { toast } from 'vue-sonner';
@@ -778,6 +779,103 @@
   function confirmBatchViewField() {
     tableRef.value.clearSelection();
   }
+
+  const isShowOtherSet = ref(false);
+
+  const isAsyncFilter = ref(false);
+  const isAsyncGroup = ref(false);
+  const isAsyncSort = ref(false);
+  const rowHeightLevel = ref();
+
+  const cancelSet = () => {
+    isShowOtherSet.value = false;
+    isAsyncFilter.value = false;
+    isAsyncGroup.value = false;
+    isAsyncSort.value = false;
+    rowHeightLevel.value = undefined;
+  };
+
+  const confirmSet = async () => {
+    let _view = await toRaw(table.value).getActiveView();
+    const viewList = await toRaw(table.value).getViewList();
+
+    // FIXME 筛选
+    let currentFilterInfo;
+    if (isAsyncFilter.value) {
+      currentFilterInfo = await _view.getFilterInfo();
+    }
+
+    // FIXME 分组
+    let currentGroupInfo;
+    if (isAsyncGroup.value) {
+      currentGroupInfo = await _view.getGroupInfo();
+    }
+
+    // FIXME 排序
+    let currentSortInfo;
+    if (isAsyncSort.value) {
+      currentSortInfo = await _view.getSortInfo();
+    }
+
+    for (const view of viewList) {
+      // FIXME 筛选
+      // done
+
+      if (isAsyncFilter.value) {
+        let info = await view.getFilterInfo();
+
+        if (view.id !== _view.id) {
+          if (info) {
+            for (let i = 0; i < info.conditions.length; i++) {
+              await view.deleteFilterCondition(info.conditions[i].conditionId);
+            }
+          }
+          await view.addFilterCondition(currentFilterInfo.conditions);
+
+          await view.setFilterConjunction(currentFilterInfo.conjunction);
+        }
+      }
+
+      // FIXME 分组
+      // done
+      if (isAsyncGroup.value) {
+        let info = await view.getGroupInfo();
+
+        if (view.id !== _view.id && info) {
+          for (const i of info) {
+            await view.deleteGroup(i);
+          }
+          await view.addGroup(currentGroupInfo);
+        }
+      }
+
+      // FIXME 排序
+      // done
+      if (isAsyncSort.value) {
+        let info = await view.getSortInfo();
+
+        if (view.id !== _view.id && info) {
+          for (const i of info) {
+            await view.deleteSort(i);
+          }
+          await view.addSort(currentSortInfo);
+        }
+      }
+
+      // FIXME 行高
+      // done
+      if (rowHeightLevel.value) {
+        await view.setRowHeight(rowHeightLevel.value);
+      }
+
+      // done
+      if (isAsyncFilter.value || isAsyncGroup.value || isAsyncSort.value || rowHeightLevel.value) {
+        await view.applySetting();
+      }
+    }
+
+    isShowOtherSet.value = false;
+  };
 </script>
 
 <template>
@@ -813,6 +911,83 @@
         </el-button>
       </template>
     </el-popconfirm>
+
+    <div class="async-set-icon">
+      <el-button
+        type="primary"
+        @click="() => (isShowOtherSet = true)"
+        @mousedown="(e) => e.preventDefault()"
+      >
+        <config
+          theme="outline"
+          size="18"
+          strokeLinecap="square"
+          style="margin-right: 5px"
+        />
+        同步所有视图其他配置
+      </el-button>
+    </div>
+
+    <!-- 同步所有视图其他配置——弹窗  -->
+    <el-dialog
+      v-model="isShowOtherSet"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      @close="cancelSet"
+      title="同步所有视图其他配置"
+      width="75%"
+    >
+      <div class="tips">Tips: 请勾选需要把当前视图同步至所有视图的配置项</div>
+      <div class="async-set">
+        <el-checkbox v-model="isAsyncFilter">筛选</el-checkbox>
+        <el-checkbox v-model="isAsyncGroup">分组</el-checkbox>
+        <el-checkbox v-model="isAsyncSort">排序</el-checkbox>
+        <div class="setRawHeight">
+          <span>行高：</span>
+          <el-select
+            v-model="rowHeightLevel"
+            placeholder="请选择行高"
+          >
+            <el-option
+              :key="1"
+              label="低"
+              :value="1"
+            />
+
+            <el-option
+              :key="2"
+              label="中等"
+              :value="2"
+            />
+            <el-option
+              :key="3"
+              label="高"
+              :value="3"
+            />
+            <el-option
+              :key="4"
+              label="超高"
+              :value="4"
+            />
+          </el-select>
+        </div>
+      </div>
+      <div>
+        <el-button
+          @mousedown="(e) => e.preventDefault()"
+          type="primary"
+          @click="confirmSet"
+          >{{ $t('Confirm') }}</el-button
+        >
+
+        <el-button
+          @mousedown="(e) => e.preventDefault()"
+          type="info"
+          @click="() => (isShowOtherSet = false)"
+          >{{ $t('Cancel') }}</el-button
+        >
+      </div>
+    </el-dialog>
 
     <el-divider />
     <div class="tips">{{ $t('tips') }}</div>
@@ -1460,5 +1635,20 @@
 
   :deep(.el-table .cell) {
     padding: 0 7px;
+  }
+
+  .async-set-icon {
+    margin: 10px 0;
+  }
+
+  .async-set {
+    margin: 10px 0 20px 0;
+  }
+
+  .setRawHeight {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    white-space: nowrap;
   }
 </style>
