@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-06-21 11:48
  * @LastAuthor : itchaox
- * @LastTime   : 2023-12-22 00:30
+ * @LastTime   : 2024-04-08 14:54
  * @desc       :
  */
 
@@ -19,6 +19,7 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: './',
   server: {
     host: true,
     hmr: true, //启动热更新，就是更改了代码自动刷新页面
