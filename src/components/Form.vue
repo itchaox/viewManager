@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-04-08 14:18
+ * @LastTime   : 2024-04-08 14:22
  * @desc       : 
 -->
 <script setup>
@@ -92,6 +92,8 @@
       addViewDrawer.value = false;
       batchAllViewFieldDrawer.value = false;
     });
+
+    isInit.value = true;
   });
 
   /**
@@ -366,12 +368,16 @@
     }
   }
 
+  const isInit = ref(false);
+
   async function getViewMetaList() {
     loading.value = true;
     table.value = await base.getActiveTable();
 
     viewList.value = await toRaw(table.value).getViewMetaList();
-    toast.success(t('Successful query'));
+    if (isInit.value) {
+      toast.success(t('Successful query'));
+    }
 
     handlerViewList();
   }
