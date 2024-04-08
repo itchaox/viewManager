@@ -87,5 +87,16 @@
   "Display Status": "Display Status",
   "default": "Default",
   "show": "Show",
-  "hide": "Hide"
+  "hide": "Hide",
+  "filter": "Filter",
+  "group": "Group",
+  "sort": "Sort",
+  "rawHeight": "RawHeight：",
+  "Synchronize other configurations for all views": "Synchronize Other Config For All Views",
+  "ttt": "Tips: Please check the configuration items that need to synchronize the current view to all views",
+  "sss": "Please select a row height",
+  "medium": "Medium",
+  "high": "Tall",
+  "Super High": "Extra Tall",
+  "Low": "Short"
 }

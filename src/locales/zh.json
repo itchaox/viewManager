@@ -87,5 +87,16 @@
   "Display Status": "显示状态",
   "default": "默认",
   "show": "显示",
-  "hide": "隐藏"
+  "hide": "隐藏",
+  "filter": "筛选",
+  "group": "分组",
+  "sort": "排序",
+  "rawHeight": "行高：",
+  "Synchronize other configurations for all views": "同步所有视图其他配置",
+  "ttt": "Tips: 请勾选需要把当前视图同步至所有视图的配置项",
+  "sss": "请选择行高",
+  "Low": "低",
+  "medium": "中等",
+  "high": "高",
+  "Super High": "超高"
 }

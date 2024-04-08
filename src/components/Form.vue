@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-04-08 14:22
+ * @LastTime   : 2024-04-08 14:37
  * @desc       : 
 -->
 <script setup>
@@ -881,6 +881,7 @@
     }
 
     isShowOtherSet.value = false;
+    toast.success(t('Synchronization Configuration Successful'));
   };
 </script>
 
@@ -930,7 +931,7 @@
           strokeLinecap="square"
           style="margin-right: 5px"
         />
-        同步所有视图其他配置
+        {{ $t('Synchronize other configurations for all views') }}
       </el-button>
     </div>
 
@@ -940,39 +941,39 @@
       :close-on-click-modal="false"
       :close-on-press-escape="false"
       @close="cancelSet"
-      title="同步所有视图其他配置"
+      :title="$t('Synchronize other configurations for all views')"
       width="75%"
     >
-      <div class="tips">Tips: 请勾选需要把当前视图同步至所有视图的配置项</div>
+      <div class="tips">{{ $t('ttt') }}</div>
       <div class="async-set">
-        <el-checkbox v-model="isAsyncFilter">筛选</el-checkbox>
-        <el-checkbox v-model="isAsyncGroup">分组</el-checkbox>
-        <el-checkbox v-model="isAsyncSort">排序</el-checkbox>
+        <el-checkbox v-model="isAsyncFilter">{{ $t('filter') }}</el-checkbox>
+        <el-checkbox v-model="isAsyncGroup">{{ $t('group') }}</el-checkbox>
+        <el-checkbox v-model="isAsyncSort">{{ $t('sort') }}</el-checkbox>
         <div class="setRawHeight">
-          <span>行高：</span>
+          <span>{{ $t('rawHeight') }}</span>
           <el-select
             v-model="rowHeightLevel"
-            placeholder="请选择行高"
+            :placeholder="$t('sss')"
           >
             <el-option
               :key="1"
-              label="低"
+              :label="$t('Low')"
               :value="1"
             />
 
             <el-option
               :key="2"
-              label="中等"
+              :label="$t('medium')"
               :value="2"
             />
             <el-option
               :key="3"
-              label="高"
+              :label="$t('high')"
               :value="3"
             />
             <el-option
               :key="4"
-              label="超高"
+              :label="$t('Super High')"
               :value="4"
             />
           </el-select>
