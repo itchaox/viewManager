@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : itchaox
- * @LastTime   : 2024-04-08 14:37
+ * @LastTime   : 2024-04-08 14:50
  * @desc       : 
 -->
 <script setup>
@@ -826,7 +826,6 @@
     for (const view of viewList) {
       // FIXME 筛选
       // done
-
       if (isAsyncFilter.value) {
         let info = await view.getFilterInfo();
 
@@ -837,7 +836,6 @@
             }
           }
           await view.addFilterCondition(currentFilterInfo.conditions);
-
           await view.setFilterConjunction(currentFilterInfo.conjunction);
         }
       }
@@ -847,9 +845,11 @@
       if (isAsyncGroup.value) {
         let info = await view.getGroupInfo();
 
-        if (view.id !== _view.id && info) {
-          for (const i of info) {
-            await view.deleteGroup(i);
+        if (view.id !== _view.id) {
+          if (info) {
+            for (const i of info) {
+              await view.deleteGroup(i);
+            }
           }
           await view.addGroup(currentGroupInfo);
         }
@@ -860,9 +860,11 @@
       if (isAsyncSort.value) {
         let info = await view.getSortInfo();
 
-        if (view.id !== _view.id && info) {
-          for (const i of info) {
-            await view.deleteSort(i);
+        if (view.id !== _view.id) {
+          if (info) {
+            for (const i of info) {
+              await view.deleteSort(i);
+            }
           }
           await view.addSort(currentSortInfo);
         }
