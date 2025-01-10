@@ -2,8 +2,8 @@
  * @Version    : v1.00
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
- * @LastAuthor : itchaox
- * @LastTime   : 2024-04-08 14:50
+ * @LastAuthor : Wang Chao
+ * @LastTime   : 2025-01-10 23:23
  * @desc       : 
 -->
 <script setup>
@@ -78,9 +78,27 @@
     // 移动表格位置
     scrollTable(_index * _height);
 
-    toRaw(table.value).onFieldAdd((event) => {
+    // 监听新增字段事件
+    toRaw(table.value).onFieldAdd(async (event) => {
       addViewDrawer.value = false;
       batchAllViewFieldDrawer.value = false;
+
+      if (onlyShowActiveView.value === true) {
+        const _addFieldId = event?.data?.fieldId;
+        // 1. 当前视图以外的视图列表
+        // 2. 新增字段的 id
+        // 3. 批量隐藏新增字段 id
+
+        const _viewList = await toRaw(table.value)?.getViewMetaList();
+        const _activeView = await toRaw(table.value)?.getActiveView();
+        const _otherViewIdList = _viewList?.filter((item) => item?.id !== _activeView?.id)?.map((item) => item?.id);
+
+        // 隐藏其他视图中新增字段
+        for (const id of _otherViewIdList) {
+          const view = await toRaw(table.value)?.getViewById(id);
+          await view?.hideField(_addFieldId);
+        }
+      }
     });
 
     toRaw(table.value).onFieldModify((event) => {
@@ -582,6 +600,9 @@
   const searchViewType = ref('all');
   const searchViewName = ref();
 
+  // 新增字段仅限当前视图
+  const onlyShowActiveView = ref(false);
+
   const viewRangeList = ref([
     { value: 1, label: 'Full Role View Scope' },
     // { value: 2, label: '当前用户个人视图' },
@@ -935,6 +956,13 @@
         />
         {{ $t('Synchronize other configurations for all views') }}
       </el-button>
+    </div>
+
+    <div class="async-set-icon">
+      <div class="addView-line">
+        <div class="addView-line-addField-label theme-view-text-color">新增字段仅限当前视图：</div>
+        <el-switch v-model="onlyShowActiveView" />
+      </div>
     </div>
 
     <!-- 同步所有视图其他配置——弹窗  -->
@@ -1546,6 +1574,13 @@
     align-items: center;
     .addView-line-label {
       width: 75px;
+      margin-right: 10px;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .addView-line-addField-label {
+      width: 145px;
       margin-right: 10px;
       font-size: 14px;
       white-space: nowrap;
