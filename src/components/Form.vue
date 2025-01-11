@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : Wang Chao
- * @LastTime   : 2025-01-11 08:12
+ * @LastTime   : 2025-01-11 08:18
  * @desc       : 
 -->
 <script setup>
@@ -603,6 +603,9 @@
   // 新增字段仅显示于当前视图
   const onlyShowActiveView = ref(false);
 
+  // 自动同步所有人
+  const autoSyncAll = ref(false);
+
   const viewRangeList = ref([
     { value: 1, label: 'Full Role View Scope' },
     // { value: 2, label: '当前用户个人视图' },
@@ -965,6 +968,12 @@
       </div>
     </div>
 
+    <div class="async-set-icon">
+      <div class="addView-line">
+        <div class="addView-line-addField-label theme-view-text-color">自动同步所有人</div>
+        <el-switch v-model="autoSyncAll" />
+      </div>
+    </div>
     <!-- 同步所有视图其他配置——弹窗  -->
     <el-dialog
       v-model="isShowOtherSet"
