@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : Wang Chao
- * @LastTime   : 2025-01-11 08:18
+ * @LastTime   : 2025-01-11 12:29
  * @desc       : 
 -->
 <script setup>
@@ -968,12 +968,14 @@
       </div>
     </div>
 
-    <div class="async-set-icon">
+    <!-- FIXME 自动同步所有人-暂时不做 -->
+    <!-- <div class="async-set-icon">
       <div class="addView-line">
         <div class="addView-line-addField-label theme-view-text-color">自动同步所有人</div>
         <el-switch v-model="autoSyncAll" />
       </div>
-    </div>
+    </div> -->
+
     <!-- 同步所有视图其他配置——弹窗  -->
     <el-dialog
       v-model="isShowOtherSet"
