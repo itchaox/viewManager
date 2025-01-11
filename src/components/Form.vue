@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : Wang Chao
- * @LastTime   : 2025-01-11 12:29
+ * @LastTime   : 2025-01-11 13:09
  * @desc       : 
 -->
 <script setup>
@@ -289,15 +289,19 @@
       'Content-Type': 'application/json; charset=utf-8',
     };
 
-    const response = await axios.post(apiUrl, data, { headers });
-    // 处理响应数据
-    if (response?.data?.code === 0) {
-      tenant_access_token.value = response?.data?.tenant_access_token;
-      Verify.value = true;
-      toast.success(t('Self-built application credentials called successfully'));
-      openEnterprise.value = false;
-    } else {
-      toast.error(t('app_id or app_secret error'));
+    try {
+      const response = await axios.post(apiUrl, data, { headers });
+      // 处理响应数据
+      if (response?.data?.code === 0) {
+        tenant_access_token.value = response?.data?.tenant_access_token;
+        Verify.value = true;
+        toast.success(t('Self-built application credentials called successfully'));
+        openEnterprise.value = false;
+      } else {
+        toast.error(t('app_id or app_secret error'));
+      }
+    } catch (error) {
+      toast.error(error?.message);
     }
     // expire 时间到了自动刷新问题, 分钟
   }
