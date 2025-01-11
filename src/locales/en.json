@@ -98,5 +98,6 @@
   "medium": "Medium",
   "high": "Tall",
   "Super High": "Extra Tall",
-  "Low": "Short"
+  "Low": "Short",
+  "addFieldOnlyShowActiveView": "Add field show only current view:"
 }

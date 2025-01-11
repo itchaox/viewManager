@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : Wang Chao
- * @LastTime   : 2025-01-10 23:23
+ * @LastTime   : 2025-01-11 08:12
  * @desc       : 
 -->
 <script setup>
@@ -600,7 +600,7 @@
   const searchViewType = ref('all');
   const searchViewName = ref();
 
-  // 新增字段仅限当前视图
+  // 新增字段仅显示于当前视图
   const onlyShowActiveView = ref(false);
 
   const viewRangeList = ref([
@@ -960,7 +960,7 @@
 
     <div class="async-set-icon">
       <div class="addView-line">
-        <div class="addView-line-addField-label theme-view-text-color">新增字段仅限当前视图：</div>
+        <div class="addView-line-addField-label theme-view-text-color">{{ $t('addFieldOnlyShowActiveView') }}</div>
         <el-switch v-model="onlyShowActiveView" />
       </div>
     </div>
@@ -1580,7 +1580,6 @@
     }
 
     .addView-line-addField-label {
-      width: 145px;
       margin-right: 10px;
       font-size: 14px;
       white-space: nowrap;

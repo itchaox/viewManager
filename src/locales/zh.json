@@ -98,5 +98,6 @@
   "Low": "低",
   "medium": "中等",
   "high": "高",
-  "Super High": "超高"
+  "Super High": "超高",
+  "addFieldOnlyShowActiveView": "新增字段仅显示于当前视图："
 }
