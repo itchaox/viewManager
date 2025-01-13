@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : Wang Chao
- * @LastTime   : 2025-01-11 13:09
+ * @LastTime   : 2025-01-11 17:42
  * @desc       : 
 -->
 <script setup>
@@ -80,6 +80,8 @@
 
     // 监听新增字段事件
     toRaw(table.value).onFieldAdd(async (event) => {
+      console.log('新增字段');
+
       addViewDrawer.value = false;
       batchAllViewFieldDrawer.value = false;
 
