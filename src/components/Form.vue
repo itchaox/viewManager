@@ -973,7 +973,10 @@
         <div class="addView-line-addField-label theme-view-text-color">{{ $t('addFieldOnlyShowActiveView') }}</div>
         <el-switch v-model="onlyShowActiveView" />
       </div>
-      <div class="addView-line-new-label">
+      <div
+        class="addView-line-new-label"
+        v-if="onlyShowActiveView"
+      >
         <info
           theme="outline"
           size="14"
