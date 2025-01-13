@@ -99,5 +99,6 @@
   "high": "Tall",
   "Super High": "Extra Tall",
   "Low": "Short",
-  "addFieldOnlyShowActiveView": "Add field show only current view"
+  "addFieldOnlyShowActiveView": "Add field show only current view",
+  "addViewLineNewLabel": "Turn on this switch and add new fields in the multidimensional table"
 }

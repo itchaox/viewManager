@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : Wang Chao
- * @LastTime   : 2025-01-11 17:42
+ * @LastTime   : 2025-01-13 14:57
  * @desc       : 
 -->
 <script setup>
@@ -19,6 +19,7 @@
     ApplicationMenu,
     PreviewOpen,
     Config,
+    Info,
   } from '@icon-park/vue-next';
 
   import { toast } from 'vue-sonner';
@@ -972,6 +973,16 @@
         <div class="addView-line-addField-label theme-view-text-color">{{ $t('addFieldOnlyShowActiveView') }}</div>
         <el-switch v-model="onlyShowActiveView" />
       </div>
+      <div class="addView-line-new-label">
+        <info
+          theme="outline"
+          size="14"
+          fill="#616466"
+        />
+        <span>
+          {{ $t('addViewLineNewLabel') }}
+        </span>
+      </div>
     </div>
 
     <!-- FIXME 自动同步所有人-暂时不做 -->
@@ -1585,10 +1596,23 @@
     margin: 10px 0;
   }
 
+  .addView-line-new-label {
+    display: flex;
+    align-items: center;
+    color: #616466;
+    font-size: 12px;
+    margin-top: -5px;
+    margin-bottom: 10px;
+    span {
+      padding-left: 2px;
+    }
+  }
+
   .addView-line {
     margin-bottom: 8px;
     display: flex;
     align-items: center;
+
     .addView-line-label {
       width: 75px;
       margin-right: 10px;

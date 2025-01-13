@@ -99,5 +99,6 @@
   "medium": "中等",
   "high": "高",
   "Super High": "超高",
-  "addFieldOnlyShowActiveView": "新增字段仅显示于当前视图"
+  "addFieldOnlyShowActiveView": "新增字段仅显示于当前视图",
+  "addViewLineNewLabel": "打开此开关，在多维表格中进行新增字段即可"
 }
