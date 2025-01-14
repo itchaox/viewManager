@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : Wang Chao
- * @LastTime   : 2025-01-14 10:40
+ * @LastTime   : 2025-01-14 13:30
  * @desc       : 
 -->
 <script setup>
@@ -672,6 +672,9 @@
   // 新增字段仅显示于当前视图
   const onlyShowActiveView = ref(false);
 
+  // 展示视频标签
+  const showViewTag = ref(false);
+
   // 自动同步所有人
   const autoSyncAll = ref(false);
 
@@ -1003,6 +1006,8 @@
     const tagsUnion = [...new Set(tagsList.value.flatMap((item) => item.tags))];
     tagOptionList.value = tagsUnion;
   }
+
+  const activeNames = ref(['1']);
 </script>
 
 <template>
@@ -1012,68 +1017,83 @@
     v-loading="allLoading"
     :element-loading-text="$t('Loading')"
   >
-    <el-popconfirm
-      width="60vw"
-      :confirm-button-text="$t('Confirm')"
-      :cancel-button-text="$t('Cancel')"
-      @confirm="syncAllViewField"
-      :icon="InfoFilled"
-      icon-color="rgb(20, 86, 240)"
-      cancel-button-type="info"
-      :hide-after="50"
-      :title="$t('Are you sure to synchronize the current view fields explicitly and implicitly to all views')"
-    >
-      <template #reference>
-        <el-button
-          type="primary"
-          @mousedown="(e) => e.preventDefault()"
+    <el-collapse v-model="activeNames">
+      <el-collapse-item
+        title="更多配置"
+        name="1"
+      >
+        <el-popconfirm
+          width="60vw"
+          :confirm-button-text="$t('Confirm')"
+          :cancel-button-text="$t('Cancel')"
+          @confirm="syncAllViewField"
+          :icon="InfoFilled"
+          icon-color="rgb(20, 86, 240)"
+          cancel-button-type="info"
+          :hide-after="50"
+          :title="$t('Are you sure to synchronize the current view fields explicitly and implicitly to all views')"
         >
-          <preview-open
-            theme="outline"
-            size="18"
-            strokeLinecap="square"
-            style="margin-right: 5px"
-          />
-          {{ $t('Synchronize all view field hides') }}
-        </el-button>
-      </template>
-    </el-popconfirm>
+          <template #reference>
+            <el-button
+              type="primary"
+              @mousedown="(e) => e.preventDefault()"
+            >
+              <preview-open
+                theme="outline"
+                size="18"
+                strokeLinecap="square"
+                style="margin-right: 5px"
+              />
+              {{ $t('Synchronize all view field hides') }}
+            </el-button>
+          </template>
+        </el-popconfirm>
 
-    <div class="async-set-icon">
-      <el-button
-        type="primary"
-        @click="() => (isShowOtherSet = true)"
-        @mousedown="(e) => e.preventDefault()"
-      >
-        <config
-          theme="outline"
-          size="18"
-          strokeLinecap="square"
-          style="margin-right: 5px"
-        />
-        {{ $t('Synchronize other configurations for all views') }}
-      </el-button>
-    </div>
+        <div class="async-set-icon">
+          <el-button
+            type="primary"
+            @click="() => (isShowOtherSet = true)"
+            @mousedown="(e) => e.preventDefault()"
+          >
+            <config
+              theme="outline"
+              size="18"
+              strokeLinecap="square"
+              style="margin-right: 5px"
+            />
+            {{ $t('Synchronize other configurations for all views') }}
+          </el-button>
+        </div>
 
-    <div class="async-set-icon">
-      <div class="addView-line">
-        <div class="addView-line-addField-label theme-view-text-color">{{ $t('addFieldOnlyShowActiveView') }}</div>
-        <el-switch v-model="onlyShowActiveView" />
-      </div>
-      <div
-        class="addView-line-new-label"
-        v-if="onlyShowActiveView"
-      >
-        <info
-          theme="outline"
-          size="14"
-          fill="#616466"
-        />
-        <span>
-          {{ $t('addViewLineNewLabel') }}
-        </span>
-      </div>
-    </div>
+        <div class="async-set-icon">
+          <div class="addView-line addView-line-switch">
+            <div class="addView-line-addField-label theme-view-text-color">{{ $t('addFieldOnlyShowActiveView') }}</div>
+            <el-switch v-model="onlyShowActiveView" />
+          </div>
+          <div
+            class="addView-line-new-label"
+            v-if="onlyShowActiveView"
+          >
+            <info
+              theme="outline"
+              size="14"
+              fill="#ca6c2c"
+              style="padding-top: 5px"
+            />
+            <span>
+              {{ $t('addViewLineNewLabel') }}
+            </span>
+          </div>
+        </div>
+
+        <div class="async-set-icon">
+          <div class="addView-line addView-line-switch">
+            <div class="addView-line-addField-label theme-view-text-color">展示视图标签</div>
+            <el-switch v-model="showViewTag" />
+          </div>
+        </div>
+      </el-collapse-item>
+    </el-collapse>
 
     <!-- FIXME 自动同步所有人-暂时不做 -->
     <!-- <div class="async-set-icon">
@@ -1143,7 +1163,6 @@
       </div>
     </el-dialog>
 
-    <el-divider />
     <div class="tips">{{ $t('tips') }}</div>
     <div class="addView-line">
       <div class="addView-line-label theme-view-text-color">{{ $t('Usage Mode') }}</div>
@@ -1361,7 +1380,10 @@
         </el-select>
       </div>
 
-      <div class="addView-line">
+      <div
+        class="addView-line"
+        v-if="showViewTag"
+      >
         <div class="addView-line-label theme-view-text-color">视图标签：</div>
         <el-select
           v-model="viewTags"
@@ -1549,6 +1571,7 @@
             </template>
           </el-table-column>
           <el-table-column
+            v-if="showViewTag"
             label="标签"
             :width="100"
           >
@@ -1733,7 +1756,7 @@
 
   .tips {
     font-size: 12px;
-    margin-bottom: 10px;
+    margin: 10px 0;
     color: #646a73;
   }
 
@@ -1748,10 +1771,16 @@
   .addView-line-new-label {
     display: flex;
     align-items: center;
+    user-select: none; /* 标准属性 */
+    -webkit-user-select: none; /* 兼容 Chrome、Safari */
+    -moz-user-select: none; /* 兼容 Firefox */
+    -ms-user-select: none; /* 兼容 IE */
+
     color: #616466;
     font-size: 12px;
-    margin-top: -5px;
-    margin-bottom: 10px;
+    /* margin-bottom: 10px; */
+    /* margin-top: 2px; */
+
     span {
       padding-left: 2px;
     }
@@ -1778,6 +1807,11 @@
     .addView-line-labelDialog {
       width: 125px;
     }
+  }
+
+  .addView-line-switch {
+    height: 24px;
+    margin-bottom: 0;
   }
 
   .total-text {
@@ -1819,6 +1853,14 @@
     /* background-color: #f5f6f7; */
     margin-right: 0;
     border-radius: 4px;
+  }
+
+  :deep(.el-collapse-item__content) {
+    padding-bottom: 5px;
+  }
+
+  :deep(.el-collapse-item__header) {
+    height: 40px;
   }
 
   .table-top {
