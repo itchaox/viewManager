@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : Wang Chao
- * @LastTime   : 2025-01-14 13:30
+ * @LastTime   : 2025-01-14 13:45
  * @desc       : 
 -->
 <script setup>
@@ -1430,8 +1430,10 @@
       <div
         class="total-text theme-view-text-color"
         v-show="!loading"
+        style="margin-top: 15px"
       >
-        {{ $t('total number', [filterViewList.length]) }}
+        {{ $t('selected') }}<span style="color: rgb(20, 86, 240)">{{ selectViewIdList.length }}</span
+        ><span style="color: #9ca3af">/</span>{{ filterViewList.length }}
       </div>
       <div
         v-show="loading"
@@ -1657,13 +1659,14 @@
           </el-table-column>
         </el-table>
       </div>
-
+      <!-- 
       <div
         class="select-text theme-view-text-color"
         v-if="filterViewList.length >= 1"
       >
         {{ $t('selected', [selectViewIdList.length]) }}
-      </div>
+      </div> -->
+
       <div
         class="delete-button"
         v-if="filterViewList.length >= 1"
@@ -1886,7 +1889,7 @@
   }
 
   .delete-button {
-    margin-top: 5px;
+    margin-top: 10px;
   }
 
   .error {

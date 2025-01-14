@@ -46,7 +46,7 @@
   "Personal view for administrators": "Personal View for Administrators",
   "Non-administrator personal view": "Non-administrator Personal View",
   "total number": "Total: {0} Size",
-  "selected": "Selected: {0} Size",
+  "selected": "Selected：",
   "Confirm deletion of the selected": "Confirm deletion of the selected {0} size views?",
   "Loading": "Loading...",
   "Please select the data table format": "Please select the data table format!",
