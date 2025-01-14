@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : Wang Chao
- * @LastTime   : 2025-01-14 13:45
+ * @LastTime   : 2025-01-14 14:01
  * @desc       : 
 -->
 <script setup>
@@ -1179,31 +1179,6 @@
       </el-radio-group>
     </div>
 
-    <div class="batch-button">
-      <el-button
-        type="primary"
-        @click="addView"
-        @mousedown="(e) => e.preventDefault()"
-      >
-        <el-icon><Plus /></el-icon>
-        <span>{{ $t('Add View') }}</span>
-      </el-button>
-
-      <!-- <el-button
-        type="danger"
-        size="small"
-        @click="batchAllViewField"
-      >
-        <preview-open
-          theme="outline"
-          size="18"
-          strokeLinecap="square"
-          style="margin-right: 5px"
-        />
-        <span>显示 / 隐藏所有视图字段</span>
-      </el-button> -->
-    </div>
-
     <!-- 企业用户弹窗 -->
     <el-dialog
       v-model="openEnterprise"
@@ -1420,6 +1395,17 @@
         >
           <el-icon><Refresh /></el-icon>
           <span>{{ $t('Reset') }}</span>
+        </el-button>
+
+        <el-button
+          style="margin-left: 20px"
+          type="primary"
+          plain
+          @click="addView"
+          @mousedown="(e) => e.preventDefault()"
+        >
+          <el-icon><Plus /></el-icon>
+          <span>{{ $t('Add View') }}</span>
         </el-button>
       </div>
     </div>
@@ -1790,13 +1776,12 @@
   }
 
   .addView-line {
-    margin-bottom: 8px;
+    margin-bottom: 12px;
     display: flex;
     align-items: center;
 
     .addView-line-label {
       width: 75px;
-      margin-right: 10px;
       font-size: 14px;
       white-space: nowrap;
     }
