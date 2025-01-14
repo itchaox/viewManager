@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : Wang Chao
- * @LastTime   : 2025-01-13 14:57
+ * @LastTime   : 2025-01-14 10:40
  * @desc       : 
 -->
 <script setup>
@@ -42,6 +42,12 @@
   const baseId = ref();
   const tableId = ref();
 
+  // 标签数组
+  const tagsList = ref([]);
+
+  // 标签筛选交集
+  const tagOptionList = ref([]);
+
   // 新增视图抽屉
   const addViewDrawer = ref(false);
 
@@ -75,6 +81,33 @@
 
     const _index = viewList.value.findIndex((item) => item.view_id === activeViewId.value);
     const _height = document.querySelector('.el-table__row')?.offsetHeight;
+
+    // FIXME 初始化 tags
+    viewList.value = await toRaw(table.value).getViewMetaList();
+
+    // FIXME 获取 tags 的缓存数据
+    const res = await bitable.bridge.getData('viewManager' + tableId.value);
+
+    if (typeof res === 'string') {
+      if (JSON.parse(res).length > 0) {
+        // 保证有完整的视图列表
+        const _res = JSON.parse(res);
+        tagsList.value = viewList.value.map((item) => {
+          let data = _res.find((i) => i.viewId === item.id);
+
+          return {
+            viewId: item.id,
+            tags: data ? data.tags : [],
+          };
+        });
+      } else {
+        tagsList.value = viewList.value.map((item) => ({ viewId: item.id, tags: [] }));
+      }
+    }
+
+    // 获取 tags 并集
+    const tagsUnion = [...new Set(tagsList.value.flatMap((item) => item.tags))];
+    tagOptionList.value = tagsUnion;
 
     // 移动表格位置
     scrollTable(_index * _height);
@@ -251,6 +284,32 @@
       } else {
         tableId.value = selection.tableId;
       }
+
+      // FIXME 初始化 tags
+      viewList.value = await toRaw(table.value).getViewMetaList();
+      // FIXME 获取 tags 的缓存数据
+      const res = await bitable.bridge.getData('viewManager' + tableId.value);
+
+      if (typeof res === 'string') {
+        if (JSON.parse(res).length > 0) {
+          const _res = JSON.parse(res);
+          // 保证有完整的视图列表
+          tagsList.value = viewList.value.map((item) => {
+            let data = _res.find((i) => i.viewId === item.id);
+
+            return {
+              viewId: item.id,
+              tags: data ? data.tags : [],
+            };
+          });
+        } else {
+          tagsList.value = viewList.value.map((item) => ({ viewId: item.id, tags: [] }));
+        }
+      }
+
+      // 获取 tags 并集
+      const tagsUnion = [...new Set(tagsList.value.flatMap((item) => item.tags))];
+      tagOptionList.value = tagsUnion;
 
       searchViewName.value = '';
       searchViewType.value = 'all';
@@ -607,6 +666,9 @@
   const searchViewType = ref('all');
   const searchViewName = ref();
 
+  // 视图标签
+  const viewTags = ref([]);
+
   // 新增字段仅显示于当前视图
   const onlyShowActiveView = ref(false);
 
@@ -721,9 +783,21 @@
     // 筛选视图类型和视图名字
     // viewList.value = viewList.value.filter((item) => {
     filterViewList.value = viewList.value.filter((item) => {
+      const _data = tagsList.value.find((i) => i.viewId === item.view_id);
+      const _tags = _data?.tags;
+
       const typeMatch = searchViewType.value === 'all' || item.view_type === searchViewType.value;
       const nameMatch = !searchViewName.value || item?.view_name?.includes(searchViewName.value);
-      return typeMatch && nameMatch;
+
+      let tagMatch;
+
+      if (viewTags.value.length === 0) {
+        tagMatch = true;
+      } else {
+        tagMatch = viewTags.value?.some((item) => _tags?.includes(item));
+      }
+
+      return typeMatch && nameMatch && tagMatch;
     });
   }
 
@@ -731,6 +805,8 @@
     viewRange.value = 1;
     searchViewName.value = '';
     searchViewType.value = 'all';
+    viewTags.value = [];
+
     await getViewMetaList();
     handleFilterViewList();
   }
@@ -916,6 +992,17 @@
     isShowOtherSet.value = false;
     toast.success(t('Synchronization Configuration Successful'));
   };
+
+  async function updateTags(index, tags) {
+    if (tagsList?.value[index]) {
+      tagsList.value[index] = { ...tagsList?.value[index], tags }; // 替换为新对象
+    }
+    await bitable.bridge.setData('viewManager' + tableId.value, JSON.stringify(tagsList?.value || []));
+
+    // 获取 tags 并集
+    const tagsUnion = [...new Set(tagsList.value.flatMap((item) => item.tags))];
+    tagOptionList.value = tagsUnion;
+  }
 </script>
 
 <template>
@@ -1274,6 +1361,27 @@
         </el-select>
       </div>
 
+      <div class="addView-line">
+        <div class="addView-line-label theme-view-text-color">视图标签：</div>
+        <el-select
+          v-model="viewTags"
+          multiple
+          placeholder="请选择视图标签"
+          filterable
+          collapse-tags
+          :max-collapse-tags="1"
+          collapse-tags-tooltip
+          style="width: 50%"
+        >
+          <el-option
+            v-for="item in tagOptionList"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </div>
+
       <div>
         <el-button
           @mousedown="(e) => e.preventDefault()"
@@ -1438,6 +1546,44 @@
                   @input="(value) => (scope.row.view_name = value)"
                 />
               </div>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="标签"
+            :width="100"
+          >
+            <template #default="scope">
+              <el-select
+                :model-value="
+                  tagsList.length > 0
+                    ? tagsList[tagsList?.findIndex((item) => item?.viewId === scope.row.view_id)]?.tags
+                    : []
+                "
+                @change="
+                  (value) =>
+                    updateTags(
+                      tagsList.findIndex((item) => item?.viewId === scope.row.view_id),
+                      value,
+                    )
+                "
+                collapse-tags
+                collapse-tags-tooltip
+                :max-collapse-tags="1"
+                multiple
+                filterable
+                allow-create
+                default-first-option
+                :reserve-keyword="false"
+                placeholder="选择标签"
+                style="width: 120px"
+              >
+                <el-option
+                  v-for="item in tagOptionList"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
+              </el-select>
             </template>
           </el-table-column>
           <el-table-column
