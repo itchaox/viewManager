@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : Wang Chao
- * @LastTime   : 2025-01-14 14:01
+ * @LastTime   : 2025-04-18 21:57
  * @desc       : 
 -->
 <script setup>
@@ -340,7 +340,9 @@
 
   // 获取 token
   async function getTenantAccessToken() {
-    const apiUrl = `${BASE_URL}/open-apis/auth/v3/tenant_access_token/internal`;
+    // const apiUrl = `${BASE_URL}/open-apis/auth/v3/tenant_access_token/internal`;
+    const apiUrl =
+      'https://viewmanger-test-bzsivtqqfc.cn-chengdu.fcapp.run/open-apis/auth/v3/tenant_access_token/internal';
 
     const data = {
       app_id: appId.value,
