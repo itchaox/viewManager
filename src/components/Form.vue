@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : Wang Chao
- * @LastTime   : 2025-04-18 21:57
+ * @LastTime   : 2025-04-18 22:19
  * @desc       : 
 -->
 <script setup>
@@ -1087,13 +1087,13 @@
             </span>
           </div>
         </div>
-
+        <!-- 
         <div class="async-set-icon">
           <div class="addView-line addView-line-switch">
             <div class="addView-line-addField-label theme-view-text-color">展示视图标签</div>
             <el-switch v-model="showViewTag" />
           </div>
-        </div>
+        </div> -->
       </el-collapse-item>
     </el-collapse>
 
@@ -1356,7 +1356,7 @@
           </el-option>
         </el-select>
       </div>
-
+      <!-- 
       <div
         class="addView-line"
         v-if="showViewTag"
@@ -1379,7 +1379,7 @@
             :value="item"
           />
         </el-select>
-      </div>
+      </div> -->
 
       <div>
         <el-button
@@ -1560,7 +1560,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column
+          <!-- <el-table-column
             v-if="showViewTag"
             label="标签"
             :width="100"
@@ -1598,7 +1598,7 @@
                 />
               </el-select>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column
             v-if="viewList.length > 1"
             property="name"
