@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : Wang Chao
- * @LastTime   : 2025-04-18 22:19
+ * @LastTime   : 2025-05-07 16:43
  * @desc       : 
 -->
 <script setup>
@@ -377,11 +377,13 @@
    * @desc  : 获取协作者列表
    */
   async function getMemberList() {
-    const apiUrl = `${BASE_URL}/open-apis/drive/permission/member/list`;
+    // const apiUrl = `${BASE_URL}/open-apis/drive/permission/member/list`;
+    const apiUrl = 'https://viewmanger-test-bzsivtqqfc.cn-chengdu.fcapp.run/open-apis/drive/permission/member/list';
 
     const data = {
       token: baseId.value,
       type: 'bitable',
+      tenant_access_token: tenant_access_token.value,
     };
 
     const headers = {
@@ -401,6 +403,49 @@
           }
         });
       }
+    } catch (error) {
+      // 弹出提示用户错误信息
+
+      console.error('Error:', error.message);
+      throw error;
+    }
+  }
+
+  /**
+   * @desc  : 删除个人视图
+   */
+  async function deletePersonView(viewId) {
+    // const apiUrl = `${BASE_URL}/open-apis/drive/permission/member/list`;
+    const apiUrl = 'https://viewmanger-test-bzsivtqqfc.cn-chengdu.fcapp.run/open-apis/deleteView';
+
+    const data = {
+      baseId: baseId.value,
+      tableId: tableId.value,
+      viewId: viewId,
+      tenant_access_token: tenant_access_token.value,
+    };
+
+    console.log('🚀 data:', data);
+
+    // const headers = {
+    //   'Content-Type': 'application/json; charset=utf-8',
+    //   Authorization: `Bearer ${tenant_access_token.value}`,
+    // };
+
+    try {
+      const response = await axios.post(apiUrl, data);
+      // 处理响应数据
+      console.log('🚀 response--删除个人视图:', response);
+
+      // if (response?.status === 200) {
+      //   const members = response?.data?.data?.members;
+
+      //   members.forEach((item) => {
+      //     if (item.perm === 'full_access') {
+      //       fullAccessIdList.value.push(item.member_open_id);
+      //     }
+      //   });
+      // }
     } catch (error) {
       // 弹出提示用户错误信息
 
@@ -430,13 +475,48 @@
 
     try {
       // 发起带有 Authorization 头的 GET 请求
-      const response = await axios.get(page_token.value ? apiUrl2 : apiUrl1, { headers });
+      // const response = await axios.get(page_token.value ? apiUrl2 : apiUrl1, { headers });
+      let response;
+
+      if (page_token.value) {
+        // v2
+        const data = {
+          baseId: baseId.value,
+          tableId: tableId.value,
+          page_token: page_token.value,
+          tenant_access_token: tenant_access_token.value,
+        };
+
+        response = await axios.post(
+          'https://viewmanger-test-bzsivtqqfc.cn-chengdu.fcapp.run/open-apis/bitable/v1/apps-2',
+          data,
+          { headers },
+        );
+      } else {
+        // v1
+
+        const data = {
+          baseId: baseId.value,
+          tableId: tableId.value,
+          tenant_access_token: tenant_access_token.value,
+        };
+
+        response = await axios.post(
+          'https://viewmanger-test-bzsivtqqfc.cn-chengdu.fcapp.run/open-apis/bitable/v1/apps-1',
+          data,
+          { headers },
+        );
+      }
+
+      console.log('🚀 response111:', response);
 
       if (response?.data?.code === 0) {
         const _list = response.data?.data?.items;
 
         // 追加元素
         viewList.value.push(..._list?.map((item) => item));
+
+        console.log('🚀 viewList.value333:', viewList.value);
 
         if (response.data?.data?.has_more) {
           // 判断是否有更多项
@@ -461,6 +541,9 @@
     table.value = await base.getActiveTable();
 
     viewList.value = await toRaw(table.value).getViewMetaList();
+
+    console.log('🚀 viewList.value:', viewList.value);
+
     if (isInit.value) {
       toast.success(t('Successful query'));
     }
@@ -545,9 +628,23 @@
    */
   async function handleDelete(index, view_id) {
     loading.value = true;
-    await toRaw(table.value).deleteView(view_id);
-    toast.success(t('Deleted successfully'));
+
+    await deletePersonView(view_id);
+
     // await getViewMetaList();
+
+    // try {
+    //   // await bitable.base.getTableById('xxx');
+    //   await toRaw(table.value).deleteView(view_id);
+    // } catch (e) {
+    //   const { message, code } = e;
+    //   console.log('🚀 message3333:', message, code);
+    //   // handle error
+    //   // Toast.error(message);
+    // }
+    // // await toRaw(table.value).deleteView('vew16kDIqX');
+
+    toast.success(t('Deleted successfully'));
 
     if (userType.value === 1 || viewRange.value === 1) {
       // 个人用户: 手动查询
