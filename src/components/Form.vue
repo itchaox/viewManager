@@ -3,7 +3,7 @@
  * @Author     : itchaox
  * @Date       : 2023-09-26 15:10
  * @LastAuthor : Wang Chao
- * @LastTime   : 2025-05-07 16:43
+ * @LastTime   : 2025-05-19 18:46
  * @desc       : 
 -->
 <script setup>
@@ -422,7 +422,9 @@
       baseId: baseId.value,
       tableId: tableId.value,
       viewId: viewId,
-      tenant_access_token: tenant_access_token.value,
+      // tenant_access_token: tenant_access_token.value,
+      // tenant_access_token: 'u-fg1sq.40Zd1HY3bOsxrA1Kl52TBN4gGNNa20k5q0aac.',
+      tenant_access_token: userAccessToken.value,
     };
 
     console.log('🚀 data:', data);
@@ -629,20 +631,13 @@
   async function handleDelete(index, view_id) {
     loading.value = true;
 
-    await deletePersonView(view_id);
+    if (userAccessToken.value) {
+      await deletePersonView(view_id);
+    } else {
+      await toRaw(table.value).deleteView(view_id);
+    }
 
     // await getViewMetaList();
-
-    // try {
-    //   // await bitable.base.getTableById('xxx');
-    //   await toRaw(table.value).deleteView(view_id);
-    // } catch (e) {
-    //   const { message, code } = e;
-    //   console.log('🚀 message3333:', message, code);
-    //   // handle error
-    //   // Toast.error(message);
-    // }
-    // // await toRaw(table.value).deleteView('vew16kDIqX');
 
     toast.success(t('Deleted successfully'));
 
@@ -687,7 +682,12 @@
     loading.value = true;
 
     for (const view_id of selectViewIdList.value) {
-      await toRaw(table.value).deleteView(view_id);
+      // await toRaw(table.value).deleteView(view_id);
+      if (userAccessToken.value) {
+        await deletePersonView(view_id);
+      } else {
+        await toRaw(table.value).deleteView(view_id);
+      }
     }
     toast.success(t('Batch Delete Success'));
     // await getViewMetaList();
@@ -947,6 +947,7 @@
 
   const appId = ref('');
   const appSecret = ref('');
+  const userAccessToken = ref('');
 
   // 过滤之后的视图列表
   const filterViewList = ref([]);
@@ -1314,6 +1315,16 @@
             v-model="appSecret"
             type="password"
             :placeholder="$t('Please enter App Secret')"
+            show-password
+          />
+        </div>
+
+        <div class="addView-line">
+          <div class="addView-line-label addView-line-labelDialog theme-view-text-color">user_access_token:</div>
+          <el-input
+            v-model="userAccessToken"
+            type="password"
+            :placeholder="$t('Please enter user_access_token')"
             show-password
           />
         </div>
